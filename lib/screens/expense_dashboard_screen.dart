@@ -70,7 +70,7 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                   _buildCategoryBreakdown(l10n, themeProvider),
                   _buildMonthlyComparison(l10n, themeProvider),
                   _buildRecentTransactions(l10n, themeProvider),
-                  const SizedBox(height: 20), // Bottom padding
+                  const SizedBox(height: 80), // Artırılmış bottom padding
                 ],
               ),
             ),
@@ -84,9 +84,13 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
             icon: const Icon(Icons.add, color: Colors.white),
             label: Text(l10n.addExpense,
                 style: const TextStyle(color: Colors.white)),
+            elevation: 4.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
           floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+              FloatingActionButtonLocation.endFloat,
         );
       },
     );

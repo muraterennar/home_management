@@ -599,36 +599,36 @@ class AppLocalizationsTr extends AppLocalizations {
   String get currencyChanged => 'Para birimi başarıyla değiştirildi';
 
   @override
-  String get incomeVsExpenses => 'Income vs Expenses';
+  String get incomeVsExpenses => 'Gelir ve Giderler';
 
   @override
-  String get savingsGoals => 'Savings Goals';
+  String get savingsGoals => 'Birikim Hedefleri';
 
   @override
-  String get remaining => 'Remaining';
+  String get remaining => 'Kalan';
 
   @override
-  String get monthlyBudget => 'Monthly Budget';
+  String get monthlyBudget => 'Aylık Bütçe';
 
   @override
-  String get goal => 'Goal';
+  String get goal => 'Hedef';
 
   @override
-  String get groceryShopping => 'Grocery Shopping';
+  String get groceryShopping => 'Market Alışverişi';
 
   @override
-  String get yesterday => 'Yesterday';
+  String get yesterday => 'Dün';
 
   @override
-  String get salaryDeposit => 'Salary Deposit';
+  String get salaryDeposit => 'Maaş Yatırma';
 
   @override
   String daysAgo(Object days) {
-    return '$days days ago';
+    return '$days gün önce';
   }
 
   @override
-  String get electricityBill => 'Electricity Bill';
+  String get electricityBill => 'Elektrik Faturası';
 
   @override
   String get recentTransactions => 'Son İşlemler';

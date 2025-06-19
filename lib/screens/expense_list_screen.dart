@@ -108,6 +108,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               _buildSummaryHeader(l10n, _expenses, themeProvider),
               Expanded(
                   child: _buildExpenseList(l10n, _expenses, themeProvider)),
+              // Alt kısma ekstra boşluk ekliyorum
+              const SizedBox(height: 16),
             ],
           ),
           floatingActionButton: FloatingActionButton.extended(
@@ -119,9 +121,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             icon: const Icon(Icons.add, color: Colors.white),
             label: Text(l10n.addExpense,
                 style: const TextStyle(color: Colors.white)),
+            elevation: 4.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
           floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+              FloatingActionButtonLocation.endFloat,
         );
       },
     );
