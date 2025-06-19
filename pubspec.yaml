@@ -1,0 +1,55 @@
+name: home_management
+description: A Flutter home management and expense tracking application.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI & Animations
+  google_fonts: ^6.1.0
+  animate_do: ^3.1.2
+  smooth_page_indicator: ^1.1.0
+
+  # Icons & Graphics
+  flutter_svg: ^2.0.9
+  cupertino_icons: ^1.0.2
+
+  # Charts & Data Visualization
+  fl_chart: ^0.68.0
+
+  # Image Handling
+  image_picker: ^1.0.4
+
+  # Additional UI Components
+  dotted_border: ^2.1.0
+
+  # Internationalization
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+  shared_preferences: ^2.2.2
+
+  # State Management
+  provider: ^6.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+  - assets/images/
+  - assets/icons/
+  # Add fonts if needed
+  # fonts:
+  #   - family: CustomFont
+  #     fonts:
+  #       - asset: fonts/CustomFont-Regular.ttf
