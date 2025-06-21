@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:home_management/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../providers/currency_provider.dart';
 import '../providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
+import '../services/auth_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -14,10 +16,18 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  late AuthService _authService;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = AuthService(context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return Scaffold(
@@ -65,6 +75,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   delay: const Duration(milliseconds: 600),
                   child: _buildAboutSection(l10n, themeProvider),
                 ),
+                const SizedBox(height: 32),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 700),
+                  child: _buildLogoutSection(l10n, themeProvider),
+                ),
               ],
             ),
           ),
@@ -73,7 +88,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildGeneralSection(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildGeneralSection(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return _buildSection(
       title: l10n.general,
       themeProvider: themeProvider,
@@ -95,7 +111,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildCurrencySection(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildCurrencySection(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return _buildSection(
       title: l10n.currency,
       themeProvider: themeProvider,
@@ -105,7 +122,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return _buildSettingsTile(
               icon: Icons.attach_money,
               title: l10n.selectCurrency,
-              subtitle: currencyProvider.getCurrencyName(currencyProvider.currentCurrency),
+              subtitle: currencyProvider
+                  .getCurrencyName(currencyProvider.currentCurrency),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () => _showCurrencyDialog(context, l10n),
               themeProvider: themeProvider,
@@ -116,7 +134,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildLanguageSection(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildLanguageSection(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return _buildSection(
       title: l10n.language,
       themeProvider: themeProvider,
@@ -126,7 +145,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return _buildSettingsTile(
               icon: Icons.language,
               title: l10n.selectLanguage,
-              subtitle: languageProvider.getLanguageName(languageProvider.currentLanguageCode),
+              subtitle: languageProvider
+                  .getLanguageName(languageProvider.currentLanguageCode),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () => _showLanguageDialog(context, l10n),
               themeProvider: themeProvider,
@@ -137,7 +157,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildNotificationSection(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildNotificationSection(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return _buildSection(
       title: l10n.notifications,
       themeProvider: themeProvider,
@@ -168,7 +189,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildAboutSection(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildAboutSection(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return _buildSection(
       title: l10n.about,
       themeProvider: themeProvider,
@@ -178,7 +200,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: l10n.version,
           subtitle: '1.0.0',
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          onTap: () {}, // Non-functional
+          onTap: () {},
+          // Non-functional
           themeProvider: themeProvider,
         ),
         _buildSettingsTile(
@@ -186,7 +209,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: l10n.privacyPolicy,
           subtitle: l10n.readPrivacyPolicy,
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          onTap: () {}, // Non-functional
+          onTap: () {},
+          // Non-functional
           themeProvider: themeProvider,
         ),
         _buildSettingsTile(
@@ -194,7 +218,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: l10n.termsOfService,
           subtitle: l10n.readTermsOfService,
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          onTap: () {}, // Non-functional
+          onTap: () {},
+          // Non-functional
+          themeProvider: themeProvider,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLogoutSection(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
+    return _buildSection(
+      title: l10n.account,
+      themeProvider: themeProvider,
+      children: [
+        _buildSettingsTile(
+          icon: Icons.logout,
+          title: l10n.logout,
+          subtitle: l10n.logoutDescription,
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          onTap: () => _showLogoutConfirmationDialog(context),
           themeProvider: themeProvider,
         ),
       ],
@@ -202,7 +245,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSection({
-    required String title, 
+    required String title,
     required List<Widget> children,
     required ThemeProvider themeProvider,
   }) {
@@ -276,12 +319,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showThemeChangedSnackbar(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    
+
     if (l10n != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            themeProvider.isDarkMode ? 'Dark mode enabled' : 'Light mode enabled',
+            themeProvider.isDarkMode
+                ? 'Dark mode enabled'
+                : 'Light mode enabled',
             style: const TextStyle(color: Colors.white),
           ),
           backgroundColor: themeProvider.successColor,
@@ -363,17 +408,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6366F1).withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? const Color(0xFF6366F1).withOpacity(0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
+            color:
+                isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
           ),
         ),
         child: Row(
           children: [
             Icon(
               Icons.language,
-              color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF6B7280),
+              color: isSelected
+                  ? const Color(0xFF6366F1)
+                  : const Color(0xFF6B7280),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -381,7 +431,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 languageName,
                 style: TextStyle(
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF1F2937),
+                  color: isSelected
+                      ? const Color(0xFF6366F1)
+                      : const Color(0xFF1F2937),
                 ),
               ),
             ),
@@ -484,17 +536,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6366F1).withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? const Color(0xFF6366F1).withOpacity(0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
+            color:
+                isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
           ),
         ),
         child: Row(
           children: [
             Icon(
               Icons.attach_money,
-              color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF6B7280),
+              color: isSelected
+                  ? const Color(0xFF6366F1)
+                  : const Color(0xFF6B7280),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -502,7 +559,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 currencyName,
                 style: TextStyle(
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF1F2937),
+                  color: isSelected
+                      ? const Color(0xFF6366F1)
+                      : const Color(0xFF1F2937),
                 ),
               ),
             ),
@@ -527,6 +586,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: const TextStyle(color: Colors.white),
           ),
           backgroundColor: const Color(0xFF10B981),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            l10n.logoutConfirmation,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1F2937),
+            ),
+          ),
+          content: Text(
+            l10n.logoutMessage,
+            style: TextStyle(
+              color: themeProvider.secondaryTextColor,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(color: Color(0xFF6B7280)),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _performLogout(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: themeProvider.errorColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(l10n.logout),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _performLogout(BuildContext context) async {
+    try {
+      await _authService.logout();
+// Kullanıcıyı giriş sayfasına yönlendir
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor:
+              Provider.of<ThemeProvider>(context, listen: false).errorColor,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
