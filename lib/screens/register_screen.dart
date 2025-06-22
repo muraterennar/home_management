@@ -1,10 +1,18 @@
+import 'dart:developer' as debugConsole;
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:home_management/screens/create_family_profile_screen.dart';
+import 'package:home_management/services/auth_service.dart';
 import 'package:provider/provider.dart';
+import '../models/register_dto.dart';
+import '../models/users/create_user_dto.dart';
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
-import 'create_family_screen.dart';
+
+import '../services/user_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,6 +26,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _authService = AuthService();
+  final _userService = UserService();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agreeToTerms = false;
@@ -34,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return Scaffold(
@@ -91,9 +101,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.language,
-                    color: const Color(0xFF6366F1),
+                    color: Color(0xFF6366F1),
                     size: 20,
                   ),
                   const SizedBox(width: 6),
@@ -116,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _showLanguageDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -185,17 +195,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6366F1).withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? const Color(0xFF6366F1).withOpacity(0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
+            color:
+                isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
           ),
         ),
         child: Row(
           children: [
             Icon(
               Icons.language,
-              color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF6B7280),
+              color: isSelected
+                  ? const Color(0xFF6366F1)
+                  : const Color(0xFF6B7280),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -203,7 +218,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 languageName,
                 style: TextStyle(
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF1F2937),
+                  color: isSelected
+                      ? const Color(0xFF6366F1)
+                      : const Color(0xFF1F2937),
                 ),
               ),
             ),
@@ -281,7 +298,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildRegisterForm(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildRegisterForm(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -318,7 +336,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 _obscurePassword ? Icons.visibility : Icons.visibility_off,
                 color: themeProvider.iconColor,
               ),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
             themeProvider: themeProvider,
           ),
@@ -333,10 +352,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             obscureText: _obscureConfirmPassword,
             suffixIcon: IconButton(
               icon: Icon(
-                _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                _obscureConfirmPassword
+                    ? Icons.visibility
+                    : Icons.visibility_off,
                 color: themeProvider.iconColor,
               ),
-              onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+              onPressed: () => setState(
+                  () => _obscureConfirmPassword = !_obscureConfirmPassword),
             ),
             themeProvider: themeProvider,
           ),
@@ -367,18 +389,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: _agreeToTerms
-                  ? () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const CreateFamilyScreen()),
-                      )
-                  : null,
+              onPressed: _agreeToTerms ? () async => await _register() : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: themeProvider.primaryColor,
               ),
               child: Text(
                 l10n.createAccount,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -387,7 +405,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildSignInPrompt(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildSignInPrompt(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return FadeInUp(
       delay: const Duration(milliseconds: 1200),
       child: Row(
@@ -442,5 +461,86 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _register() async {
+    final l10n = AppLocalizations.of(context)!;
+    final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.fillAllFields)),
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.passwordsDoNotMatch)),
+      );
+      return;
+    }
+
+    // Burada kayıt işlemini gerçekleştirebilirsiniz
+    var registerDto = RegisterDto(
+      email: _emailController.text,
+      password: password,
+      firstName: _nameController.text.split(' ').first,
+      lastName: _nameController.text.split(' ').length > 1
+          ? _nameController.text.split(' ')[1]
+          : null,
+    );
+
+    debugConsole.log("Register DTO: ${registerDto.toJson()}");
+
+    try {
+
+      var isUser = await _userService.getUserProfileByEmail(registerDto.email);
+
+      if (isUser != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.userAlreadyExists)),
+        );
+        return;
+      }
+
+      var result = await _authService.registerWithEmail(registerDto);
+      await _userService.createUserProfile(
+        CreateUserDto(
+          id: result!.uid,
+          email: registerDto.email,
+          firstName: registerDto.firstName,
+          lastName: registerDto.lastName,
+          photoURL: '', // Fotoğraf URL'si eklenebilir
+        ),
+      );
+      debugConsole.log('Registration result: $result');
+
+      if (result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.registrationFailed)),
+        );
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.registrationSuccess)),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CreateFamilyProfileScreen(),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.registrationFailed)),
+      );
+    }
   }
 }

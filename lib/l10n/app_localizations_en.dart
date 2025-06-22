@@ -638,6 +638,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removed => 'Removed';
 
   @override
+  String get remove => 'Remove';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
   String get undo => 'Undo';
 
   @override
@@ -663,4 +669,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenseSaved => 'Expense saved';
+
+  @override
+  String get loginFailed => 'Login failed. Please check your credentials.';
+
+  @override
+  String get invalidEmailOrPassword => 'Invalid email or password';
+
+  @override
+  String get fillAllFields => 'Please fill all fields';
+
+  @override
+  String get firebaseAuthError => 'Firebase Authentication error: ';
+
+  @override
+  String get networkError =>
+      'Network error: Please check your internet connection.';
+
+  @override
+  String get firebaseConnectionError => 'Firebase connection error: ';
+
+  @override
+  String get unknownError => 'Unknown error: ';
+
+  @override
+  String get userNotLoggedIn => 'User is not logged in.';
+
+  @override
+  String get profileUpdateError => 'Error updating profile: ';
+
+  @override
+  String get emailAlreadyVerified =>
+      'User is not logged in or email is already verified.';
+
+  @override
+  String get emailVerificationError => 'Error sending email verification: ';
+
+  @override
+  String get userInfoError => 'Error getting user information: ';
+
+  @override
+  String get logoutError => 'Error during logout: ';
+
+  @override
+  String get passwordRequired => 'Please enter your password';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get registrationFailed => 'Registration failed. Please try again.';
+
+  @override
+  String get registrationSuccess =>
+      'Registration successful! You can now login.';
+
+  @override
+  String get verifyEmailFirst => 'Please verify your email address first.';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutDescription => 'Sign out from your account';
+
+  @override
+  String get logoutConfirmation => 'Logout Confirmation';
+
+  @override
+  String get logoutMessage =>
+      'Are you sure you want to logout from your account?';
+
+  @override
+  String get logoutSuccess => 'You have been logged out successfully';
+
+  @override
+  String get userAlreadyExists =>
+      'User already exists with this email address.';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get currencySymbol => '\$';
 }
