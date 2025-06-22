@@ -3,29 +3,202 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
+import 'package:home_management/services/family_service.dart';
+import 'package:home_management/services/user_service.dart';
+import 'package:home_management/models/family/family_dto.dart';
+import 'package:home_management/models/family/update_family_dto.dart';
 
 class FamilyProfileEditScreen extends StatefulWidget {
   @override
-  _FamilyProfileEditScreenState createState() => _FamilyProfileEditScreenState();
+  _FamilyProfileEditScreenState createState() =>
+      _FamilyProfileEditScreenState();
 }
 
 class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
-  final _familyNameController = TextEditingController(text: 'The Smith Family');
-  final _monthlyIncomeController = TextEditingController(text: '5400');
-  
-  final List<Map<String, dynamic>> _fixedExpenses = [
-    {'name': 'Rent', 'controller': TextEditingController(text: '1500'), 'icon': Icons.home},
-    {'name': 'Utilities', 'controller': TextEditingController(text: '200'), 'icon': Icons.flash_on},
-    {'name': 'Internet', 'controller': TextEditingController(text: '80'), 'icon': Icons.wifi},
-    {'name': 'Insurance', 'controller': TextEditingController(text: '300'), 'icon': Icons.security},
+  final _familyService = FamilyService();
+  final _userService = UserService();
+
+  final _familyNameController = TextEditingController();
+  final _monthlyIncomeController = TextEditingController();
+
+  List<Map<String, dynamic>> _fixedExpenses = [
+    {
+      'name': 'Rent',
+      'controller': TextEditingController(),
+      'icon': Icons.home,
+      'isDefault': true
+    },
+    {
+      'name': 'Utilities',
+      'controller': TextEditingController(),
+      'icon': Icons.flash_on,
+      'isDefault': true
+    },
+    {
+      'name': 'Internet',
+      'controller': TextEditingController(),
+      'icon': Icons.wifi,
+      'isDefault': true
+    },
+    {
+      'name': 'Insurance',
+      'controller': TextEditingController(),
+      'icon': Icons.security,
+      'isDefault': true
+    },
   ];
+
+  String? _tenantId;
+  bool _loading = true;
+
+  int _summaryIncome = 0;
+  int _summaryExpenses = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFamilyData();
+  }
+
+  Future<void> _loadFamilyData() async {
+    setState(() {
+      _loading = true;
+    });
+    try {
+      _tenantId = await _userService.getTenantId();
+      if (_tenantId == null || _tenantId!.isEmpty) {
+        throw Exception("TenantId bulunamadı");
+      }
+
+      final family = await _familyService.getFamilyByTenantId(_tenantId!);
+
+      _familyNameController.text = family.name;
+      _monthlyIncomeController.text = family.familyIncome.toString();
+
+      // Harcamaları doldur
+      _fixedExpenses = [];
+      final icons = [
+        Icons.home,
+        Icons.flash_on,
+        Icons.wifi,
+        Icons.security,
+        Icons.shopping_cart,
+        Icons.directions_car,
+        Icons.school,
+        Icons.local_hospital,
+        Icons.fitness_center,
+        Icons.card_giftcard,
+        Icons.pets,
+      ];
+      for (int i = 0; i < family.fixedExpenses.length; i++) {
+        final exp = family.fixedExpenses[i];
+        _fixedExpenses.add({
+          'name': exp['name'],
+          'controller': TextEditingController(text: exp['value'].toString()),
+          'icon': i < icons.length ? icons[i] : Icons.shopping_cart,
+          'isDefault': i < 4,
+        });
+      }
+
+      // Profil özeti için gerçek verileri ayarla
+      _summaryIncome = family.familyIncome;
+      _summaryExpenses = family.fixedExpenses.fold<int>(
+        0,
+        (sum, item) => (sum +
+                (item['value'] is int
+                    ? item['value']
+                    : int.tryParse(item['value'].toString()) ?? 0))
+            .toInt(),
+      );
+    } catch (e) {
+      // Hata yönetimi
+      debugPrint("Family data yüklenirken hata: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Aile bilgisi yüklenemedi: $e")));
+    }
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  void _addExpense() {
+    setState(() {
+      final icons = [
+        Icons.shopping_cart,
+        Icons.directions_car,
+        Icons.school,
+        Icons.local_hospital,
+        Icons.fitness_center,
+        Icons.card_giftcard,
+        Icons.pets,
+      ];
+      _fixedExpenses.add({
+        'name': 'Expense ${_fixedExpenses.length + 1}',
+        'controller': TextEditingController(),
+        'icon': icons[_fixedExpenses.length % icons.length],
+        'isDefault': false,
+      });
+    });
+  }
+
+  void _deleteExpense(int index) {
+    if (_fixedExpenses[index]['isDefault'] == true) return;
+    setState(() {
+      _fixedExpenses[index]['controller'].dispose();
+      _fixedExpenses.removeAt(index);
+    });
+    _updateExpenseNames();
+  }
+
+  void _updateExpenseNames() {
+    for (int i = 4; i < _fixedExpenses.length; i++) {
+      _fixedExpenses[i]['name'] = 'Expense ${i + 1}';
+    }
+  }
+
+  Future<void> _saveFamily() async {
+    if (_tenantId == null) return;
+    final name = _familyNameController.text.trim();
+    final income = int.tryParse(_monthlyIncomeController.text.trim()) ?? 0;
+    final expenses = _fixedExpenses.map((expense) {
+      final valueText = expense['controller'].text.trim();
+      final value = int.tryParse(valueText) ?? 0;
+      return {
+        'name': expense['name'],
+        'value': value,
+      };
+    }).toList();
+
+    final updateDto = UpdateFamilyDto(
+      tenantId: _tenantId,
+      name: name,
+      familyIncome: income,
+      fixedExpenses: expenses,
+    );
+
+    try {
+      await _familyService.updateFamily(updateDto);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Aile profili güncellendi")));
+      Navigator.pop(context);
+    } catch (e) {
+      debugPrint("Aile profili güncellenirken hata: $e");
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Güncelleme hatası: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
+        if (_loading) {
+          return Scaffold(
+            backgroundColor: themeProvider.backgroundColor,
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
         return Scaffold(
           backgroundColor: themeProvider.backgroundColor,
           appBar: AppBar(
@@ -44,7 +217,7 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: _saveFamily,
                 child: Text(
                   l10n.save,
                   style: TextStyle(
@@ -91,7 +264,9 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
     );
   }
 
-  Widget _buildProfileSummary(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildProfileSummary(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
+    final currencySymbol = l10n.currencySymbol ?? '₺';
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -144,7 +319,11 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
           Row(
             children: [
               Expanded(
-                child: _buildSummaryItem(l10n.monthlyIncome, '\$5,400', themeProvider.successColor),
+                child: _buildSummaryItem(
+                  l10n.monthlyIncome,
+                  '$currencySymbol${_summaryIncome.toString()}',
+                  themeProvider.successColor,
+                ),
               ),
               Container(
                 width: 1,
@@ -153,7 +332,11 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 16),
               ),
               Expanded(
-                child: _buildSummaryItem(l10n.fixedExpenses, '\$2,080', themeProvider.errorColor),
+                child: _buildSummaryItem(
+                  l10n.fixedExpenses,
+                  '$currencySymbol${_summaryExpenses.toString()}',
+                  themeProvider.errorColor,
+                ),
               ),
             ],
           ),
@@ -185,19 +368,20 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
     );
   }
 
-  Widget _buildFamilyNameField(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildFamilyNameField(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           l10n.familyName,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xFF374151),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -206,13 +390,13 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: 10,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: TextField(
             controller: _familyNameController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               prefixIcon: Icon(Icons.family_restroom, color: Color(0xFF6B7280)),
               border: InputBorder.none,
               contentPadding: EdgeInsets.all(16),
@@ -223,19 +407,21 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
     );
   }
 
-  Widget _buildMonthlyIncomeField(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildMonthlyIncomeField(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
+    final currencySymbol = l10n.currencySymbol ?? '₺';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           l10n.monthlyFamilyIncome,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xFF374151),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -244,24 +430,24 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: 10,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: TextField(
             controller: _monthlyIncomeController,
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
               prefixIcon: Container(
-                margin: EdgeInsets.all(12),
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Color(0xFF10B981).withOpacity(0.1),
+                  color: const Color(0xFF10B981).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  '\$',
-                  style: TextStyle(
+                  currencySymbol,
+                  style: const TextStyle(
                     color: Color(0xFF10B981),
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -269,9 +455,9 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
                 ),
               ),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(16),
             ),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Color(0xFF1F2937),
@@ -282,14 +468,9 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
     );
   }
 
-  Widget _buildFixedExpensesSection(AppLocalizations l10n, ThemeProvider themeProvider) {
-    final List<Map<String, dynamic>> _fixedExpenses = [
-      {'name': l10n.rent, 'controller': TextEditingController(text: '1500'), 'icon': Icons.home},
-      {'name': l10n.utilities, 'controller': TextEditingController(text: '200'), 'icon': Icons.flash_on},
-      {'name': l10n.internet, 'controller': TextEditingController(text: '80'), 'icon': Icons.wifi},
-      {'name': l10n.insurance, 'controller': TextEditingController(text: '300'), 'icon': Icons.security},
-    ];
-
+  Widget _buildFixedExpensesSection(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
+    final currencySymbol = l10n.currencySymbol ?? '₺';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -297,24 +478,29 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
           children: [
             Text(
               l10n.fixedMonthlyExpenses,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF374151),
               ),
             ),
-            Spacer(),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.add, color: Color(0xFF6366F1)),
+            const Spacer(),
+            TextButton.icon(
+              onPressed: _addExpense,
+              icon: const Icon(Icons.add, size: 16),
+              label: Text(l10n.addMore),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF6366F1),
+              ),
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         ...List.generate(_fixedExpenses.length, (index) {
           final expense = _fixedExpenses[index];
+          final isDefault = expense['isDefault'] == true;
           return Container(
-            margin: EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -322,7 +508,7 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 8,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -331,72 +517,51 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
                 Expanded(
                   child: TextField(
                     controller: expense['controller'],
-                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     decoration: InputDecoration(
                       labelText: expense['name'],
-                      prefixIcon: Icon(expense['icon'], color: Color(0xFF6B7280)),
-                      suffixText: '\$',
+                      prefixIcon:
+                          Icon(expense['icon'], color: const Color(0xFF6B7280)),
+                      suffixText: currencySymbol,
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(16),
-                      labelStyle: TextStyle(color: Color(0xFF6B7280)),
+                      contentPadding: const EdgeInsets.all(16),
+                      labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {}, // Non-functional delete
-                  icon: Icon(Icons.delete_outline, color: Color(0xFFEF4444)),
-                ),
+                if (!isDefault)
+                  IconButton(
+                    onPressed: () => _deleteExpense(index),
+                    icon: const Icon(Icons.delete_outline,
+                        color: Color(0xFFEF4444)),
+                  ),
               ],
             ),
           );
         }),
-        SizedBox(height: 12),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFF6366F1), style: BorderStyle.solid),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add, color: Color(0xFF6366F1)),
-                SizedBox(width: 8),
-                Text(
-                  l10n.addNewFixedExpense,
-                  style: TextStyle(
-                    color: Color(0xFF6366F1),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }
 
-  Widget _buildActionButtons(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildActionButtons(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: _saveFamily,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF6366F1),
+              backgroundColor: const Color(0xFF6366F1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
               l10n.saveChanges,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -404,21 +569,21 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
             ),
           ),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
           height: 56,
           child: OutlinedButton(
             onPressed: () => Navigator.pop(context),
             style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Color(0xFFEF4444)),
+              side: const BorderSide(color: Color(0xFFEF4444)),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
               l10n.cancelChanges,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFFEF4444),

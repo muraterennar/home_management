@@ -5,9 +5,14 @@ import 'package:provider/provider.dart';
 import '../providers/currency_provider.dart';
 import '../providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
+import '../services/expense_service.dart'; // ExpenseService'i import ediyoruz
+import '../models/espenses/create_expense_dto.dart'; // CreateExpenseDto modelini import ediyoruz
 import 'settings_screen.dart';
-import 'expense_list_screen.dart';
-import 'expense_dashboard_screen.dart';
+import 'dart:developer' as developer; // debugPrint yerine developer.log kullanmak için
+import 'dart:convert'; // Base64 için
+import 'dart:io'; // File için
+import 'package:image_picker/image_picker.dart'; // Resim seçmek için
+import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase için
 
 class AddExpenseScreen extends StatefulWidget {
   @override
@@ -24,6 +29,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   bool _isRecurring = false;
   String _recurringFrequency = 'monthly';
   DateTime _selectedDate = DateTime.now();
+  final _expenseService = ExpenseService(); // ExpenseService örneği oluşturuyoruz
+  String? _uploadedUrl; // Supabase'den dönen public url
+  final ImagePicker _picker = ImagePicker();
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -65,6 +74,62 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       setState(() {
         _selectedDate = picked;
         _dateController.text = _formatDate(_selectedDate);
+      });
+    }
+  }
+
+  // Kameradan resim çekme
+  Future<void> _getImageFromCamera() async {
+    await _pickAndUploadImage(ImageSource.camera);
+  }
+
+  // Galeriden resim seçme
+  Future<void> _getImageFromGallery() async {
+    await _pickAndUploadImage(ImageSource.gallery);
+  }
+
+  // Supabase'a upload fonksiyonu
+  Future<void> _pickAndUploadImage(ImageSource source) async {
+    final picked = await _picker.pickImage(source: source, imageQuality: 80);
+    if (picked == null) return;
+
+    setState(() {
+      _isUploading = true;
+    });
+
+    final File file = File(picked.path);
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}_${picked.name}';
+    const bucket = 'home-management';
+    final path = 'public/$fileName';
+
+    try {
+      final storage = Supabase.instance.client.storage;
+      final res = await storage
+          .from(bucket)
+          .upload(path, file, fileOptions: const FileOptions(cacheControl: '3600', upsert: false));
+
+      if (res != null && res.isNotEmpty) {
+        final publicURL = storage.from(bucket).getPublicUrl(path);
+        setState(() {
+          _uploadedUrl = publicURL;
+          _hasReceiptImage = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Resim başarıyla yüklendi.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Yükleme hatası!')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Resim yükleme hatası: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Yükleme hatası: $e')),
+      );
+    } finally {
+      setState(() {
+        _isUploading = false;
       });
     }
   }
@@ -552,7 +617,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         const SizedBox(height: 12),
         if (!_hasReceiptImage)
           GestureDetector(
-            onTap: () => setState(() => _hasReceiptImage = true),
+            onTap: () => _pickAndUploadImage(ImageSource.gallery),
             child: DottedBorder(
               borderType: BorderType.RRect,
               radius: const Radius.circular(12),
@@ -613,22 +678,32 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: const Color(0xFFF3F4F6),
-                    child: const Icon(
-                      Icons.receipt_long,
-                      size: 48,
-                      color: Color(0xFF6B7280),
-                    ),
-                  ),
+                  child: _uploadedUrl != null
+                      ? Image.network(
+                          _uploadedUrl!,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          color: const Color(0xFFF3F4F6),
+                          child: const Icon(
+                            Icons.receipt_long,
+                            size: 48,
+                            color: Color(0xFF6B7280),
+                          ),
+                        ),
                 ),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: () => setState(() => _hasReceiptImage = false),
+                    onTap: () => setState(() {
+                      _hasReceiptImage = false;
+                      _uploadedUrl = null;
+                    }),
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -643,6 +718,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     ),
                   ),
                 ),
+                if (_isUploading)
+                  const Positioned.fill(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -651,7 +732,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           children: [
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () => setState(() => _hasReceiptImage = true),
+                onPressed: _isUploading ? null : () => _pickAndUploadImage(ImageSource.camera),
                 icon: const Icon(Icons.camera_alt, size: 18),
                 label: Text(l10n.camera),
                 style: ElevatedButton.styleFrom(
@@ -668,7 +749,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () => setState(() => _hasReceiptImage = true),
+                onPressed: _isUploading ? null : () => _pickAndUploadImage(ImageSource.gallery),
                 icon: const Icon(Icons.photo_library, size: 18),
                 label: Text(l10n.gallery),
                 style: ElevatedButton.styleFrom(
@@ -825,13 +906,36 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
-  void _saveExpense() {
+  void _saveExpense() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement save functionality
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.expenseSaved)),
-      );
-      Navigator.pop(context);
+      try {
+        final createExpenseDto = CreateExpenseDto(
+          name: _expenseNameController.text,
+          amount: double.tryParse(_amountController.text) ?? 0.0,
+          category: _selectedCategory!,
+          date: _selectedDate,
+          isActive: true,
+          voucherUrl: _uploadedUrl, // Artık Supabase public url'si
+        );
+
+        developer.log("Kaydedilecek harcama: ${createExpenseDto.toJson()}", name: 'ExpenseCreation');
+
+        final result = await _expenseService.createExpense(createExpenseDto);
+
+        developer.log("Harcama başarıyla kaydedildi: ${result.toJson()}", name: 'ExpenseCreation');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.expenseSaved)),
+        );
+
+        Navigator.pop(context);
+      } catch (e) {
+        developer.log("Harcama kaydedilirken hata oluştu: $e", name: 'ExpenseCreation', error: e);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("${AppLocalizations.of(context)!.error}: $e")),
+        );
+      }
     }
   }
 }

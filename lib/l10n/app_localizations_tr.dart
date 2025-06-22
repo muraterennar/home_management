@@ -640,6 +640,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get removed => 'Kaldırıldı';
 
   @override
+  String get remove => 'Kaldır';
+
+  @override
+  String get delete => 'Sil';
+
+  @override
   String get undo => 'Geri Al';
 
   @override
@@ -741,4 +747,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get logoutSuccess => 'Başarıyla çıkış yaptınız';
+
+  @override
+  String get userAlreadyExists =>
+      'Bu e-posta adresiyle zaten bir kullanıcı var.';
+
+  @override
+  String get error => 'Hata';
+
+  @override
+  String get currencySymbol => '₺';
 }

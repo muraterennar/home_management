@@ -1,10 +1,12 @@
-class RegisterDto {
+import 'package:equatable/equatable.dart';
+
+class RegisterDto extends Equatable {
   String email;
   String password;
   String? firstName;
   String? lastName;
   String? photoURL;
-  int? tenantId;
+  String? tenantId;
 
   RegisterDto({
     required this.email,
@@ -36,7 +38,7 @@ class RegisterDto {
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       photoURL: json['photoURL'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] as String?,
     );
   }
 }

@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_management/models/register_dto.dart';
+import 'package:home_management/services/user_service.dart';
 import '../l10n/app_localizations.dart';
 import '../models/login_dto.dart';
+import '../models/users/create_user_dto.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -60,6 +62,7 @@ class AuthService {
         email: loginDto.email,
         password: loginDto.password,
       );
+
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw Exception(
@@ -83,22 +86,26 @@ class AuthService {
         password: registerDto.password,
       );
 
-     var result = await updateUserProfile(
+      var result = await updateUserProfile(
           registerDto.firstName ?? '', registerDto.photoURL ?? '');
 
       await sendEmailVerification();
 
       return _auth.currentUser;
     } on FirebaseAuthException catch (e) {
+      debugConsole.log('FirebaseAuthException: ${e}');
       throw Exception(
           '${_getLocalizedMessage('firebaseAuthError', 'FirebaseAuth hatası: ')}${e.message}');
     } on SocketException catch (_) {
+      debugConsole.log('SocketException: Ağ hatası');
       throw Exception(_getLocalizedMessage(
           'networkError', 'Ağ hatası: İnternet bağlantınızı kontrol edin.'));
     } on FirebaseException catch (e) {
+      debugConsole.log('FirebaseException: ${e.message}');
       throw Exception(
           '${_getLocalizedMessage('firebaseConnectionError', 'Firebase bağlantı hatası: ')}${e.message}');
     } catch (e) {
+      debugConsole.log('Unknown exception: $e');
       throw Exception(
           '${_getLocalizedMessage('unknownError', 'Bilinmeyen hata: ')}$e');
     }

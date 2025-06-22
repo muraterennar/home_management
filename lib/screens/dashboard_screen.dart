@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:home_management/screens/create_family_profile_screen.dart';
+import 'package:home_management/screens/family_profile_edit_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import 'add_expense_screen.dart';
@@ -208,8 +209,11 @@ class DashboardHome extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
+                              // builder: (context) =>
+                              //     CreateFamilyProfileScreen()),
+
                               builder: (context) =>
-                                  CreateFamilyProfileScreen()),
+                                  FamilyProfileEditScreen()),
                         );
                       }),
                     ],
