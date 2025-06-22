@@ -1334,6 +1334,18 @@ abstract class AppLocalizations {
   /// **'Removed'**
   String get removed;
 
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
   /// No description provided for @undo.
   ///
   /// In en, this message translates to:
@@ -1531,6 +1543,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have been logged out successfully'**
   String get logoutSuccess;
+
+  /// No description provided for @userAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'User already exists with this email address.'**
+  String get userAlreadyExists;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @currencySymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'\$'**
+  String get currencySymbol;
 }
 
 class _AppLocalizationsDelegate

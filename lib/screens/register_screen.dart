@@ -7,9 +7,12 @@ import 'package:home_management/screens/create_family_profile_screen.dart';
 import 'package:home_management/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import '../models/register_dto.dart';
+import '../models/users/create_user_dto.dart';
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
+
+import '../services/user_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -24,6 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _authService = AuthService();
+  final _userService = UserSerice();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agreeToTerms = false;
@@ -494,7 +498,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
     debugConsole.log("Register DTO: ${registerDto.toJson()}");
 
     try {
+
+      var isUser = await _userService.getUserProfileByEmail(registerDto.email);
+
+      if (isUser != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.userAlreadyExists)),
+        );
+        return;
+      }
+
       var result = await _authService.registerWithEmail(registerDto);
+      await _userService.createUserProfile(
+        CreateUserDto(
+          id: result!.uid,
+          email: registerDto.email,
+          firstName: registerDto.firstName,
+          lastName: registerDto.lastName,
+          photoURL: '', // Fotoğraf URL'si eklenebilir
+        ),
+      );
       debugConsole.log('Registration result: $result');
 
       if (result == null) {

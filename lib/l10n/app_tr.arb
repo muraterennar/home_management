@@ -206,6 +206,8 @@
   "recentTransactions": "Son İşlemler",
   "dateRangeSelected": "Tarih Aralığı Seçildi",
   "removed": "Kaldırıldı",
+  "remove": "Kaldır",
+  "delete": "Sil",
   "undo": "Geri Al",
   "noExpensesYet": "Henüz harcama yok",
   "addYourFirstExpense": "İlk harcamanızı ekleyin",
@@ -238,5 +240,8 @@
   "logoutDescription": "Hesabınızdan çıkış yapın",
   "logoutConfirmation": "Çıkış Onayı",
   "logoutMessage": "Hesabınızdan çıkış yapmak istediğinizden emin misiniz?",
-  "logoutSuccess": "Başarıyla çıkış yaptınız"
+  "logoutSuccess": "Başarıyla çıkış yaptınız",
+  "userAlreadyExists": "Bu e-posta adresiyle zaten bir kullanıcı var.",
+  "error": "Hata",
+  "currencySymbol": "₺"
 }

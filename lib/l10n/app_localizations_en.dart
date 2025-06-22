@@ -638,6 +638,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removed => 'Removed';
 
   @override
+  String get remove => 'Remove';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
   String get undo => 'Undo';
 
   @override
@@ -739,4 +745,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutSuccess => 'You have been logged out successfully';
+
+  @override
+  String get userAlreadyExists =>
+      'User already exists with this email address.';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get currencySymbol => '\$';
 }

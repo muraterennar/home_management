@@ -206,6 +206,8 @@
   "recentTransactions": "Recent Transactions",
   "dateRangeSelected": "Date Range Selected",
   "removed": "Removed",
+  "remove": "Remove",
+  "delete": "Delete",
   "undo": "Undo",
   "noExpensesYet": "No expenses yet",
   "addYourFirstExpense": "Add your first expense",
@@ -238,5 +240,8 @@
   "logoutDescription": "Sign out from your account",
   "logoutConfirmation": "Logout Confirmation",
   "logoutMessage": "Are you sure you want to logout from your account?",
-  "logoutSuccess": "You have been logged out successfully"
+  "logoutSuccess": "You have been logged out successfully",
+  "userAlreadyExists": "User already exists with this email address.",
+  "error": "Error",
+  "currencySymbol": "$"
 }
