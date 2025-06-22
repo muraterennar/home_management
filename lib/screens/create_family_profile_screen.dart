@@ -17,7 +17,7 @@ class _CreateFamilyProfileScreenState extends State<CreateFamilyProfileScreen> {
   final _familyNameController = TextEditingController();
   final _monthlyIncomeController = TextEditingController();
   final _familyService = FamilyService();
-  final _userService = UserSerice();
+  final _userService = UserService();
 
   final List<Map<String, dynamic>> _fixedExpenses = [
     {

@@ -16,7 +16,7 @@ class FamilyProfileEditScreen extends StatefulWidget {
 
 class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
   final _familyService = FamilyService();
-  final _userService = UserSerice();
+  final _userService = UserService();
 
   final _familyNameController = TextEditingController();
   final _monthlyIncomeController = TextEditingController();

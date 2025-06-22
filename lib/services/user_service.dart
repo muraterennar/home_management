@@ -6,7 +6,7 @@ import 'package:home_management/services/auth_service.dart';
 
 import 'database_service.dart';
 
-class UserSerice {
+class UserService {
   final _authService = AuthService();
   final _databaseService = DataBaseService();
 

@@ -8,7 +8,7 @@ import 'database_service.dart';
 class ExpenseService {
   final _authService = AuthService();
   final databaseService = DataBaseService();
-  final _userService = UserSerice();
+  final _userService = UserService();
 
   get _getCurrentUser => _authService.getCurrentUser();
 
