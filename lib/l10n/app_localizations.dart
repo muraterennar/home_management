@@ -1334,6 +1334,18 @@ abstract class AppLocalizations {
   /// **'Removed'**
   String get removed;
 
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
   /// No description provided for @undo.
   ///
   /// In en, this message translates to:
@@ -1387,6 +1399,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expense saved'**
   String get expenseSaved;
+
+  /// No description provided for @loginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed. Please check your credentials.'**
+  String get loginFailed;
+
+  /// No description provided for @invalidEmailOrPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password'**
+  String get invalidEmailOrPassword;
+
+  /// No description provided for @fillAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all fields'**
+  String get fillAllFields;
+
+  /// No description provided for @firebaseAuthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase Authentication error: '**
+  String get firebaseAuthError;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error: Please check your internet connection.'**
+  String get networkError;
+
+  /// No description provided for @firebaseConnectionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase connection error: '**
+  String get firebaseConnectionError;
+
+  /// No description provided for @unknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error: '**
+  String get unknownError;
+
+  /// No description provided for @userNotLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'User is not logged in.'**
+  String get userNotLoggedIn;
+
+  /// No description provided for @profileUpdateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating profile: '**
+  String get profileUpdateError;
+
+  /// No description provided for @emailAlreadyVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'User is not logged in or email is already verified.'**
+  String get emailAlreadyVerified;
+
+  /// No description provided for @emailVerificationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error sending email verification: '**
+  String get emailVerificationError;
+
+  /// No description provided for @userInfoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error getting user information: '**
+  String get userInfoError;
+
+  /// No description provided for @logoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error during logout: '**
+  String get logoutError;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get passwordRequired;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @registrationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed. Please try again.'**
+  String get registrationFailed;
+
+  /// No description provided for @registrationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration successful! You can now login.'**
+  String get registrationSuccess;
+
+  /// No description provided for @verifyEmailFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your email address first.'**
+  String get verifyEmailFirst;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @logoutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out from your account'**
+  String get logoutDescription;
+
+  /// No description provided for @logoutConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout Confirmation'**
+  String get logoutConfirmation;
+
+  /// No description provided for @logoutMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout from your account?'**
+  String get logoutMessage;
+
+  /// No description provided for @logoutSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You have been logged out successfully'**
+  String get logoutSuccess;
+
+  /// No description provided for @userAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'User already exists with this email address.'**
+  String get userAlreadyExists;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @currencySymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'\$'**
+  String get currencySymbol;
 }
 
 class _AppLocalizationsDelegate

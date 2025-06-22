@@ -640,6 +640,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get removed => 'Kaldırıldı';
 
   @override
+  String get remove => 'Kaldır';
+
+  @override
+  String get delete => 'Sil';
+
+  @override
   String get undo => 'Geri Al';
 
   @override
@@ -665,4 +671,90 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get expenseSaved => 'Harcama kaydedildi';
+
+  @override
+  String get loginFailed =>
+      'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
+
+  @override
+  String get invalidEmailOrPassword => 'Geçersiz e-posta veya şifre';
+
+  @override
+  String get fillAllFields => 'Lütfen tüm alanları doldurun';
+
+  @override
+  String get firebaseAuthError => 'FirebaseAuth hatası: ';
+
+  @override
+  String get networkError => 'Ağ hatası: İnternet bağlantınızı kontrol edin.';
+
+  @override
+  String get firebaseConnectionError => 'Firebase bağlantı hatası: ';
+
+  @override
+  String get unknownError => 'Bilinmeyen hata: ';
+
+  @override
+  String get userNotLoggedIn => 'Kullanıcı oturumu açık değil.';
+
+  @override
+  String get profileUpdateError => 'Profil güncellenirken hata: ';
+
+  @override
+  String get emailAlreadyVerified =>
+      'Kullanıcı oturumu açık değil veya e-posta zaten doğrulanmış.';
+
+  @override
+  String get emailVerificationError => 'E-posta doğrulama gönderilirken hata: ';
+
+  @override
+  String get userInfoError => 'Kullanıcı bilgileri alınırken hata: ';
+
+  @override
+  String get logoutError => 'Çıkış yaparken hata: ';
+
+  @override
+  String get passwordRequired => 'Lütfen şifrenizi girin';
+
+  @override
+  String get passwordsDoNotMatch => 'Şifreler eşleşmiyor';
+
+  @override
+  String get registrationFailed => 'Kayıt başarısız. Lütfen tekrar deneyin.';
+
+  @override
+  String get registrationSuccess =>
+      'Kayıt başarılı! Şimdi giriş yapabilirsiniz.';
+
+  @override
+  String get verifyEmailFirst => 'Lütfen önce e-posta adresinizi doğrulayın.';
+
+  @override
+  String get account => 'Hesap';
+
+  @override
+  String get logout => 'Çıkış Yap';
+
+  @override
+  String get logoutDescription => 'Hesabınızdan çıkış yapın';
+
+  @override
+  String get logoutConfirmation => 'Çıkış Onayı';
+
+  @override
+  String get logoutMessage =>
+      'Hesabınızdan çıkış yapmak istediğinizden emin misiniz?';
+
+  @override
+  String get logoutSuccess => 'Başarıyla çıkış yaptınız';
+
+  @override
+  String get userAlreadyExists =>
+      'Bu e-posta adresiyle zaten bir kullanıcı var.';
+
+  @override
+  String get error => 'Hata';
+
+  @override
+  String get currencySymbol => '₺';
 }

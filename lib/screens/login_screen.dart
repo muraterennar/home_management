@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:home_management/models/login_dto.dart';
+import 'package:home_management/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
@@ -18,12 +20,13 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
   bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return Scaffold(
@@ -96,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _showLanguageDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -165,17 +168,22 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6366F1).withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? const Color(0xFF6366F1).withOpacity(0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
+            color:
+                isSelected ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
           ),
         ),
         child: Row(
           children: [
             Icon(
               Icons.language,
-              color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF6B7280),
+              color: isSelected
+                  ? const Color(0xFF6366F1)
+                  : const Color(0xFF6B7280),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -183,7 +191,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 languageName,
                 style: TextStyle(
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF1F2937),
+                  color: isSelected
+                      ? const Color(0xFF6366F1)
+                      : const Color(0xFF1F2937),
                 ),
               ),
             ),
@@ -271,7 +281,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 _obscurePassword ? Icons.visibility : Icons.visibility_off,
                 color: themeProvider.iconColor,
               ),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
           ),
         ),
@@ -299,16 +310,60 @@ class _LoginScreenState extends State<LoginScreen> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const DashboardScreen()),
-              ),
+              onPressed: () async {
+                final loginDto = LoginDto(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                );
+
+                if(_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.fillAllFields)),
+                  );
+                  return;
+                }
+
+                try {
+                  var result = await _authService.loginWithEmail(loginDto);
+                  var user = await _authService.getCurrentUser();
+
+                  debugPrint('Giriş başarılı: $result');
+                  debugPrint('Kullanıcı: ${user!}');
+
+                  if (!user!.emailVerified) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.verifyEmailFirst),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                    await _authService.sendEmailVerification();
+                    return;
+                  }
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DashboardScreen()),
+                  );
+
+
+
+                } catch (e, stackTrace) {
+                  debugPrint('Hata: $e');
+                  debugPrint('StackTrace: $stackTrace');
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: themeProvider.primaryColor,
               ),
               child: Text(
                 l10n.signIn,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -349,7 +404,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignUpPrompt(AppLocalizations l10n, ThemeProvider themeProvider) {
+  Widget _buildSignUpPrompt(
+      AppLocalizations l10n, ThemeProvider themeProvider) {
     return FadeInUp(
       delay: const Duration(milliseconds: 1200),
       child: Row(

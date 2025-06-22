@@ -23,7 +23,7 @@ dependencies:
   fl_chart: ^0.68.0
 
   # Image Handling
-  image_picker: ^1.0.4
+  image_picker: ^1.1.2
 
   # Additional UI Components
   dotted_border: ^2.1.0
@@ -36,6 +36,10 @@ dependencies:
 
   # State Management
   provider: ^6.1.1
+  firebase_core: ^3.14.0
+  firebase_auth: ^5.6.0
+  firebase_database: ^11.3.7
+  supabase_flutter: ^2.9.1
 
 dev_dependencies:
   flutter_test:
