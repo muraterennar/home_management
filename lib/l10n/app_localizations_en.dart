@@ -755,4 +755,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencySymbol => '\$';
+
+  @override
+  String get noRecentTransactions => 'No recent transactions';
+
+  @override
+  String get budgetExceeded => 'Budget exceeded';
+
+  @override
+  String get vsPreviousPeriod => 'vs Previous Period';
+
+  @override
+  String get vsLastWeek => 'vs Last Week';
+
+  @override
+  String get vsLastYear => 'vs Last Year';
+
+  @override
+  String get uploading => 'Uploading...';
 }

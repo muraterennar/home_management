@@ -243,5 +243,11 @@
   "logoutSuccess": "You have been logged out successfully",
   "userAlreadyExists": "User already exists with this email address.",
   "error": "Error",
-  "currencySymbol": "$"
+  "currencySymbol": "$",
+  "noRecentTransactions": "No recent transactions",
+  "budgetExceeded": "Budget exceeded",
+  "vsPreviousPeriod": "vs Previous Period",
+  "vsLastWeek": "vs Last Week",
+  "vsLastYear": "vs Last Year",
+  "uploading": "Uploading..."
 }

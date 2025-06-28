@@ -44,20 +44,43 @@ class ExpenseDto extends Equatable {
   }
 
   factory ExpenseDto.fromJson(Map<String, dynamic> json) {
+    DateTime dateValue;
+
+    try {
+      if (json['date'] is DateTime) {
+        // Zaten DateTime ise doğrudan kullan
+        dateValue = json['date'];
+      } else if (json['date'] is String) {
+        // String ise parse et
+        dateValue = DateTime.parse(json['date']);
+      } else {
+        // Başka bir tip veya null ise bugünün tarihini kullan
+        dateValue = DateTime.now();
+        print("Date field was not in expected format: ${json['date']}");
+      }
+    } catch (e) {
+      // Herhangi bir hata durumunda güvenli bir değer kullan
+      dateValue = DateTime.now();
+      print("Error parsing date: $e");
+    }
+
     return ExpenseDto(
       tenantId: json['tenantId'] as String?,
       createdBy: json['createdBy'] as String?,
       isActive: json['isActive'] as bool? ?? true,
-      createdAt:
-          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] is DateTime
+              ? json['createdAt']
+              : DateTime.parse(json['createdAt']))
+          : DateTime.now(),
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       deletedAt:
           json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
       name: json['name'] as String,
       amount: (json['amount'] as num).toDouble(),
-      category: json['category'] as String,
-      date: DateTime.parse(json['date']),
+      category: json['category'] as String? ?? 'Diğer',
+      date: dateValue,
       voucherUrl: json['voucherUrl'] as String?,
     );
   }

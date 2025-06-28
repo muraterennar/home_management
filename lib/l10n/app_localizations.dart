@@ -1561,6 +1561,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'\$'**
   String get currencySymbol;
+
+  /// No description provided for @noRecentTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent transactions'**
+  String get noRecentTransactions;
+
+  /// No description provided for @budgetExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget exceeded'**
+  String get budgetExceeded;
+
+  /// No description provided for @vsPreviousPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'vs Previous Period'**
+  String get vsPreviousPeriod;
+
+  /// No description provided for @vsLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'vs Last Week'**
+  String get vsLastWeek;
+
+  /// No description provided for @vsLastYear.
+  ///
+  /// In en, this message translates to:
+  /// **'vs Last Year'**
+  String get vsLastYear;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploading;
 }
 
 class _AppLocalizationsDelegate

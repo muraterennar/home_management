@@ -1,71 +1,80 @@
 class FamilyDto {
-  final String tenantId;
+  String? id;
   String name;
-  int familyIncome;
-  List<Map<String, dynamic>> fixedExpenses;
-  String? familyId;
+  String? tenantId;
+  String? familyCode;
+  dynamic monthlyBudget; // double veya int olabilir, veya null olabilir
+  int familyIncome; // Eklendi
+  List<Map<String, dynamic>> fixedExpenses; // Eklendi
+  String? currencyCode;
   String? createdBy;
-  bool? isActive = true;
   DateTime? createdAt;
   DateTime? updatedAt;
-  DateTime? deletedAt;
-
+  bool? isActive;
 
   FamilyDto({
-    required this.tenantId,
+    this.id,
     required this.name,
-    required this.familyIncome,
-    required this.fixedExpenses,
-    this.familyId,
+    this.tenantId,
+    this.familyCode,
+    this.monthlyBudget,
+    this.familyIncome = 0, // Varsayılan değer
+    this.fixedExpenses = const [], // Varsayılan değer
+    this.currencyCode,
     this.createdBy,
-    this.isActive,
     this.createdAt,
     this.updatedAt,
-    this.deletedAt,
+    this.isActive,
   });
 
-  @override
-  String toString() {
-    return 'FamilyDto(tenantId: $tenantId, name: $name, familyIncome: $familyIncome, fixedExpenses: $fixedExpenses, familyId: $familyId, createdBy: $createdBy, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
-  }
+  factory FamilyDto.fromJson(Map<String, dynamic> json) {
+    // fixedExpenses alanı için JSON dönüşümü
+    List<Map<String, dynamic>> expenses = [];
+    if (json['fixedExpenses'] != null) {
+      if (json['fixedExpenses'] is List) {
+        expenses = List<Map<String, dynamic>>.from(
+          (json['fixedExpenses'] as List).map((item) {
+            if (item is Map) {
+              return Map<String, dynamic>.from(item as Map);
+            }
+            return <String, dynamic>{};
+          }),
+        );
+      }
+    }
 
+    return FamilyDto(
+      id: json['id'],
+      name: json['name'],
+      tenantId: json['tenantId'],
+      familyCode: json['familyCode'],
+      monthlyBudget: json['monthlyBudget'],
+      familyIncome: json['familyIncome'] != null
+          ? int.tryParse(json['familyIncome'].toString()) ?? 0
+          : 0,
+      fixedExpenses: expenses,
+      currencyCode: json['currencyCode'],
+      createdBy: json['createdBy'],
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      isActive: json['isActive'],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
-      'tenantId': tenantId,
+      'id': id,
       'name': name,
+      'tenantId': tenantId,
+      'familyCode': familyCode,
+      'monthlyBudget': monthlyBudget,
       'familyIncome': familyIncome,
       'fixedExpenses': fixedExpenses,
-      'familyId': familyId,
+      'currencyCode': currencyCode,
       'createdBy': createdBy,
-      'isActive': isActive,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
-      'deletedAt': deletedAt?.toIso8601String(),
+      'isActive': isActive,
     };
-  }
-
-  factory FamilyDto.fromJson(Map<String, dynamic> json) {
-    return FamilyDto(
-      tenantId: json['tenantId'] as String,
-      name: json['name'] as String,
-      familyIncome: json['familyIncome'] as int,
-      fixedExpenses: List<Map<String, dynamic>>.from(
-        (json['fixedExpenses'] as List).map((e) =>
-        Map<String, dynamic>.from(e)),
-      ),
-      familyId: json['familyId'] as String?,
-      createdBy: json['createdBy'] as String?,
-      isActive: json['isActive'] as bool?,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
-      deletedAt: json['deletedAt'] != null
-          ? DateTime.parse(json['deletedAt'])
-          : null,
-    );
   }
 }
