@@ -249,5 +249,13 @@
   "vsPreviousPeriod": "Geçen Döneme Göre",
   "vsLastWeek": "Geçen Haftaya Göre",
   "vsLastYear": "Geçen Yıla Göre",
-  "uploading": "Yükleniyor..."
+  "uploading": "Yükleniyor...",
+  "deleteExpense": "Harcama Sil",
+  "deleteExpenseConfirmation": "Bu harcamayı silmek istediğinizden emin misiniz?",
+  "expenseDeleted": "Harcama başarıyla silindi",
+  "expenseEdit": "Harcama Düzenle",
+  "editExpense": "Harcama Düzenle",
+  "expenseUpdated": "Harcama başarıyla güncellendi",
+  "addFamilyMemberDesc": "Aile üyesi ekleyin ve birlikte ev yönetimine başlayın",
+  "deleting": "Siliniyor..."
 }

@@ -775,4 +775,17 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get uploading => 'Yükleniyor...';
+
+  @override
+  String get deleteExpense => 'Harcama Sil';
+
+  @override
+  String get deleteConfirmation =>
+      'Are you sure you want to delete this expense?';
+
+  @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
+  String get deleting => 'Siliniyor...';
 }

@@ -773,4 +773,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uploading => 'Uploading...';
+
+  @override
+  String get deleteExpense => 'Delete Expense';
+
+  @override
+  String get deleteConfirmation =>
+      'Are you sure you want to delete this expense?';
+
+  @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
+  String get deleting => 'Deleting...';
 }

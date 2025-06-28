@@ -1597,6 +1597,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uploading...'**
   String get uploading;
+
+  /// No description provided for @deleteExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Expense'**
+  String get deleteExpense;
+
+  /// No description provided for @deleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this expense?'**
+  String get deleteConfirmation;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorOccurred;
+
+  /// No description provided for @deleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting...'**
+  String get deleting;
 }
 
 class _AppLocalizationsDelegate

@@ -97,4 +97,28 @@ class ExpenseService {
       rethrow; // Hatayı yukarı fırlat
     }
   }
+
+  // Delete an expense
+  Future<void> deleteExpense(String expenseId) async {
+    try {
+      if (expenseId.isEmpty) {
+        throw Exception("Expense ID cannot be empty");
+      }
+
+      final ref = databaseService.database.ref("expenses/$expenseId");
+
+      // Önce belirtilen ID'ye sahip harcamanın var olduğunu kontrol edelim
+      final snapshot = await ref.get();
+      if (!snapshot.exists) {
+        throw Exception("Expense with ID $expenseId not found");
+      }
+
+      // Harcamayı sil
+      await ref.remove();
+      print("Expense with ID $expenseId successfully deleted");
+    } catch (e) {
+      print('Error deleting expense: $e');
+      rethrow; // Hatayı yukarıya fırlat
+    }
+  }
 }

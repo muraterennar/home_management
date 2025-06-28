@@ -529,7 +529,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           final expense = filteredExpenses[index];
 
           return Dismissible(
-            key: Key(expense.name + expense.date.toIso8601String()),
+            key: Key(expense.id ?? expense.name + expense.date.toIso8601String()),
             background: Container(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -541,13 +541,95 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               child: const Icon(Icons.delete, color: Colors.white),
             ),
             direction: DismissDirection.endToStart,
-            onDismissed: (direction) {
-              // TODO: Silme fonksiyonu eklenebilir
-              ScaffoldMessenger.of(context).showSnackBar(
+            confirmDismiss: (direction) async {
+              // Silme işlemi için onay iste
+              return await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(l10n.deleteExpense),
+                    content: Text(l10n.deleteConfirmation),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text(l10n.cancel),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(
+                          l10n.delete,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            onDismissed: (direction) async {
+              // Yükleniyor göstergesi
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              scaffoldMessenger.showSnackBar(
                 SnackBar(
-                  content: Text('${expense.name} ${l10n.removed}'),
+                  content: Row(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(l10n.deleting ?? 'Deleting...'),
+                    ],
+                  ),
+                  duration: const Duration(seconds: 1),
                 ),
               );
+
+              try {
+                // ID'nin var olduğundan emin olalım
+                if (expense.id == null || expense.id!.isEmpty) {
+                  throw Exception("Expense ID is missing");
+                }
+
+                // ExpenseService ile harcamayı sil
+                await _expenseService.deleteExpense(expense.id!);
+
+                // UI listesinden kaldır
+                setState(() {
+                  _allExpenses.removeWhere((item) => item.id == expense.id);
+                });
+
+                // Başarılı mesajı göster
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(
+                    content: Text('${expense.name} ${l10n.removed}'),
+                    backgroundColor: Colors.green,
+                    action: SnackBarAction(
+                      label: l10n.undo ?? 'Undo',
+                      textColor: Colors.white,
+                      onPressed: () {
+                        // TODO: Silme işlemini geri alma fonksiyonu eklenebilir
+                        _fetchExpenses(); // Şimdilik sadece yeniden yükle
+                      },
+                    ),
+                  ),
+                );
+              } catch (e) {
+                print("Error deleting expense: $e");
+                // Hata mesajı göster
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(
+                    content: Text('${l10n.errorOccurred}: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                // Hata durumunda listeyi yenile
+                _fetchExpenses();
+              }
             },
             child: _buildExpenseCard(expense, themeProvider),
           );
