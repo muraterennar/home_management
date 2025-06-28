@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -33,6 +35,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   String? _uploadedUrl; // Supabase'den dönen public url
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
+  double _uploadProgress = 0.0; // Yükleme ilerleme yüzdesi
 
   @override
   void initState() {
@@ -95,6 +98,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     setState(() {
       _isUploading = true;
+      _uploadProgress = 0.0; // İlerlemeyi sıfırla
     });
 
     final File file = File(picked.path);
@@ -104,28 +108,61 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     try {
       final storage = Supabase.instance.client.storage;
+
+      // Simüle edilmiş ilerleme animasyonu
+      // (Supabase yükleme ilerleme bildirimi desteklemediği için)
+      final progressTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        if (_uploadProgress < 0.9) {
+          setState(() {
+            _uploadProgress += 0.01;
+          });
+        } else {
+          timer.cancel();
+        }
+      });
+
       final res = await storage
           .from(bucket)
           .upload(path, file, fileOptions: const FileOptions(cacheControl: '3600', upsert: false));
 
+      // Timer'ı durdur
+      progressTimer.cancel();
+
       if (res != null && res.isNotEmpty) {
         final publicURL = storage.from(bucket).getPublicUrl(path);
         setState(() {
+          _uploadProgress = 1.0; // Yükleme tamamlandı
           _uploadedUrl = publicURL;
           _hasReceiptImage = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Resim başarıyla yüklendi.')),
-        );
+
+        // Yükleme tamamlandı göstergesini kısa süre göster
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Resim başarıyla yüklendi.'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,)
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Yükleme hatası!')),
+          SnackBar(
+            content: Text('Yükleme hatası!'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     } catch (e) {
       debugPrint('Resim yükleme hatası: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Yükleme hatası: $e')),
+        SnackBar(
+          content: Text('Yükleme hatası: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     } finally {
       setState(() {
@@ -617,45 +654,49 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         const SizedBox(height: 12),
         if (!_hasReceiptImage)
           GestureDetector(
-            onTap: () => _pickAndUploadImage(ImageSource.gallery),
+            onTap: _isUploading ? null : () => _pickAndUploadImage(ImageSource.gallery),
             child: DottedBorder(
               borderType: BorderType.RRect,
               radius: const Radius.circular(12),
               dashPattern: const [8, 4],
-              color: const Color(0xFF6366F1),
+              color: _isUploading ? Colors.grey : const Color(0xFF6366F1),
               child: Container(
                 height: 120,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withOpacity(0.05),
+                  color: _isUploading
+                    ? Colors.grey.withOpacity(0.05)
+                    : const Color(0xFF6366F1).withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.camera_alt,
-                      size: 32,
-                      color: Color(0xFF6366F1),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.takePhotoOrUpload,
-                      style: const TextStyle(
-                        color: Color(0xFF6366F1),
-                        fontWeight: FontWeight.w600,
+                child: _isUploading
+                    ? _buildUploadingIndicator(themeProvider)
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.camera_alt,
+                            size: 32,
+                            color: Color(0xFF6366F1),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.takePhotoOrUpload,
+                            style: const TextStyle(
+                              color: Color(0xFF6366F1),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.tapToAdd,
+                            style: const TextStyle(
+                              color: Color(0xFF6B7280),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.tapToAdd,
-                      style: const TextStyle(
-                        color: Color(0xFF6B7280),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ),
           )
@@ -684,6 +725,18 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                                color: const Color(0xFF6366F1),
+                              ),
+                            );
+                          },
                         )
                       : Container(
                           width: double.infinity,
@@ -700,18 +753,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: () => setState(() {
-                      _hasReceiptImage = false;
-                      _uploadedUrl = null;
-                    }),
+                    onTap: _isUploading
+                      ? null
+                      : () => setState(() {
+                          _hasReceiptImage = false;
+                          _uploadedUrl = null;
+                        }),
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: _isUploading ? Colors.grey : Colors.red,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
-                        Icons.close,
+                      child: Icon(
+                        _isUploading ? Icons.hourglass_empty : Icons.close,
                         size: 16,
                         color: Colors.white,
                       ),
@@ -719,10 +774,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   ),
                 ),
                 if (_isUploading)
-                  const Positioned.fill(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                  Positioned.fill(
+                    child: _buildUploadingIndicator(themeProvider),
                   ),
               ],
             ),
@@ -733,13 +786,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: _isUploading ? null : () => _pickAndUploadImage(ImageSource.camera),
-                icon: const Icon(Icons.camera_alt, size: 18),
-                label: Text(l10n.camera),
+                icon: Icon(_isUploading ? Icons.hourglass_empty : Icons.camera_alt, size: 18),
+                label: Text(_isUploading ? l10n.uploading ?? 'Yükleniyor...' : l10n.camera),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF6366F1),
+                  foregroundColor: _isUploading ? Colors.grey : const Color(0xFF6366F1),
                   elevation: 0,
-                  side: const BorderSide(color: Color(0xFF6366F1)),
+                  side: BorderSide(color: _isUploading ? Colors.grey : const Color(0xFF6366F1)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -750,13 +803,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: _isUploading ? null : () => _pickAndUploadImage(ImageSource.gallery),
-                icon: const Icon(Icons.photo_library, size: 18),
-                label: Text(l10n.gallery),
+                icon: Icon(_isUploading ? Icons.hourglass_empty : Icons.photo_library, size: 18),
+                label: Text(_isUploading ? l10n.uploading ?? 'Yükleniyor...' : l10n.gallery),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF6366F1),
+                  foregroundColor: _isUploading ? Colors.grey : const Color(0xFF6366F1),
                   elevation: 0,
-                  side: const BorderSide(color: Color(0xFF6366F1)),
+                  side: BorderSide(color: _isUploading ? Colors.grey : const Color(0xFF6366F1)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -766,6 +819,56 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  // Yükleme göstergesi için yeni widget
+  Widget _buildUploadingIndicator(ThemeProvider themeProvider) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 60,
+            height: 60,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(
+                  value: _uploadProgress,
+                  backgroundColor: Colors.white.withOpacity(0.3),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6366F1)),
+                  strokeWidth: 6,
+                ),
+                Text(
+                  "${(_uploadProgress * 100).toInt()}%",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          FadeIn(
+            child: const Text(
+              "Resim Yükleniyor...",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

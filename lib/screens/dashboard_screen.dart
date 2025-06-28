@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:home_management/models/espenses/expense_dto.dart';
+import 'package:home_management/models/family/family_dto.dart';
+import 'package:home_management/models/users/user_dto.dart';
 import 'package:home_management/screens/create_family_profile_screen.dart';
 import 'package:home_management/screens/family_profile_edit_screen.dart';
+import 'package:home_management/services/expense_service.dart';
+import 'package:home_management/services/family_service.dart';
+import 'package:home_management/services/user_service.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import 'add_expense_screen.dart';
@@ -125,33 +132,260 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-class DashboardHome extends StatelessWidget {
+class DashboardHome extends StatefulWidget {
+  @override
+  _DashboardHomeState createState() => _DashboardHomeState();
+}
+
+class _DashboardHomeState extends State<DashboardHome> {
+  // Servisler
+  final _userService = UserService();
+  final _familyService = FamilyService();
+  final _expenseService = ExpenseService();
+
+  // Veri state'leri
+  bool _isLoading = true;
+  String? _errorMessage;
+  UserDto? _currentUser;
+  FamilyDto? _family;
+  List<ExpenseDto> _expenses = [];
+
+  // Hesaplanan değerler
+  double _totalIncome = 0;
+  double _totalExpenses = 0;
+  double _remainingBalance = 0;
+  double _monthlyBudget = 0;
+  List<Map<String, dynamic>> _recentTransactions = [];
+
+  // Tarih bilgileri
+  String _currentMonth = '';
+  int _daysLeft = 0;
+  double _monthProgress = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+    _calculateDateInfo();
+  }
+
+  void _calculateDateInfo() {
+    final now = DateTime.now();
+
+    // Ay adını hesapla
+    _currentMonth = DateFormat('MMMM yyyy').format(now);
+
+    // Ay içinde kalan gün sayısını hesapla
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    _daysLeft = lastDayOfMonth.day - now.day;
+
+    // Ay ilerlemesini hesapla
+    _monthProgress = now.day / lastDayOfMonth.day;
+  }
+
+  Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Kullanıcı bilgilerini yükle
+      _currentUser = await _userService.getCurrentUserProfile();
+
+      if (_currentUser?.tenantId == null || _currentUser!.tenantId!.isEmpty) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = "Aile bilgisi bulunamadı";
+        });
+        return;
+      }
+
+      // Aile bilgilerini yükle
+      _family = await _familyService.getFamilyByTenantId(_currentUser!.tenantId!);
+
+      // Harcamaları yükle
+      _expenses = await _expenseService.getAllExpenses();
+
+      // Verileri işle
+      _processData();
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString();
+      });
+      print("Dashboard veri yükleme hatası: $e");
+    }
+  }
+
+  void _processData() {
+    // Aylık gelir - Null kontrolü ekleyerek güvenli bir şekilde double'a dönüştürme
+    final monthlyBudget = _family?.familyIncome;
+    _totalIncome = monthlyBudget != null ? monthlyBudget.toDouble() : 0.0;
+    _monthlyBudget = _totalIncome;
+
+    // Toplam harcamaları hesapla (bu ay içindekiler)
+    final now = DateTime.now();
+    final thisMonthExpenses = _expenses.where((expense) =>
+      expense.date.year == now.year && expense.date.month == now.month).toList();
+
+    _totalExpenses = thisMonthExpenses.fold(0, (sum, expense) => sum + expense.amount);
+
+    // Kalan bakiye
+    _remainingBalance = _totalIncome - _totalExpenses;
+
+    // Son harcamalar
+    _expenses.sort((a, b) => b.date.compareTo(a.date)); // En yeni en başta
+    final recentExpenses = _expenses.take(3).toList();
+
+    _recentTransactions = recentExpenses.map((expense) {
+      // Zaman farkını hesapla
+      final difference = DateTime.now().difference(expense.date);
+      String timeAgo;
+
+      if (difference.inHours < 1) {
+        timeAgo = '${difference.inMinutes} dakika önce';
+      } else if (difference.inHours < 24) {
+        timeAgo = '${difference.inHours} saat önce';
+      } else if (difference.inDays < 30) {
+        timeAgo = '${difference.inDays} gün önce';
+      } else {
+        timeAgo = DateFormat('dd MMM').format(expense.date);
+      }
+
+      IconData icon;
+      Color color;
+      String category = expense.category;
+
+      // Kategori ikonları ve renkleri
+      switch(expense.category.toLowerCase()) {
+        case 'yemek ve restoran':
+          icon = Icons.restaurant;
+          color = Colors.redAccent;
+          category = 'Yemek';
+          break;
+        case 'alışveriş':
+          icon = Icons.shopping_bag;
+          color = Colors.orangeAccent;
+          break;
+        case 'ulaşım':
+          icon = Icons.directions_car;
+          color = Colors.blueAccent;
+          break;
+        case 'faturalar ve hizmetler':
+          icon = Icons.receipt_long;
+          color = Colors.purpleAccent;
+          category = 'Faturalar';
+          break;
+        case 'eğlence':
+          icon = Icons.movie;
+          color = Colors.pinkAccent;
+          break;
+        case 'sağlık':
+          icon = Icons.medical_services;
+          color = Colors.greenAccent;
+          break;
+        default:
+          icon = Icons.attach_money;
+          color = Colors.grey;
+      }
+
+      return {
+        'title': expense.name,
+        'amount': '-\$${expense.amount.toStringAsFixed(2)}',
+        'category': category,
+        'time': timeAgo,
+        'icon': icon,
+        'color': color
+      };
+    }).toList();
+
+    // Eğer işlem yoksa ekleyelim
+    if (_recentTransactions.isEmpty) {
+      _recentTransactions = [
+        {
+          'title': 'Henüz işlem yok',
+          'amount': '-\$0',
+          'category': 'Bilgi',
+          'time': 'Şimdi',
+          'icon': Icons.info_outline,
+          'color': Colors.grey
+        }
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        return SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              _buildHeader(context, l10n, themeProvider),
-              SliverPadding(
-                padding: const EdgeInsets.all(20),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    _buildBudgetOverview(l10n, themeProvider),
-                    const SizedBox(height: 24),
-                    _buildMonthlyProgress(l10n, themeProvider),
-                    const SizedBox(height: 24),
-                    _buildQuickActions(context, l10n, themeProvider),
-                    const SizedBox(height: 24),
-                    _buildRecentTransactions(l10n, themeProvider),
-                    const SizedBox(height: 20),
-                  ]),
-                ),
+        if (_isLoading) {
+          return const SafeArea(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (_errorMessage != null) {
+          return SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Hata: $_errorMessage',
+                    style: TextStyle(color: themeProvider.errorColor),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _loadData,
+                    child: const Text('Tekrar Dene'),
+                  ),
+                  const SizedBox(height: 20),
+                  if (_currentUser?.tenantId == null || _currentUser!.tenantId!.isEmpty)
+                    ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CreateFamilyProfileScreen()),
+                      ),
+                      child: const Text('Aile Profili Oluştur'),
+                    ),
+                ],
               ),
-            ],
+            ),
+          );
+        }
+
+        return SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _loadData,
+            child: CustomScrollView(
+              slivers: [
+                _buildHeader(context, l10n, themeProvider),
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildBudgetOverview(l10n, themeProvider),
+                      const SizedBox(height: 24),
+                      _buildMonthlyProgress(l10n, themeProvider),
+                      const SizedBox(height: 24),
+                      _buildQuickActions(context, l10n, themeProvider),
+                      const SizedBox(height: 24),
+                      _buildRecentTransactions(l10n, themeProvider),
+                      const SizedBox(height: 20),
+                    ]),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -160,6 +394,9 @@ class DashboardHome extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context, AppLocalizations l10n,
       ThemeProvider themeProvider) {
+    // Aile adını formatla
+    final familyName = _family?.name ?? 'Aile';
+
     return SliverToBoxAdapter(
       child: FadeInDown(
         child: Container(
@@ -191,9 +428,9 @@ class DashboardHome extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'Smith Family',
-                        style: TextStyle(
+                      Text(
+                        '$familyName Ailesi',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -209,12 +446,8 @@ class DashboardHome extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              // builder: (context) =>
-                              //     CreateFamilyProfileScreen()),
-
-                              builder: (context) =>
-                                  FamilyProfileEditScreen()),
-                        );
+                              builder: (context) => FamilyProfileEditScreen()),
+                        ).then((_) => _loadData()); // Geri döndüğünde verileri yenile
                       }),
                     ],
                   ),
@@ -228,23 +461,23 @@ class DashboardHome extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.white.withOpacity(0.2)),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined,
+                    const Icon(Icons.calendar_today_outlined,
                         color: Colors.white, size: 20),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Text(
-                      'December 2024',
-                      style: TextStyle(
+                      _currentMonth,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Text(
-                      '15 days left',
-                      style: TextStyle(
+                      '$_daysLeft gün kaldı',
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
                       ),
@@ -275,6 +508,16 @@ class DashboardHome extends StatelessWidget {
 
   Widget _buildBudgetOverview(
       AppLocalizations l10n, ThemeProvider themeProvider) {
+    // Geçen aya göre değişim yüzdesi (örnek - gerçek veri yok)
+    final incomeChangePercent = '+2.0%';
+    final expenseChangePercent = _expenses.isEmpty ? '+0.0%' : '+12.5%';
+
+    // Bütçe durumu (Yolunda mı, aşıldı mı?)
+    final bool isBudgetOnTrack = _totalExpenses <= _totalIncome;
+
+    // Kalan bakiyenin gelire oranı
+    final remainingPercentage = _totalIncome > 0 ? (_remainingBalance / _totalIncome * 100).toStringAsFixed(0) : '0';
+
     return FadeInUp(
       delay: const Duration(milliseconds: 200),
       child: Container(
@@ -291,7 +534,7 @@ class DashboardHome extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Budget Overview',
+                  'Bütçe Durumu',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -302,13 +545,15 @@ class DashboardHome extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: themeProvider.successColor.withOpacity(0.1),
+                    color: isBudgetOnTrack
+                      ? themeProvider.successColor.withOpacity(0.1)
+                      : themeProvider.errorColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'On Track',
+                    isBudgetOnTrack ? 'Yolunda' : 'Bütçe Aşımı',
                     style: TextStyle(
-                      color: themeProvider.successColor,
+                      color: isBudgetOnTrack ? themeProvider.successColor : themeProvider.errorColor,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -321,22 +566,22 @@ class DashboardHome extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildBudgetItem(
-                    'Total Income',
-                    '\$5,400',
+                    'Toplam Gelir',
+                    '\$${_totalIncome.toStringAsFixed(0)}',
                     Icons.trending_up,
                     themeProvider.successColor,
-                    '+8.2%',
+                    incomeChangePercent,
                     themeProvider,
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildBudgetItem(
-                    'Total Expenses',
-                    '\$3,247',
+                    'Toplam Harcama',
+                    '\$${_totalExpenses.toStringAsFixed(0)}',
                     Icons.trending_down,
                     themeProvider.errorColor,
-                    '+12.5%',
+                    expenseChangePercent,
                     themeProvider,
                   ),
                 ),
@@ -363,7 +608,9 @@ class DashboardHome extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: themeProvider.successColor,
+                      color: _remainingBalance >= 0
+                          ? themeProvider.successColor
+                          : themeProvider.errorColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(Icons.account_balance_wallet,
@@ -375,7 +622,7 @@ class DashboardHome extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Remaining Balance',
+                          'Kalan Bakiye',
                           style: TextStyle(
                             color: themeProvider.secondaryTextColor,
                             fontSize: 14,
@@ -383,9 +630,11 @@ class DashboardHome extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '\$2,153',
+                          '\$${_remainingBalance.toStringAsFixed(0)}',
                           style: TextStyle(
-                            color: themeProvider.primaryTextColor,
+                            color: _remainingBalance >= 0
+                                ? themeProvider.primaryTextColor
+                                : themeProvider.errorColor,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -397,9 +646,11 @@ class DashboardHome extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '60%',
+                        '$remainingPercentage%',
                         style: TextStyle(
-                          color: themeProvider.successColor,
+                          color: _remainingBalance >= 0
+                              ? themeProvider.successColor
+                              : themeProvider.errorColor,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -478,6 +729,14 @@ class DashboardHome extends StatelessWidget {
 
   Widget _buildMonthlyProgress(
       AppLocalizations l10n, ThemeProvider themeProvider) {
+    // Günlük ortalama harcama
+    final now = DateTime.now();
+    final daysPassedInMonth = now.day;
+    final averageDaily = daysPassedInMonth > 0 ? (_totalExpenses / daysPassedInMonth) : 0;
+
+    // Bütçe kullanım yüzdesi
+    final budgetUsedPercent = _totalIncome > 0 ? ((_totalExpenses / _totalIncome) * 100).toStringAsFixed(0) : '0';
+
     return FadeInUp(
       delay: const Duration(milliseconds: 300),
       child: Container(
@@ -494,7 +753,7 @@ class DashboardHome extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Monthly Progress',
+                  'Aylık İlerleme',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -502,7 +761,7 @@ class DashboardHome extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '15 days left',
+                  '$_daysLeft gün kaldı',
                   style: TextStyle(
                     color: themeProvider.secondaryTextColor,
                     fontSize: 14,
@@ -512,7 +771,7 @@ class DashboardHome extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             LinearProgressIndicator(
-              value: 0.6,
+              value: _monthProgress,
               backgroundColor: themeProvider.borderColor,
               valueColor:
                   AlwaysStoppedAnimation<Color>(themeProvider.primaryColor),
@@ -522,9 +781,9 @@ class DashboardHome extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildProgressItem('Days Passed', '15', themeProvider),
-                _buildProgressItem('Budget Used', '60%', themeProvider),
-                _buildProgressItem('Avg. Daily', '\$216', themeProvider),
+                _buildProgressItem('Geçen Günler', '$daysPassedInMonth', themeProvider),
+                _buildProgressItem('Bütçe Kullanımı', '$budgetUsedPercent%', themeProvider),
+                _buildProgressItem('Günlük Ort.', '\$${averageDaily.toStringAsFixed(0)}', themeProvider),
               ],
             ),
           ],
@@ -653,33 +912,6 @@ class DashboardHome extends StatelessWidget {
 
   Widget _buildRecentTransactions(
       AppLocalizations l10n, ThemeProvider themeProvider) {
-    final transactions = [
-      {
-        'title': 'Grocery Shopping',
-        'amount': '-\$89.30',
-        'category': 'Shopping',
-        'time': '2 hours ago',
-        'icon': Icons.shopping_bag,
-        'color': themeProvider.warningColor
-      },
-      {
-        'title': 'Monthly Salary',
-        'amount': '+\$2,700',
-        'category': 'Income',
-        'time': '1 day ago',
-        'icon': Icons.account_balance_wallet,
-        'color': themeProvider.successColor
-      },
-      {
-        'title': 'Restaurant Dinner',
-        'amount': '-\$45.50',
-        'category': 'Food',
-        'time': '2 days ago',
-        'icon': Icons.restaurant,
-        'color': themeProvider.errorColor
-      },
-    ];
-
     return FadeInUp(
       delay: const Duration(milliseconds: 500),
       child: Container(
@@ -696,7 +928,7 @@ class DashboardHome extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Recent Transactions',
+                  'Son İşlemler',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -704,9 +936,12 @@ class DashboardHome extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ExpenseListScreen())
+                  ),
                   child: Text(
-                    'View All',
+                    'Tümünü Gör',
                     style: TextStyle(
                       color: themeProvider.primaryColor,
                       fontSize: 14,
@@ -717,7 +952,7 @@ class DashboardHome extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            ...transactions
+            ..._recentTransactions
                 .map((transaction) =>
                     _buildTransactionItem(transaction, themeProvider))
                 .toList(),
@@ -786,8 +1021,8 @@ class DashboardHome extends StatelessWidget {
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning!';
-    if (hour < 17) return 'Good Afternoon!';
-    return 'Good Evening!';
+    if (hour < 12) return 'Günaydın!';
+    if (hour < 17) return 'İyi Günler!';
+    return 'İyi Akşamlar!';
   }
 }

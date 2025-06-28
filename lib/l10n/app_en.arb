@@ -243,5 +243,15 @@
   "logoutSuccess": "You have been logged out successfully",
   "userAlreadyExists": "User already exists with this email address.",
   "error": "Error",
-  "currencySymbol": "$"
+  "currencySymbol": "$",
+  "noRecentTransactions": "No recent transactions",
+  "budgetExceeded": "Budget exceeded",
+  "vsPreviousPeriod": "vs Previous Period",
+  "vsLastWeek": "vs Last Week",
+  "vsLastYear": "vs Last Year",
+  "uploading": "Uploading...",
+  "deleteExpense": "Delete Expense",
+  "deleteConfirmation": "Are you sure you want to delete this expense?",
+  "errorOccurred": "An error occurred",
+  "deleting": "Deleting..."
 }

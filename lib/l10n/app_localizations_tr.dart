@@ -757,4 +757,35 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get currencySymbol => '₺';
+
+  @override
+  String get noRecentTransactions => 'Henüz son işlem yok';
+
+  @override
+  String get budgetExceeded => 'Bütçe Aşıldı';
+
+  @override
+  String get vsPreviousPeriod => 'Geçen Döneme Göre';
+
+  @override
+  String get vsLastWeek => 'Geçen Haftaya Göre';
+
+  @override
+  String get vsLastYear => 'Geçen Yıla Göre';
+
+  @override
+  String get uploading => 'Yükleniyor...';
+
+  @override
+  String get deleteExpense => 'Harcama Sil';
+
+  @override
+  String get deleteConfirmation =>
+      'Are you sure you want to delete this expense?';
+
+  @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
+  String get deleting => 'Siliniyor...';
 }

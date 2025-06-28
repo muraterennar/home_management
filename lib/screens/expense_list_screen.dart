@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:home_management/models/espenses/expense_dto.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/expense_service.dart';
 import 'add_expense_screen.dart';
 import 'package:home_management/l10n/app_localizations.dart';
 import 'settings_screen.dart';
@@ -20,9 +22,41 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   String _searchQuery = '';
   List<String> _selectedCategories = [];
   double _minAmount = 0;
-  double _maxAmount = 200;
+  double _maxAmount = 10000; // Değeri artırdım, varsayılan 200 çok düşük olabilir
+  final _expenseService = ExpenseService();
+
+  List<ExpenseDto> _allExpenses = [];
+  bool _isLoading = true;
+  String? _error;
 
   final List<String> _filters = ['All', 'Today', 'This Week', 'This Month'];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchExpenses();
+  }
+
+  Future<void> _fetchExpenses() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final expenses = await _expenseService.getAllExpenses();
+      print("Fetched ${expenses.length} expenses from Firebase"); // Debug için
+      setState(() {
+        _allExpenses = expenses;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching expenses: $e"); // Debug için hata mesajını yazdır
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -48,53 +82,21 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           l10n.other
         ];
 
-        final List<Map<String, dynamic>> _expenses = [
-          {
-            'name': 'Lunch at Italian Restaurant',
-            'amount': 45.50,
-            'category': l10n.foodDining,
-            'date': 'Today, 2:30 PM',
-            'icon': Icons.restaurant,
-            'color': const Color(0xFF10B981),
-            'hasReceipt': true,
-          },
-          {
-            'name': 'Uber Ride to Office',
-            'amount': 12.75,
-            'category': l10n.transportation,
-            'date': 'Today, 9:15 AM',
-            'icon': Icons.directions_car,
-            'color': const Color(0xFF3B82F6),
-            'hasReceipt': false,
-          },
-          {
-            'name': 'Grocery Shopping',
-            'amount': 89.30,
-            'category': l10n.shopping,
-            'date': 'Yesterday, 6:45 PM',
-            'icon': Icons.shopping_bag,
-            'color': const Color(0xFFF59E0B),
-            'hasReceipt': true,
-          },
-          {
-            'name': 'Netflix Subscription',
-            'amount': 15.99,
-            'category': l10n.entertainment,
-            'date': 'Yesterday, 12:00 PM',
-            'icon': Icons.movie,
-            'color': const Color(0xFFEF4444),
-            'hasReceipt': false,
-          },
-          {
-            'name': 'Electricity Bill',
-            'amount': 125.00,
-            'category': l10n.billsUtilities,
-            'date': '2 days ago',
-            'icon': Icons.receipt_long,
-            'color': const Color(0xFF8B5CF6),
-            'hasReceipt': true,
-          },
-        ];
+        if (_isLoading) {
+          return Scaffold(
+            backgroundColor: themeProvider.backgroundColor,
+            appBar: _buildAppBar(l10n, themeProvider),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (_error != null) {
+          return Scaffold(
+            backgroundColor: themeProvider.backgroundColor,
+            appBar: _buildAppBar(l10n, themeProvider),
+            body: Center(child: Text(_error!)),
+          );
+        }
 
         return Scaffold(
           backgroundColor: themeProvider.backgroundColor,
@@ -105,18 +107,20 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               if (_showFilterPanel)
                 _buildFilterPanel(l10n, _categories, themeProvider),
               if (!_isSearching) _buildFilterTabs(l10n, themeProvider),
-              _buildSummaryHeader(l10n, _expenses, themeProvider),
+              _buildSummaryHeader(l10n, themeProvider),
               Expanded(
-                  child: _buildExpenseList(l10n, _expenses, themeProvider)),
-              // Alt kısma ekstra boşluk ekliyorum
+                  child: _buildExpenseList(l10n, themeProvider)),
               const SizedBox(height: 16),
             ],
           ),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AddExpenseScreen()),
-            ),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddExpenseScreen()),
+              );
+              _fetchExpenses(); // Yeni eklenen harcamaları çek
+            },
             backgroundColor: themeProvider.primaryColor,
             icon: const Icon(Icons.add, color: Colors.white),
             label: Text(l10n.addExpense,
@@ -237,7 +241,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             ),
             const Spacer(),
             Text(
-              '${_getFilteredExpenses(context).length} ${l10n.results}',
+              '${_getFilteredExpenses().length} ${l10n.results}',
               style: const TextStyle(
                 color: Color(0xFF6366F1),
                 fontSize: 14,
@@ -328,8 +332,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             RangeSlider(
               values: RangeValues(_minAmount, _maxAmount),
               min: 0,
-              max: 200,
-              divisions: 20,
+              max: 10000, // 200 yerine 10000 kullanarak tutarlılık sağlayalım
+              divisions: 100, // Divisions değerini de artıralım ki kaydırıcı doğru çalışsın
               activeColor: const Color(0xFF6366F1),
               inactiveColor: const Color(0xFFE5E7EB),
               onChanged: (RangeValues values) {
@@ -344,7 +348,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${_getFilteredExpenses(context).length} ${l10n.expensesFound}',
+                  '${_getFilteredExpenses().length} ${l10n.expensesFound}',
                   style: const TextStyle(
                     color: Color(0xFF6B7280),
                     fontSize: 12,
@@ -378,105 +382,70 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     setState(() {
       _selectedCategories.clear();
       _minAmount = 0;
-      _maxAmount = 200;
+      _maxAmount = 10000; // Bu değeri de 10000 olarak güncelleyelim
       _selectedFilter = 'All';
     });
   }
 
-  List<Map<String, dynamic>> _getFilteredExpenses(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+  List<ExpenseDto> _getFilteredExpenses() {
+    List<ExpenseDto> filtered = List.from(_allExpenses);
+    print("Total expenses before filtering: ${filtered.length}");
 
-    final List<Map<String, dynamic>> _expenses = [
-      {
-        'name': 'Lunch at Italian Restaurant',
-        'amount': 45.50,
-        'category': l10n.foodDining,
-        'date': 'Today, 2:30 PM',
-        'icon': Icons.restaurant,
-        'color': const Color(0xFF10B981),
-        'hasReceipt': true,
-      },
-      {
-        'name': 'Uber Ride to Office',
-        'amount': 12.75,
-        'category': l10n.transportation,
-        'date': 'Today, 9:15 AM',
-        'icon': Icons.directions_car,
-        'color': const Color(0xFF3B82F6),
-        'hasReceipt': false,
-      },
-      {
-        'name': 'Grocery Shopping',
-        'amount': 89.30,
-        'category': l10n.shopping,
-        'date': 'Yesterday, 6:45 PM',
-        'icon': Icons.shopping_bag,
-        'color': const Color(0xFFF59E0B),
-        'hasReceipt': true,
-      },
-      {
-        'name': 'Netflix Subscription',
-        'amount': 15.99,
-        'category': l10n.entertainment,
-        'date': 'Yesterday, 12:00 PM',
-        'icon': Icons.movie,
-        'color': const Color(0xFFEF4444),
-        'hasReceipt': false,
-      },
-      {
-        'name': 'Electricity Bill',
-        'amount': 125.00,
-        'category': l10n.billsUtilities,
-        'date': '2 days ago',
-        'icon': Icons.receipt_long,
-        'color': const Color(0xFF8B5CF6),
-        'hasReceipt': true,
-      },
-    ];
-
-    List<Map<String, dynamic>> filteredExpenses = List.from(_expenses);
-
-    // Search filter
+    // Arama
     if (_searchQuery.isNotEmpty) {
-      filteredExpenses = filteredExpenses.where((expense) {
-        return expense['name']
-                .toString()
-                .toLowerCase()
-                .contains(_searchQuery) ||
-            expense['category'].toString().toLowerCase().contains(_searchQuery);
+      filtered = filtered.where((expense) {
+        return expense.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            expense.category.toLowerCase().contains(_searchQuery.toLowerCase());
       }).toList();
+      print("After search filter: ${filtered.length}");
     }
 
-    // Category filter
+    // Kategori
     if (_selectedCategories.isNotEmpty) {
-      filteredExpenses = filteredExpenses.where((expense) {
-        return _selectedCategories.contains(expense['category']);
-      }).toList();
+      filtered = filtered
+          .where((expense) {
+            // Kategorileri lokalize edilmiş isimlerle karşılaştırmak yerine
+            // doğrudan eşleşme kontrolü yapalım
+            return _selectedCategories.contains(expense.category);
+          })
+          .toList();
+      print("After category filter: ${filtered.length}");
     }
 
-    // Amount range filter
-    filteredExpenses = filteredExpenses.where((expense) {
-      double amount = expense['amount'].toDouble();
-      return amount >= _minAmount && amount <= _maxAmount;
-    }).toList();
+    // Tutar aralığı
+    filtered = filtered
+        .where((expense) =>
+            expense.amount >= _minAmount && expense.amount <= _maxAmount)
+        .toList();
+    print("After amount filter: ${filtered.length}");
 
-    // Time filter
-    if (_selectedFilter != 'All') {
-      if (_selectedFilter == 'Today') {
-        filteredExpenses = filteredExpenses.where((expense) {
-          return expense['date'].toString().contains('Today');
-        }).toList();
-      }
+    // Zaman filtresi
+    final now = DateTime.now();
+    if (_selectedFilter == 'Today') {
+      filtered = filtered.where((expense) =>
+          expense.date.year == now.year &&
+          expense.date.month == now.month &&
+          expense.date.day == now.day).toList();
+    } else if (_selectedFilter == 'This Week') {
+      final weekStart = now.subtract(Duration(days: now.weekday - 1));
+      final weekEnd = weekStart.add(const Duration(days: 6));
+      filtered = filtered.where((expense) =>
+          expense.date.isAfter(weekStart.subtract(const Duration(days: 1))) &&
+          expense.date.isBefore(weekEnd.add(const Duration(days: 1)))).toList();
+    } else if (_selectedFilter == 'This Month') {
+      filtered = filtered.where((expense) =>
+          expense.date.year == now.year &&
+          expense.date.month == now.month).toList();
     }
+    print("After time filter: ${filtered.length}");
 
-    return filteredExpenses;
+    return filtered;
   }
 
-  Widget _buildSummaryHeader(AppLocalizations l10n,
-      List<Map<String, dynamic>> expenses, ThemeProvider themeProvider) {
-    final filteredExpenses = _getFilteredExpenses(context);
+  Widget _buildSummaryHeader(AppLocalizations l10n, ThemeProvider themeProvider) {
+    final filteredExpenses = _getFilteredExpenses();
     final totalAmount = filteredExpenses.fold<double>(
-        0, (sum, expense) => sum + expense['amount']);
+        0, (sum, expense) => sum + expense.amount);
 
     return FadeInUp(
       delay: const Duration(milliseconds: 200),
@@ -544,9 +513,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     );
   }
 
-  Widget _buildExpenseList(AppLocalizations l10n,
-      List<Map<String, dynamic>> expenses, ThemeProvider themeProvider) {
-    final filteredExpenses = _getFilteredExpenses(context);
+  Widget _buildExpenseList(AppLocalizations l10n, ThemeProvider themeProvider) {
+    final filteredExpenses = _getFilteredExpenses();
 
     if (filteredExpenses.isEmpty) {
       return _buildEmptyState(l10n, themeProvider);
@@ -561,7 +529,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           final expense = filteredExpenses[index];
 
           return Dismissible(
-            key: Key(expense['name']),
+            key: Key(expense.id ?? expense.name + expense.date.toIso8601String()),
             background: Container(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -573,19 +541,95 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               child: const Icon(Icons.delete, color: Colors.white),
             ),
             direction: DismissDirection.endToStart,
-            onDismissed: (direction) {
-              // TODO: Implement delete functionality
-              ScaffoldMessenger.of(context).showSnackBar(
+            confirmDismiss: (direction) async {
+              // Silme işlemi için onay iste
+              return await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(l10n.deleteExpense),
+                    content: Text(l10n.deleteConfirmation),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text(l10n.cancel),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(
+                          l10n.delete,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            onDismissed: (direction) async {
+              // Yükleniyor göstergesi
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              scaffoldMessenger.showSnackBar(
                 SnackBar(
-                  content: Text('${expense['name']} ${l10n.removed}'),
-                  action: SnackBarAction(
-                    label: l10n.usd,
-                    onPressed: () {
-                      // TODO: Implement undo functionality
-                    },
+                  content: Row(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(l10n.deleting ?? 'Deleting...'),
+                    ],
                   ),
+                  duration: const Duration(seconds: 1),
                 ),
               );
+
+              try {
+                // ID'nin var olduğundan emin olalım
+                if (expense.id == null || expense.id!.isEmpty) {
+                  throw Exception("Expense ID is missing");
+                }
+
+                // ExpenseService ile harcamayı sil
+                await _expenseService.deleteExpense(expense.id!);
+
+                // UI listesinden kaldır
+                setState(() {
+                  _allExpenses.removeWhere((item) => item.id == expense.id);
+                });
+
+                // Başarılı mesajı göster
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(
+                    content: Text('${expense.name} ${l10n.removed}'),
+                    backgroundColor: Colors.green,
+                    action: SnackBarAction(
+                      label: l10n.undo ?? 'Undo',
+                      textColor: Colors.white,
+                      onPressed: () {
+                        // TODO: Silme işlemini geri alma fonksiyonu eklenebilir
+                        _fetchExpenses(); // Şimdilik sadece yeniden yükle
+                      },
+                    ),
+                  ),
+                );
+              } catch (e) {
+                print("Error deleting expense: $e");
+                // Hata mesajı göster
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(
+                    content: Text('${l10n.errorOccurred}: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                // Hata durumunda listeyi yenile
+                _fetchExpenses();
+              }
             },
             child: _buildExpenseCard(expense, themeProvider),
           );
@@ -595,7 +639,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Widget _buildExpenseCard(
-      Map<String, dynamic> expense, ThemeProvider themeProvider) {
+      ExpenseDto expense, ThemeProvider themeProvider) {
+    // Tarih formatını düzeltme
+    final formattedDate = expense.date != null
+        ? "${expense.date.day}/${expense.date.month}/${expense.date.year}"
+        : "";
+
     return GestureDetector(
       onTap: () {
         // TODO: Navigate to expense details screen
@@ -612,15 +661,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // İkon container
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: expense['color'].withOpacity(0.1),
+                  color: _getCategoryColor(expense.category).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  expense['icon'],
-                  color: expense['color'],
+                  _getCategoryIcon(expense.category),
+                  color: _getCategoryColor(expense.category),
                   size: 24,
                 ),
               ),
@@ -638,13 +688,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             text: _buildHighlightedText(
-                              expense['name'],
+                              expense.name,
                               _searchQuery,
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        if (expense['hasReceipt'])
+                        if (expense.isActive)
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
@@ -665,7 +715,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         children: [
                           Flexible(
                             child: Text(
-                              expense['category'],
+                              expense.category,
                               style: const TextStyle(
                                 color: Color(0xFF6B7280),
                                 fontSize: 12,
@@ -682,7 +732,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           ),
                           Flexible(
                             child: Text(
-                              expense['date'],
+                              formattedDate, // ISO formatı yerine insan tarafından okunabilir format
                               style: const TextStyle(
                                 color: Color(0xFF6B7280),
                                 fontSize: 12,
@@ -700,7 +750,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               Container(
                 constraints: const BoxConstraints(minWidth: 80),
                 child: Text(
-                  '-\$${expense['amount'].toStringAsFixed(2)}',
+                  '-\$${expense.amount.toStringAsFixed(2)}',
                   textAlign: TextAlign.right,
                   style: const TextStyle(
                     fontSize: 16,
@@ -714,6 +764,49 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         ),
       ),
     );
+  }
+
+  // Kategori ikonları ve renkleri için yardımcı metotlar
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'food & dining':
+        return Icons.restaurant;
+      case 'transportation':
+        return Icons.directions_car;
+      case 'shopping':
+        return Icons.shopping_bag;
+      case 'entertainment':
+        return Icons.movie;
+      case 'bills & utilities':
+        return Icons.receipt;
+      case 'healthcare':
+        return Icons.medical_services;
+      case 'education':
+        return Icons.school;
+      default:
+        return Icons.attach_money;
+    }
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'food & dining':
+        return const Color(0xFF10B981);
+      case 'transportation':
+        return const Color(0xFF3B82F6);
+      case 'shopping':
+        return const Color(0xFFF59E0B);
+      case 'entertainment':
+        return const Color(0xFFEF4444);
+      case 'bills & utilities':
+        return const Color(0xFF8B5CF6);
+      case 'healthcare':
+        return const Color(0xFFEC4899);
+      case 'education':
+        return const Color(0xFF6366F1);
+      default:
+        return const Color(0xFF6B7280);
+    }
   }
 
   Widget _buildEmptyState(AppLocalizations l10n, ThemeProvider themeProvider) {
