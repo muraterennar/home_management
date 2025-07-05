@@ -14,6 +14,8 @@ class CreateExpenseDto extends Equatable {
   DateTime? updatedAt;
   DateTime? deletedAt;
   String? voucherUrl;
+  String? notes;
+  String? location;
 
   CreateExpenseDto({
     String? id,
@@ -28,6 +30,8 @@ class CreateExpenseDto extends Equatable {
     required this.amount,
     required this.category,
     required this.date,
+    this.notes,
+    this.location,
   }) : this.id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   Map<String, dynamic> toJson() {
@@ -44,6 +48,8 @@ class CreateExpenseDto extends Equatable {
       'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
       'voucherUrl': voucherUrl,
+      'notes': notes,
+      'location': location,
     };
   }
 
@@ -71,6 +77,8 @@ class CreateExpenseDto extends Equatable {
           ? DateTime.parse(json['deletedAt'])
           : null,
       voucherUrl: json['voucherUrl']?.toString(),
+      notes: json['notes']?.toString(),
+      location: json['location']?.toString(),
     );
   }
 
@@ -88,5 +96,7 @@ class CreateExpenseDto extends Equatable {
         updatedAt,
         deletedAt,
         voucherUrl,
+        notes,
+        location,
       ];
 }

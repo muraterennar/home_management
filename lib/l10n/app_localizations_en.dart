@@ -378,7 +378,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteConfirmation =>
-      'Are you sure you want to delete this expense? This action cannot be undone.';
+      'Are you sure you want to delete this expense?';
 
   @override
   String get deleting => 'Deleting...';
@@ -705,4 +705,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dailyAverage => 'Daily Avg.';
+
+  @override
+  String get expenseDetails => 'Expense Details';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get receipt => 'Receipt';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get viewFullscreen => 'View Fullscreen';
+
+  @override
+  String get editExpense => 'Edit Expense';
+
+  @override
+  String get locationServicesDisabled => 'Location services are disabled';
+
+  @override
+  String get locationPermissionDenied => 'Location permission denied';
+
+  @override
+  String get locationPermissionPermanentlyDenied =>
+      'Location permission permanently denied. Please enable from settings';
+
+  @override
+  String get getCurrentLocation => 'Get Current Location';
 }

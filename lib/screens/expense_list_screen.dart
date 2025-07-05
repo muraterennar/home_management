@@ -9,6 +9,7 @@ import 'add_expense_screen.dart';
 import 'package:home_management/l10n/app_localizations.dart';
 import 'settings_screen.dart';
 import 'expense_dashboard_screen.dart'; // Add this import
+import 'expense_detail_screen.dart'; // Import the expense detail screen
 
 class ExpenseListScreen extends StatefulWidget {
   @override
@@ -670,15 +671,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
-    // Tarih formatını düzeltme
-    final formattedDate = expense.date != null
-        ? "${expense.date.day}/${expense.date.month}/${expense.date.year}"
-        : "";
-    final currencySymbol = AppLocalizations.of(context)!.currencySymbol ?? '₺';
-
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to expense details screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExpenseDetailScreen(expense: expense),
+          ),
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -764,7 +764,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           ),
                           Flexible(
                             child: Text(
-                              formattedDate, // ISO formatı yerine insan tarafından okunabilir format
+                              // ISO formatı yerine insan tarafından okunabilir format
+                              "${expense.date.day}/${expense.date.month}/${expense.date.year}",
                               style: const TextStyle(
                                 color: Color(0xFF6B7280),
                                 fontSize: 12,
@@ -782,7 +783,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               Container(
                 constraints: const BoxConstraints(minWidth: 80),
                 child: Text(
-                  '-$currencySymbol${expense.amount.toStringAsFixed(2)}',
+                  '-${l10n.currencySymbol}${expense.amount.toStringAsFixed(2)}',
                   textAlign: TextAlign.right,
                   style: const TextStyle(
                     fontSize: 16,
