@@ -17,6 +17,8 @@ import 'dart:developer' as developer;
 import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   @override
@@ -28,6 +30,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _expenseNameController = TextEditingController();
   final _amountController = TextEditingController();
   final _dateController = TextEditingController();
+  final _notesController = TextEditingController();
+  final _locationController = TextEditingController();
   ExpenseCategory _selectedCategory = ExpenseCategory.foodDining; // String yerine ExpenseCategory
   bool _hasReceiptImage = false;
   bool _isRecurring = false;
@@ -41,6 +45,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
   double _uploadProgress = 0.0; // Yükleme ilerleme yüzdesi
+  bool _isGettingLocation = false;
 
   @override
   void initState() {
@@ -53,6 +58,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     _expenseNameController.dispose();
     _amountController.dispose();
     _dateController.dispose();
+    _notesController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -217,6 +224,71 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
   }
 
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isGettingLocation = true;
+    });
+
+    try {
+      // Konum servisinin açık olup olmadığını kontrol et
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception(AppLocalizations.of(context)?.locationServicesDisabled ?? 'Location services are disabled');
+      }
+
+      // Konum izinlerini kontrol et
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception(AppLocalizations.of(context)?.locationPermissionDenied ?? 'Location permissions are denied');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception(AppLocalizations.of(context)?.locationPermissionPermanentlyDenied ??
+          'Location permissions are permanently denied');
+      }
+
+      // Konumu al
+      Position position = await Geolocator.getCurrentPosition();
+
+      // Koordinatları adrese çevir
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        String address = '';
+
+        if (place.street?.isNotEmpty == true) address += '${place.street}, ';
+        if (place.subLocality?.isNotEmpty == true) address += '${place.subLocality}, ';
+        if (place.locality?.isNotEmpty == true) address += place.locality!;
+
+        setState(() {
+          _locationController.text = address.trim();
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isGettingLocation = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -343,12 +415,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   const SizedBox(height: 32),
                   FadeInUp(
                     delay: const Duration(milliseconds: 700),
+                    child: _buildNotesAndLocation(l10n, themeProvider),
+                  ),
+                  const SizedBox(height: 32),
+                  FadeInUp(
+                    delay: const Duration(milliseconds: 800),
                     child: _buildSummaryCard(
                         l10n, _categories, themeProvider, currencyProvider),
                   ),
                   const SizedBox(height: 32),
                   FadeInUp(
-                    delay: const Duration(milliseconds: 800),
+                    delay: const Duration(milliseconds: 900),
                     child: _buildActionButtons(l10n, themeProvider),
                   ),
                 ],
@@ -1094,6 +1171,89 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
+  // Formun içinde, fotoğraf yükleme bölümünden önce eklenecek
+  Widget _buildNotesAndLocation(AppLocalizations l10n, ThemeProvider themeProvider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Notlar alanı
+        Text(
+          l10n.notes,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: themeProvider.primaryTextColor,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: themeProvider.inputBackgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: themeProvider.cardShadow,
+          ),
+          child: TextFormField(
+            controller: _notesController,
+            maxLines: 3,
+            style: TextStyle(color: themeProvider.primaryTextColor),
+            decoration: InputDecoration(
+              hintText: l10n.notes,
+              prefixIcon: Icon(Icons.note, color: themeProvider.iconColor),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.all(16),
+              hintStyle: TextStyle(color: themeProvider.hintTextColor),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Konum alanı
+        Text(
+          l10n.location,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: themeProvider.primaryTextColor,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: themeProvider.inputBackgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: themeProvider.cardShadow,
+          ),
+          child: TextFormField(
+            controller: _locationController,
+            style: TextStyle(color: themeProvider.primaryTextColor),
+            decoration: InputDecoration(
+              hintText: l10n.location,
+              prefixIcon: Icon(Icons.location_on, color: themeProvider.iconColor),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.all(16),
+              hintStyle: TextStyle(color: themeProvider.hintTextColor),
+              suffixIcon: _isGettingLocation
+                ? Container(
+                    margin: const EdgeInsets.all(12),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(themeProvider.primaryColor),
+                    ),
+                  )
+                : IconButton(
+                    icon: Icon(Icons.my_location, color: themeProvider.iconColor),
+                    onPressed: _getCurrentLocation,
+                  ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 32),
+      ],
+    );
+  }
+
   void _saveExpense() async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -1108,10 +1268,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         final createExpenseDto = CreateExpenseDto(
           name: _expenseNameController.text,
           amount: double.tryParse(_amountController.text) ?? 0.0,
-          category: _selectedCategory!,
+          category: _selectedCategory,
           date: _selectedDate,
           isActive: true,
-          voucherUrl: imageUrl, // Hibrit resim URL'i
+          voucherUrl: imageUrl,
+          notes: _notesController.text.isNotEmpty ? _notesController.text : null,
+          location: _locationController.text.isNotEmpty ? _locationController.text : null,
         );
 
         developer.log("Kaydedilecek harcama: ${createExpenseDto.toJson()}", name: 'ExpenseCreation');

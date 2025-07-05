@@ -821,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteConfirmation.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete this expense? This action cannot be undone.'**
+  /// **'Are you sure you want to delete this expense?'**
   String get deleteConfirmation;
 
   /// No description provided for @deleting.
@@ -1441,6 +1441,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Daily Avg.'**
   String get dailyAverage;
+
+  /// No description provided for @expenseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Details'**
+  String get expenseDetails;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notes;
+
+  /// No description provided for @receipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get receipt;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @viewFullscreen.
+  ///
+  /// In en, this message translates to:
+  /// **'View Fullscreen'**
+  String get viewFullscreen;
+
+  /// No description provided for @editExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Expense'**
+  String get editExpense;
+
+  /// No description provided for @locationServicesDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are disabled'**
+  String get locationServicesDisabled;
+
+  /// No description provided for @locationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied'**
+  String get locationPermissionDenied;
+
+  /// No description provided for @locationPermissionPermanentlyDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission permanently denied. Please enable from settings'**
+  String get locationPermissionPermanentlyDenied;
+
+  /// No description provided for @getCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Current Location'**
+  String get getCurrentLocation;
 }
 
 class _AppLocalizationsDelegate

@@ -323,5 +323,18 @@
   "daysLeft": "{days} gün kaldı",
   "daysPassed": "Geçen Günler",
   "budgetUsed": "Bütçe Kullanımı",
-  "dailyAverage": "Günlük Ort."
+  "dailyAverage": "Günlük Ort.",
+  "expenseDetails": "Harcama Detayları",
+  "details": "Detaylar",
+  "notes": "Notlar",
+  "receipt": "Fatura",
+  "location": "Konum",
+  "viewFullscreen": "Tam Ekran Görüntüle",
+  "editExpense": "Harcamayı Düzenle",
+  "deleteExpense": "Harcamayı Sil",
+  "deleteConfirmation": "Bu harcamayı silmek istediğinizden emin misiniz?",
+  "locationServicesDisabled": "Konum servisleri kapalı",
+  "locationPermissionDenied": "Konum izni reddedildi",
+  "locationPermissionPermanentlyDenied": "Konum izni kalıcı olarak reddedildi. Lütfen ayarlardan etkinleştirin",
+  "getCurrentLocation": "Mevcut Konumu Al"
 }

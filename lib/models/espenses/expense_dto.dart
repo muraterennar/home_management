@@ -14,6 +14,8 @@ class ExpenseDto extends Equatable {
   final DateTime? updatedAt;
   final DateTime? deletedAt;
   final String? voucherUrl;
+  final String? notes;     // Notlar alanı eklendi
+  final String? location;  // Konum alanı eklendi
 
   const ExpenseDto({
     this.id,
@@ -24,6 +26,8 @@ class ExpenseDto extends Equatable {
     this.updatedAt,
     this.deletedAt,
     this.voucherUrl,
+    this.notes,      // Constructor'a eklendi
+    this.location,   // Constructor'a eklendi
     required this.name,
     required this.amount,
     required this.category,
@@ -44,6 +48,8 @@ class ExpenseDto extends Equatable {
       'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
       'voucherUrl': voucherUrl,
+      'notes': notes,       // JSON'a eklendi
+      'location': location, // JSON'a eklendi
     };
   }
 
@@ -102,6 +108,8 @@ class ExpenseDto extends Equatable {
       updatedAt: updatedAt,
       deletedAt: deletedAt,
       voucherUrl: json['voucherUrl']?.toString(),
+      notes: json['notes']?.toString(),     // JSON'dan dönüşüm
+      location: json['location']?.toString(), // JSON'dan dönüşüm
     );
   }
 
@@ -119,5 +127,7 @@ class ExpenseDto extends Equatable {
         updatedAt,
         deletedAt,
         voucherUrl,
+        notes,     // props'a eklendi
+        location,  // props'a eklendi
       ];
 }

@@ -56,7 +56,11 @@
 		<key>NSCameraUsageDescription</key>
 		<string>Fatura veya fiş eklemek için kamera erişimi gereklidir.</string>
 		<key>NSLocalNetworkUsageDescription</key>
-		<string>Bu uygulama yerel ağ bağlantıları için izin istemektedir.</string>
+		<string>Yerel ağ erişimi, uygulamanın düzgün çalışması için gereklidir.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Harcama konumunu otomatik olarak eklemek için konum izni gerekiyor</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Harcama konumunu otomatik olarak eklemek için konum izni gerekiyor</string>
 		<key>NSAppTransportSecurity</key>
 		<dict>
 			<key>NSAllowsArbitraryLoads</key>

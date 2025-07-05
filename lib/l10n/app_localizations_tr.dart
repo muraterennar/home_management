@@ -376,11 +376,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get thisMonth => 'Bu Ay';
 
   @override
-  String get deleteExpense => 'Harcama Sil';
+  String get deleteExpense => 'Harcamayı Sil';
 
   @override
   String get deleteConfirmation =>
-      'Are you sure you want to delete this expense? This action cannot be undone.';
+      'Bu harcamayı silmek istediğinizden emin misiniz?';
 
   @override
   String get deleting => 'Siliniyor...';
@@ -706,4 +706,38 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dailyAverage => 'Günlük Ort.';
+
+  @override
+  String get expenseDetails => 'Harcama Detayları';
+
+  @override
+  String get details => 'Detaylar';
+
+  @override
+  String get notes => 'Notlar';
+
+  @override
+  String get receipt => 'Fatura';
+
+  @override
+  String get location => 'Konum';
+
+  @override
+  String get viewFullscreen => 'Tam Ekran Görüntüle';
+
+  @override
+  String get editExpense => 'Harcamayı Düzenle';
+
+  @override
+  String get locationServicesDisabled => 'Konum servisleri kapalı';
+
+  @override
+  String get locationPermissionDenied => 'Konum izni reddedildi';
+
+  @override
+  String get locationPermissionPermanentlyDenied =>
+      'Konum izni kalıcı olarak reddedildi. Lütfen ayarlardan etkinleştirin';
+
+  @override
+  String get getCurrentLocation => 'Mevcut Konumu Al';
 }
