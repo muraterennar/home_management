@@ -96,20 +96,28 @@ class UserService {
       throw Exception("Email cannot be empty");
     }
 
-    final ref = _databaseService.database.ref("users");
-    final snapshot = await ref.orderByChild('email').equalTo(email).get();
+    try {
+      final ref = _databaseService.database.ref("users");
+      final snapshot = await ref.orderByChild('email').equalTo(email).get();
 
-    if (snapshot.exists) {
-      final dataMap = snapshot.value as Map<dynamic, dynamic>;
-      if (dataMap.isEmpty) {
+      debugPrint("Email sorgusu sonucu: ${snapshot.exists ? 'Veri bulundu' : 'Veri bulunamadı'}");
+
+      if (snapshot.exists && snapshot.value != null) {
+        final dataMap = snapshot.value as Map<dynamic, dynamic>;
+        if (dataMap.isEmpty) {
+          return null;
+        }
+
+        final firstKey = dataMap.keys.first;
+        final userData = Map<String, dynamic>.from(dataMap[firstKey] as Map);
+
+        return UserDto.fromJson(userData);
+      } else {
         return null;
       }
-
-      final firstKey = dataMap.keys.first;
-      final userData = Map<String, dynamic>.from(dataMap[firstKey] as Map);
-
-      return UserDto.fromJson(userData);
-    } else {
+    } catch (e) {
+      debugPrint("Email ile kullanıcı sorgularken hata: $e");
+      // Uygulamanın çökmesini önlemek için null dönüyoruz
       return null;
     }
   }

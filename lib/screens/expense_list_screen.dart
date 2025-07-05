@@ -446,6 +446,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final filteredExpenses = _getFilteredExpenses();
     final totalAmount = filteredExpenses.fold<double>(
         0, (sum, expense) => sum + expense.amount);
+    final currencySymbol = l10n.currencySymbol ?? '₺';
 
     return FadeInUp(
       delay: const Duration(milliseconds: 200),
@@ -477,7 +478,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '\$${totalAmount.toStringAsFixed(2)}',
+                    '$currencySymbol${totalAmount.toStringAsFixed(2)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 32,
@@ -644,6 +645,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final formattedDate = expense.date != null
         ? "${expense.date.day}/${expense.date.month}/${expense.date.year}"
         : "";
+    final currencySymbol = AppLocalizations.of(context)!.currencySymbol ?? '₺';
 
     return GestureDetector(
       onTap: () {
@@ -750,7 +752,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               Container(
                 constraints: const BoxConstraints(minWidth: 80),
                 child: Text(
-                  '-\$${expense.amount.toStringAsFixed(2)}',
+                  '-$currencySymbol${expense.amount.toStringAsFixed(2)}',
                   textAlign: TextAlign.right,
                   style: const TextStyle(
                     fontSize: 16,

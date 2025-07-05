@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
@@ -56,6 +57,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -93,6 +95,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   // Supabase'a upload fonksiyonu
   Future<void> _pickAndUploadImage(ImageSource source) async {
+    final l10n = AppLocalizations.of(context)!;
     final picked = await _picker.pickImage(source: source, imageQuality: 80);
     if (picked == null) return;
 
@@ -141,7 +144,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Resim başarıyla yüklendi.'),
+            SnackBar(content: Text(l10n.imageUploadedSuccess),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,)
           );
@@ -149,7 +152,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Yükleme hatası!'),
+            content: Text(l10n.uploadError),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -159,7 +162,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       debugPrint('Resim yükleme hatası: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Yükleme hatası: $e'),
+          content: Text(l10n.uploadErrorWithMessage(e.toString())),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
@@ -824,6 +827,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   // Yükleme göstergesi için yeni widget
   Widget _buildUploadingIndicator(ThemeProvider themeProvider) {
+    final l10n = AppLocalizations.of(context)!; // l10n değişkenini tanımla
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.5),
@@ -858,9 +863,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           ),
           const SizedBox(height: 12),
           FadeIn(
-            child: const Text(
-              "Resim Yükleniyor...",
-              style: TextStyle(
+            child: Text(
+              l10n.imageUploading,
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -884,6 +889,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           (cat) => cat['name'] == _selectedCategory,
           orElse: () => categories.first, // Bulunamazsa ilk kategoriyi kullan
         );
+
+        final currencySymbol = l10n.currencySymbol ?? '₺';
 
         return Container(
           padding: const EdgeInsets.all(20),
@@ -953,8 +960,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   ),
                   Text(
                     _amountController.text.isEmpty
-                        ? '${currencyProvider.currencySymbol}0.00'
-                        : '${currencyProvider.currencySymbol}${_amountController.text}',
+                        ? '$currencySymbol 0.00'
+                        : '$currencySymbol${_amountController.text}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,

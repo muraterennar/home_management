@@ -9,7 +9,9 @@ import 'providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'screens/dashboard_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +19,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await Supabase.initialize(
-    url: '***YOUR_SUPABASE_URL_HERE***',
-    anonKey: '****YOUR_SUPABASE_ANON_KEY_HERE***',
+    url: '******',
+    anonKey:
+        '******',
   );
   runApp(MyApp());
 }
@@ -42,13 +45,28 @@ class MyApp extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             theme: themeProvider.themeData.copyWith(
               textTheme: GoogleFonts.poppinsTextTheme(
-                themeProvider.isDarkMode ? ThemeData.dark().textTheme : ThemeData.light().textTheme,
+                themeProvider.isDarkMode
+                    ? ThemeData.dark().textTheme
+                    : ThemeData.light().textTheme,
               ).apply(
                 bodyColor: themeProvider.primaryTextColor,
                 displayColor: themeProvider.primaryTextColor,
               ),
             ),
-            home: const LoginScreen(),
+            home: StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                if (snapshot.hasData) {
+                  return DashboardScreen();
+                }
+                return const LoginScreen();
+              },
+            ),
           );
         },
       ),

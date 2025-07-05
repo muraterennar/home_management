@@ -85,7 +85,7 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
           _expenses = expenses;
 
           // Aile gelirini aylık bütçe olarak ayarla
-          _monthlyBudget = family.familyIncome.toDouble();
+          _monthlyBudget = family.monthlyBudget.toDouble();
 
           _processData();
           _isLoading = false;
@@ -450,6 +450,8 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
       percentChange = ((_totalSpending - _lastMonthSpending) / _lastMonthSpending) * 100;
     }
 
+    final currencySymbol = l10n.currencySymbol ?? '₺';
+
     // Karşılaştırma etiketi (seçilen periyoda göre)
     String comparisonLabel;
     if (_isDateRangeActive) {
@@ -511,7 +513,7 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '\$${_totalSpending.toStringAsFixed(2)}',
+                      '$currencySymbol${_totalSpending.toStringAsFixed(2)}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 36,
@@ -543,7 +545,7 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                     percentChange >= 0 ? const Color(0xFF10B981) : Colors.red),
                 const SizedBox(width: 24),
                 _buildSpendingMetric(
-                    l10n.averageDaily, '\$${dailyAverage.toStringAsFixed(2)}', Colors.white70),
+                    l10n.averageDaily, '$currencySymbol${dailyAverage.toStringAsFixed(2)}', Colors.white70),
               ],
             ),
           ],
@@ -585,6 +587,8 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
 
     if (progressPercentage > 1) progressPercentage = 1;
 
+    final currencySymbol = l10n.currencySymbol ?? '₺';
+
     // Kalan bütçeyi hesapla, eksi değeri olduğu gibi bırak
     double remaining = _monthlyBudget - _totalSpending;
 
@@ -617,7 +621,7 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                   ),
                 ),
                 Text(
-                  '\$${_monthlyBudget.toStringAsFixed(0)}',
+                  '$currencySymbol${_monthlyBudget.toStringAsFixed(0)}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -656,7 +660,7 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                       ),
                     ),
                     Text(
-                      '\$${_totalSpending.toStringAsFixed(2)}',
+                      '$currencySymbol${_totalSpending.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -679,8 +683,8 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                     ),
                     Text(
                       remaining >= 0
-                          ? '\$${remaining.toStringAsFixed(2)}'
-                          : '-\$${remaining.abs().toStringAsFixed(2)}',
+                          ? '$currencySymbol${remaining.toStringAsFixed(2)}'
+                          : '-$currencySymbol${remaining.abs().toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -1051,6 +1055,8 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
       return const SizedBox.shrink();
     }
 
+    final currencySymbol = l10n.currencySymbol ?? '₺';
+
     // Top 5 kategoriyi seç
     final sortedCategories = _categoryTotals.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
@@ -1165,7 +1171,7 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                               ),
                             ),
                             Text(
-                              '\$${(category['amount'] as double).toStringAsFixed(0)}',
+                              '$currencySymbol${(category['amount'] as double).toStringAsFixed(0)}',
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -1292,6 +1298,8 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
     // Son 3 işlemi al
     final recentTransactions = _expenses
       ..sort((a, b) => b.date.compareTo(a.date));
+
+    final currencySymbol = l10n.currencySymbol ?? '₺';
 
     final transactions = recentTransactions.take(3).map((expense) {
       final now = DateTime.now();
@@ -1427,8 +1435,8 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                         ),
                         Text(
                           (tx['amount'] as double) > 0
-                              ? '+\$${((tx['amount'] ?? 0) as num).toStringAsFixed(2)}'
-                              : '-\$${(-((tx['amount'] ?? 0) as double)).toStringAsFixed(2)}',
+                              ? '+$currencySymbol${((tx['amount'] ?? 0) as num).toStringAsFixed(2)}'
+                              : '-$currencySymbol${(-((tx['amount'] ?? 0) as double)).toStringAsFixed(2)}',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,

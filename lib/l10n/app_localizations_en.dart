@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeBack => 'Welcome Back!';
 
   @override
-  String get signInToContinue => 'Sign in to continue managing your home';
+  String get signInToContinue => 'Sign in to continue';
 
   @override
   String get email => 'Email';
@@ -39,7 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccount => 'Create Account';
 
   @override
-  String get joinUs => 'Join us and start managing your home efficiently';
+  String get joinUs => 'Join us and start managing your financial life';
 
   @override
   String get fullName => 'Full Name';
@@ -49,318 +49,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get agreeToTerms =>
-      'I agree to the Terms of Service and Privacy Policy';
+      'I agree to the terms of service and privacy policy';
 
   @override
-  String get resetPassword => 'Reset Password';
-
-  @override
-  String get forgotYourPassword => 'Forgot Your Password?';
-
-  @override
-  String get resetPasswordMessage =>
-      'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.';
-
-  @override
-  String get sendResetLink => 'Send Reset Link';
-
-  @override
-  String get checkYourEmail => 'Check Your Email';
-
-  @override
-  String get resetLinkSent => 'We have sent a password reset link to';
-
-  @override
-  String get backToLogin => 'Back to Login';
-
-  @override
-  String get resendEmail => 'Resend Email';
-
-  @override
-  String get familySetup => 'Family Setup';
-
-  @override
-  String get familySetupMessage =>
-      'Set up your family to start managing your home together';
-
-  @override
-  String get createNewFamily => 'Create New Family';
-
-  @override
-  String get createNewFamilyDesc => 'Start fresh with a new family group';
-
-  @override
-  String get joinExistingFamily => 'Join Existing Family';
-
-  @override
-  String get joinExistingFamilyDesc =>
-      'Join a family group with an invitation code';
-
-  @override
-  String get familyName => 'Family Name';
-
-  @override
-  String get homeAddress => 'Home Address';
-
-  @override
-  String get invitationCode => 'Invitation Code';
-
-  @override
-  String get createFamily => 'Create Family';
-
-  @override
-  String get joinFamily => 'Join Family';
-
-  @override
-  String get inviteMessage =>
-      'You can invite family members later from the dashboard';
-
-  @override
-  String get goodMorning => 'Good Morning!';
-
-  @override
-  String get dashboard => 'Dashboard';
-
-  @override
-  String get tasks => 'Tasks';
-
-  @override
-  String get expenses => 'Expenses';
-
-  @override
-  String get events => 'Events';
-
-  @override
-  String get quickActions => 'Quick Actions';
-
-  @override
-  String get addExpense => 'Add Expense';
-
-  @override
-  String get viewExpenses => 'View Expenses';
-
-  @override
-  String get analytics => 'Analytics';
-
-  @override
-  String get addTask => 'Add Task';
-
-  @override
-  String get recentActivity => 'Recent Activity';
-
-  @override
-  String get viewAll => 'View All';
-
-  @override
-  String get totalExpenses => 'Total Expenses';
-
-  @override
-  String get transactions => 'transactions';
-
-  @override
-  String get expenseName => 'Expense Name';
-
-  @override
-  String get amount => 'Amount';
-
-  @override
-  String get category => 'Category';
-
-  @override
-  String get receiptOptional => 'Receipt (Optional)';
-
-  @override
-  String get takePhotoOrUpload => 'Take Photo or Upload Receipt';
-
-  @override
-  String get tapToAdd => 'Tap to add receipt image';
-
-  @override
-  String get camera => 'Camera';
-
-  @override
-  String get gallery => 'Gallery';
-
-  @override
-  String get expenseSummary => 'Expense Summary';
-
-  @override
-  String get enterExpenseName => 'Enter expense name';
-
-  @override
-  String get save => 'Save';
-
-  @override
-  String get searchExpenses => 'Search expenses...';
-
-  @override
-  String get filterOptions => 'Filter Options';
-
-  @override
-  String get clearAll => 'Clear All';
-
-  @override
-  String get categories => 'Categories';
-
-  @override
-  String get amountRange => 'Amount Range';
-
-  @override
-  String get expensesFound => 'expenses found';
-
-  @override
-  String get applyFilters => 'Apply Filters';
-
-  @override
-  String get filteredTotal => 'Filtered Total';
-
-  @override
-  String get noExpensesFound => 'No expenses found';
-
-  @override
-  String get noExpensesMatch => 'No expenses match your filters';
-
-  @override
-  String get trySearchingElse => 'Try searching for something else';
-
-  @override
-  String get tryAdjustingFilters => 'Try adjusting your filter criteria';
-
-  @override
-  String get searchingFor => 'Searching for';
-
-  @override
-  String get results => 'results';
-
-  @override
-  String get all => 'All';
-
-  @override
-  String get today => 'Today';
-
-  @override
-  String get thisWeek => 'This Week';
-
-  @override
-  String get thisMonth => 'This Month';
-
-  @override
-  String get settings => 'Settings';
-
-  @override
-  String get language => 'Language';
+  String get alreadyHaveAAccount => 'Already have an account? ';
 
   @override
   String get selectLanguage => 'Select Language';
 
   @override
-  String get turkish => 'Türkçe';
-
-  @override
-  String get english => 'English';
-
-  @override
-  String get general => 'General';
-
-  @override
-  String get about => 'About';
-
-  @override
-  String get version => 'Version';
-
-  @override
-  String get privacyPolicy => 'Privacy Policy';
-
-  @override
-  String get termsOfService => 'Terms of Service';
-
-  @override
-  String get notifications => 'Notifications';
-
-  @override
-  String get pushNotifications => 'Push Notifications';
-
-  @override
-  String get emailNotifications => 'Email Notifications';
-
-  @override
-  String get darkMode => 'Dark Mode';
-
-  @override
-  String get currency => 'Currency';
-
-  @override
-  String get changeLanguage => 'Change Language';
+  String get cancel => 'Cancel';
 
   @override
   String get languageChanged => 'Language changed successfully';
 
   @override
-  String get restartRequired => 'Please restart the app to apply changes';
+  String get fillAllFields => 'Please fill in all fields';
 
   @override
-  String get cancel => 'Cancel';
+  String get passwordsDoNotMatch => 'Passwords do not match';
 
   @override
-  String get totalIncome => 'Total Income';
+  String get registrationSuccess => 'Registration successful';
 
   @override
-  String get totalSpending => 'Total Spending';
+  String get registrationFailed => 'Registration failed';
 
   @override
-  String get remainingBalance => 'Remaining Balance';
+  String get userAlreadyExists => 'This email is already in use';
 
   @override
-  String get monthlyIncome => 'Monthly Income';
+  String get verifyEmailFirst => 'Please verify your email first';
 
   @override
-  String get fixedExpenses => 'Fixed Expenses';
+  String get error => 'Error';
 
   @override
-  String get spendingByCategory => 'Spending by Category';
+  String get errorOccurred => 'An error occurred';
 
   @override
-  String get monthlySpendingTrends => 'Monthly Spending Trends';
+  String get settings => 'Settings';
 
   @override
-  String get addMore => 'Add More';
+  String get dashboard => 'Dashboard';
 
   @override
-  String get editProfile => 'Edit Profile';
+  String get expenses => 'Expenses';
 
   @override
-  String get reports => 'Reports';
+  String get analytics => 'Analytics';
 
   @override
-  String get profileSummary => 'Profile Summary';
+  String get addExpense => 'Add Expense';
 
   @override
-  String get updateFamilyInfo => 'Update your family financial information';
+  String get save => 'Save';
 
   @override
-  String get saveChanges => 'Save Changes';
+  String get currencySymbol => '\$';
 
   @override
-  String get cancelChanges => 'Cancel Changes';
+  String get category => 'Category';
 
   @override
-  String get addNewFixedExpense => 'Add New Fixed Expense';
+  String get amount => 'Amount';
 
   @override
-  String get welcomeToFamilyFinance => 'Welcome to Family Finance';
+  String get date => 'Date';
 
   @override
-  String get familyFinanceDesc =>
-      'Set up your family profile to start tracking your income and expenses together.';
+  String get expenseSaved => 'Expense successfully saved';
 
   @override
-  String get monthlyFamilyIncome => 'Monthly Family Income';
+  String get pleaseEnterExpenseName => 'Please enter an expense name';
 
   @override
-  String get fixedMonthlyExpenses => 'Fixed Monthly Expenses';
+  String get pleaseEnterAmount => 'Please enter an amount';
 
   @override
-  String get createFamilyProfile => 'Create Family Profile';
+  String get expenseName => 'Expense Name';
+
+  @override
+  String get lunchRestaurant => 'Lunch (Restaurant)';
+
+  @override
+  String get selectDate => 'Select Date';
 
   @override
   String get foodDining => 'Food & Dining';
@@ -387,6 +160,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get other => 'Other';
 
   @override
+  String get recurringExpense => 'Recurring Expense';
+
+  @override
+  String get receiptOptional => 'Receipt (Optional)';
+
+  @override
+  String get takePhotoOrUpload => 'Take a photo or upload';
+
+  @override
+  String get tapToAdd => 'Tap to add';
+
+  @override
+  String get expenseSummary => 'Expense Summary';
+
+  @override
+  String get enterExpenseName => 'Enter expense name';
+
+  @override
   String get week => 'Week';
 
   @override
@@ -396,205 +187,253 @@ class AppLocalizationsEn extends AppLocalizations {
   String get year => 'Year';
 
   @override
-  String get spendingTrend => 'Spending Trend';
+  String get camera => 'Camera';
 
   @override
-  String get categoryBreakdown => 'Category Breakdown';
+  String get gallery => 'Gallery';
 
   @override
-  String get monthlyComparison => 'Monthly Comparison';
+  String get recurringExpenseNote =>
+      'This expense will automatically repeat at the selected frequency';
 
   @override
-  String get vsLastMonth => 'vs Last Month';
+  String get uploading => 'Uploading...';
 
   @override
-  String get averageDaily => 'Average Daily';
+  String get familySetup => 'Family Setup';
 
   @override
-  String get emailAddress => 'Email Address';
+  String get createFamilyProfile => 'Create Family Profile';
 
   @override
-  String get switchThemes => 'Switch between light and dark themes';
+  String get welcomeToFamilyFinance => 'Welcome to Family Finance';
 
   @override
-  String get receivePushNotifications => 'Receive push notifications';
+  String get familyFinanceDesc =>
+      'View, manage, and improve your family\'s financial situation';
 
   @override
-  String get receiveEmailNotifications => 'Receive email notifications';
+  String get familyName => 'Family Name';
 
   @override
-  String get readPrivacyPolicy => 'Read our privacy policy';
+  String get theFamilyName => 'Enter your family name';
 
   @override
-  String get readTermsOfService => 'Read our terms of service';
+  String get monthlyFamilyIncome => 'Monthly Family Income';
 
   @override
-  String get lunchRestaurant => 'e.g., Lunch at restaurant';
+  String get fixedMonthlyExpenses => 'Fixed Monthly Expenses';
 
   @override
-  String get addedExpense => 'Added expense:';
-
-  @override
-  String get taskCompleted => 'Task completed:';
-
-  @override
-  String get newExpense => 'New expense:';
-
-  @override
-  String get theFamilyName => 'The Smith Family';
-
-  @override
-  String get membersTasksActive => '4 members • 12 tasks active';
-
-  @override
-  String get daysLeft => '15 days left';
-
-  @override
-  String get percentRemaining => '60% of monthly income remaining';
-
-  @override
-  String get family => 'Family';
-
-  @override
-  String get totalSpendingText => 'Total Spending';
-
-  @override
-  String get editFamilyProfile => 'Edit Family Profile';
-
-  @override
-  String get addFamilyMember => 'Add Family Member';
-
-  @override
-  String get aprilMonth => 'April';
-
-  @override
-  String get augustMonth => 'August';
-
-  @override
-  String get decemberMonth => 'December';
-
-  @override
-  String get editFamilyMemberProfile => 'Edit Family Member Profile';
-
-  @override
-  String get entertainmentExpenses => 'Entertainment Expenses';
-
-  @override
-  String get familyMemberAdded => 'Family member added';
-
-  @override
-  String get familyMemberEmail => 'Family Member Email';
-
-  @override
-  String get familyMemberName => 'Family Member Name';
-
-  @override
-  String get familyMemberPhone => 'Family Member Phone';
-
-  @override
-  String get familyMemberProfile => 'Family Member Profile';
-
-  @override
-  String get familyMemberProfileDesc =>
-      'View and edit the profile of your family member.';
-
-  @override
-  String get familyMemberProfileUpdated => 'Family member profile updated';
-
-  @override
-  String get familyMemberProfileUpdatedDesc =>
-      'The family member\'s profile has been updated successfully.';
-
-  @override
-  String get familyMemberRemoved => 'Family member removed';
-
-  @override
-  String get familyMemberRole => 'Family Member Role';
-
-  @override
-  String get familyMemberUpdated => 'Family member updated';
-
-  @override
-  String get familyMembers => 'Family Members';
-
-  @override
-  String get familyProfile => 'Family Profile';
-
-  @override
-  String get familyProfileDesc =>
-      'Manage your family\'s information and members.';
-
-  @override
-  String get februaryMonth => 'February';
-
-  @override
-  String get goodMorningFamily => 'Good Morning, Family!';
-
-  @override
-  String get groceries => 'Groceries';
-
-  @override
-  String get insurance => 'Insurance';
-
-  @override
-  String get internet => 'Internet';
-
-  @override
-  String get januaryMonth => 'January';
-
-  @override
-  String get julyMonth => 'July';
-
-  @override
-  String get juneMonth => 'June';
-
-  @override
-  String get marchMonth => 'March';
-
-  @override
-  String get mayMonth => 'May';
-
-  @override
-  String get novemberMonth => 'November';
-
-  @override
-  String get octoberMonth => 'October';
-
-  @override
-  String get remainingBalanceAmount => 'Remaining Balance Amount';
+  String get addMore => 'Add More';
 
   @override
   String get rent => 'Rent';
 
   @override
-  String get septemberMonth => 'September';
-
-  @override
-  String get totalExpensesAmount => 'Total Expenses Amount';
-
-  @override
-  String get totalIncomeAmount => 'Total Income Amount';
-
-  @override
-  String get transportationExpenses => 'Transportation Expenses';
-
-  @override
   String get utilities => 'Utilities';
 
   @override
-  String get alreadyHaveAAccount => 'Already have an account? ';
+  String get internet => 'Internet';
 
   @override
-  String get usd => 'US Dollar (\$)';
+  String get insurance => 'Insurance';
 
   @override
-  String get tr => 'Turkish Lira (₺)';
+  String get delete => 'Delete';
 
   @override
-  String get selectCurrency => 'Select Currency';
+  String get createNewFamily => 'Create New Family';
 
   @override
-  String get currencyChanged => 'Currency changed successfully';
+  String get createNewFamilyDesc =>
+      'Create a new family profile to manage your family finances';
+
+  @override
+  String get joinExistingFamily => 'Join Existing Family';
+
+  @override
+  String get joinExistingFamilyDesc =>
+      'Join an existing family using a family code';
+
+  @override
+  String get invitationCode => 'Invitation Code';
+
+  @override
+  String get joinFamily => 'Join Family';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get forgotYourPassword => 'Forgot Your Password?';
+
+  @override
+  String get resetPasswordMessage =>
+      'Enter your email address to reset your password. We\'ll send you an email with instructions to reset your password.';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get checkYourEmail => 'Check Your Email';
+
+  @override
+  String get resetLinkSent => 'Password reset link has been sent to:';
+
+  @override
+  String get backToLogin => 'Back to Login';
+
+  @override
+  String get resendEmail => 'Resend Email';
+
+  @override
+  String get editFamilyProfile => 'Edit Family Profile';
+
+  @override
+  String get profileSummary => 'Profile Summary';
+
+  @override
+  String get updateFamilyInfo => 'Update your family information';
+
+  @override
+  String get monthlyIncome => 'Monthly Income';
+
+  @override
+  String get fixedExpenses => 'Fixed Expenses';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get cancelChanges => 'Cancel Changes';
+
+  @override
+  String get familyProfile => 'Family Profile';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String familyCodeShareMessage(String appName, String familyCode) {
+    return 'Hello! Join me on $appName with this family code:\n\n$familyCode';
+  }
+
+  @override
+  String get searchExpenses => 'Search Expenses';
+
+  @override
+  String get searchingFor => 'Searching for:';
+
+  @override
+  String get results => 'results';
+
+  @override
+  String get filterOptions => 'Filter Options';
+
+  @override
+  String get clearAll => 'Clear All';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get amountRange => 'Amount Range';
+
+  @override
+  String get expensesFound => 'expenses found';
+
+  @override
+  String get applyFilters => 'Apply Filters';
+
+  @override
+  String get filteredTotal => 'Filtered Total';
+
+  @override
+  String get totalExpenses => 'Total Expenses';
+
+  @override
+  String get transactions => 'transactions';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get thisWeek => 'This Week';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get deleteExpense => 'Delete Expense';
+
+  @override
+  String get deleteConfirmation =>
+      'Are you sure you want to delete this expense? This action cannot be undone.';
+
+  @override
+  String get deleting => 'Deleting...';
+
+  @override
+  String get removed => 'removed';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get noExpensesFound => 'No Expenses Found';
+
+  @override
+  String get trySearchingElse => 'Try a different search term or clear filters';
+
+  @override
+  String get noExpensesYet => 'No Expenses Yet';
+
+  @override
+  String get addYourFirstExpense =>
+      'Click the plus button to add your first expense';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get totalSpendingText => 'Total Spending';
+
+  @override
+  String get vsLastWeek => 'vs Last Week';
+
+  @override
+  String get vsLastMonth => 'vs Last Month';
+
+  @override
+  String get vsLastYear => 'vs Last Year';
+
+  @override
+  String get vsPreviousPeriod => 'vs Previous Period';
+
+  @override
+  String get averageDaily => 'Daily Average';
+
+  @override
+  String get monthlyBudget => 'Monthly Budget';
+
+  @override
+  String get remaining => 'Remaining';
+
+  @override
+  String get budgetExceeded => 'Budget Exceeded';
+
+  @override
+  String get spendingTrend => 'Spending Trend';
 
   @override
   String get incomeVsExpenses => 'Income vs Expenses';
@@ -603,129 +442,213 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsGoals => 'Savings Goals';
 
   @override
-  String get remaining => 'Remaining';
+  String get categoryBreakdown => 'Category Breakdown';
 
   @override
-  String get monthlyBudget => 'Monthly Budget';
-
-  @override
-  String get goal => 'Goal';
-
-  @override
-  String get groceryShopping => 'Grocery Shopping';
-
-  @override
-  String get yesterday => 'Yesterday';
-
-  @override
-  String get salaryDeposit => 'Salary Deposit';
-
-  @override
-  String daysAgo(Object days) {
-    return '$days days ago';
-  }
-
-  @override
-  String get electricityBill => 'Electricity Bill';
+  String get monthlyComparison => 'Monthly Comparison';
 
   @override
   String get recentTransactions => 'Recent Transactions';
 
   @override
-  String get dateRangeSelected => 'Date Range Selected';
+  String get goal => 'Goal';
 
   @override
-  String get removed => 'Removed';
+  String get yesterday => 'Yesterday';
 
   @override
-  String get remove => 'Remove';
+  String daysAgo(Object days) {
+    return 'days ago';
+  }
 
   @override
-  String get delete => 'Delete';
+  String get budget => 'Budget';
 
   @override
-  String get undo => 'Undo';
+  String get budgetOverview => 'Budget Overview';
 
   @override
-  String get noExpensesYet => 'No expenses yet';
+  String get spent => 'Spent';
 
   @override
-  String get addYourFirstExpense => 'Add your first expense';
+  String get spentSoFar => 'Spent So Far';
 
   @override
-  String get recurringExpenseNote => 'This is a recurring expense';
+  String get allocatedBudget => 'Allocated Budget';
 
   @override
-  String get recurringExpense => 'Recurring Expense';
+  String get overBudget => 'Over Budget';
 
   @override
-  String get pleaseEnterAmount => 'Please enter an amount';
+  String get adjust => 'Adjust';
 
   @override
-  String get selectDate => 'Select Date';
+  String get edit => 'Edit';
 
   @override
-  String get pleaseEnterExpenseName => 'Please enter an expense name';
+  String get monthlyBudgetOverview => 'Monthly Budget Overview';
 
   @override
-  String get expenseSaved => 'Expense saved';
+  String get uncategorized => 'Uncategorized';
 
   @override
-  String get loginFailed => 'Login failed. Please check your credentials.';
+  String get amountPaid => 'Amount Paid';
 
   @override
-  String get invalidEmailOrPassword => 'Invalid email or password';
+  String get receiptDetails => 'Receipt Details';
 
   @override
-  String get fillAllFields => 'Please fill all fields';
+  String get subtotal => 'Subtotal';
 
   @override
-  String get firebaseAuthError => 'Firebase Authentication error: ';
+  String get tax => 'Tax';
 
   @override
-  String get networkError =>
-      'Network error: Please check your internet connection.';
+  String get total => 'Total';
 
   @override
-  String get firebaseConnectionError => 'Firebase connection error: ';
+  String get familyCodeCopied => 'Family code copied to clipboard!';
 
   @override
-  String get unknownError => 'Unknown error: ';
+  String get familyCodeNotFound => 'No family code found to share!';
 
   @override
-  String get userNotLoggedIn => 'User is not logged in.';
+  String get familyProfileUpdated => 'Family profile updated';
 
   @override
-  String get profileUpdateError => 'Error updating profile: ';
+  String updateError(String error) {
+    return 'Update error: $error';
+  }
 
   @override
-  String get emailAlreadyVerified =>
-      'User is not logged in or email is already verified.';
+  String familyDataError(String error) {
+    return 'Failed to load family data: $error';
+  }
 
   @override
-  String get emailVerificationError => 'Error sending email verification: ';
+  String get tenantIdNotFound => 'Tenant ID not found';
 
   @override
-  String get userInfoError => 'Error getting user information: ';
+  String get goodMorning => 'Good Morning!';
 
   @override
-  String get logoutError => 'Error during logout: ';
+  String get goodAfternoon => 'Good Afternoon!';
 
   @override
-  String get passwordRequired => 'Please enter your password';
+  String get goodEvening => 'Good Evening!';
 
   @override
-  String get passwordsDoNotMatch => 'Passwords do not match';
+  String get familySuffix => 'Family';
 
   @override
-  String get registrationFailed => 'Registration failed. Please try again.';
+  String daysLeft(Object days) {
+    return '$days days left';
+  }
 
   @override
-  String get registrationSuccess =>
-      'Registration successful! You can now login.';
+  String get quickActions => 'Quick Actions';
 
   @override
-  String get verifyEmailFirst => 'Please verify your email address first.';
+  String get addExpenseAction => 'Add Expense';
+
+  @override
+  String get viewAnalyticsAction => 'View Analytics';
+
+  @override
+  String get allExpensesAction => 'All Expenses';
+
+  @override
+  String get imageUploadedSuccess => 'Image uploaded successfully.';
+
+  @override
+  String get uploadError => 'Image upload failed';
+
+  @override
+  String uploadErrorWithMessage(String error) {
+    return 'Image upload failed: $error';
+  }
+
+  @override
+  String get imageUploading => 'Image Uploading...';
+
+  @override
+  String get noFamilyFound => 'No family information found';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get createFamilyProfileAction => 'Create Family Profile';
+
+  @override
+  String get sharingFor => 'Code copied for sharing';
+
+  @override
+  String get invalidInvitationCode => 'Invalid invitation code';
+
+  @override
+  String ofIncome(Object percentage) {
+    return 'of Income';
+  }
+
+  @override
+  String firebaseAuthError(Object error) {
+    return 'Firebase authentication error: $error';
+  }
+
+  @override
+  String get noRecentTransactions => 'No recent transactions found';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get switchThemes => 'Switch Themes';
+
+  @override
+  String get currency => 'Currency';
+
+  @override
+  String get selectCurrency => 'Select Currency';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get pushNotifications => 'Push Notifications';
+
+  @override
+  String get receivePushNotifications => 'Receive Push Notifications';
+
+  @override
+  String get emailNotifications => 'Email Notifications';
+
+  @override
+  String get receiveEmailNotifications => 'Receive Email Notifications';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get readPrivacyPolicy => 'Read our Privacy Policy';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get readTermsOfService => 'Read our Terms of Service';
 
   @override
   String get account => 'Account';
@@ -734,56 +657,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Logout';
 
   @override
-  String get logoutDescription => 'Sign out from your account';
+  String get logoutDescription =>
+      'Are you sure you want to log out? You will need to sign in again to access your account.';
+
+  @override
+  String get usd => '\$';
+
+  @override
+  String get tr => '₺';
+
+  @override
+  String get currencyChanged => 'Currency changed successfully';
 
   @override
   String get logoutConfirmation => 'Logout Confirmation';
 
   @override
   String get logoutMessage =>
-      'Are you sure you want to logout from your account?';
+      'Are you sure you want to log out? You will need to sign in again to access your account.';
 
   @override
-  String get logoutSuccess => 'You have been logged out successfully';
+  String get remainingBalance => 'Remaining Balance';
 
   @override
-  String get userAlreadyExists =>
-      'User already exists with this email address.';
+  String get totalSpending => 'Total Spending';
 
   @override
-  String get error => 'Error';
+  String get totalIncome => 'Total Income';
 
   @override
-  String get currencySymbol => '\$';
+  String get onTrack => 'On Track';
 
   @override
-  String get noRecentTransactions => 'No recent transactions';
+  String get budgetOverflow => 'Budget Overflow';
 
   @override
-  String get budgetExceeded => 'Budget exceeded';
+  String get goodDay => 'Good Day';
 
   @override
-  String get vsPreviousPeriod => 'vs Previous Period';
+  String get monthlyProgress => 'Monthly Progress';
 
   @override
-  String get vsLastWeek => 'vs Last Week';
+  String get daysPassed => 'Days Passed';
 
   @override
-  String get vsLastYear => 'vs Last Year';
+  String get budgetUsed => 'Budget Used';
 
   @override
-  String get uploading => 'Uploading...';
-
-  @override
-  String get deleteExpense => 'Delete Expense';
-
-  @override
-  String get deleteConfirmation =>
-      'Are you sure you want to delete this expense?';
-
-  @override
-  String get errorOccurred => 'An error occurred';
-
-  @override
-  String get deleting => 'Deleting...';
+  String get dailyAverage => 'Daily Avg.';
 }
