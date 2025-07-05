@@ -5,6 +5,7 @@ class CreateFamilyDto {
   String? tenantId;
   String name;
   String? familyCode;
+  dynamic monthlyBudget;
   int familyIncome;
   List<Map<String, dynamic>> fixedExpenses;
   String? createdBy;
@@ -17,6 +18,7 @@ class CreateFamilyDto {
     this.tenantId,
     required this.name,
     this.familyCode,
+    this.monthlyBudget,
     required this.familyIncome,
     required this.fixedExpenses,
     this.createdAt,
@@ -28,7 +30,7 @@ class CreateFamilyDto {
 
   @override
   String toString() {
-    return 'CreateFamilyDto(name: $name, familyIncome: $familyIncome, familyCode: $familyCode, fixedExpenses: $fixedExpenses, createdBy: $createdBy, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, tenantId: $tenantId)';
+    return 'CreateFamilyDto(name: $name, familyIncome: $familyIncome, familyCode: $familyCode, monthlyBudget: $monthlyBudget, fixedExpenses: $fixedExpenses, createdBy: $createdBy, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, tenantId: $tenantId)';
   }
 
   @override
@@ -37,6 +39,7 @@ class CreateFamilyDto {
         name,
         familyCode ?? '',
         familyIncome,
+        monthlyBudget ?? 0,
         fixedExpenses,
         createdBy ?? '',
         isActive ?? true,
@@ -51,6 +54,7 @@ class CreateFamilyDto {
       'Id': Id,
       'tenantId': tenantId,
       'familyCode': familyCode,
+      'monthlyBudget': monthlyBudget,
       'name': name,
       'familyIncome': familyIncome,
       'fixedExpenses': fixedExpenses,
@@ -69,6 +73,7 @@ class CreateFamilyDto {
       tenantId: json['tenantId'] as String,
       name: json['name'] as String,
       familyIncome: json['familyIncome'] as int,
+      monthlyBudget: json['monthlyBudget'],
       familyCode: json['familyCode'] as String?,
       fixedExpenses:
           List<Map<String, dynamic>>.from(json['fixedExpenses'] ?? []),

@@ -16,8 +16,14 @@ class CreateFamilyProfileScreen extends StatefulWidget {
 class _CreateFamilyProfileScreenState extends State<CreateFamilyProfileScreen> {
   final _familyNameController = TextEditingController();
   final _monthlyIncomeController = TextEditingController();
+  final _invitationCodeController = TextEditingController(); // Davet kodu için
   final _familyService = FamilyService();
   final _userService = UserService();
+
+  // Görünüm modu - 0: seçim ekranı, 1: yeni aile oluştur, 2: aileye katıl
+  int _viewMode = 0;
+  bool _isLoading = false;
+  String? _errorMessage;
 
   final List<Map<String, dynamic>> _fixedExpenses = [
     {
@@ -113,21 +119,125 @@ class _CreateFamilyProfileScreenState extends State<CreateFamilyProfileScreen> {
         tenantId: 'test');
   }
 
+  Future<void> _createNewFamily() async {
+    if (_familyNameController.text.trim().isEmpty) {
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.fillAllFields;
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Form verilerinden CreateFamilyDto objesi oluştur
+      final familyDto = _createFamilyDto();
+
+      // Aile oluştur
+      var addedFamily = await _familyService.createFamily(familyDto);
+      await _userService.setTenantId(addedFamily.tenantId!);
+
+      // Ana ekrana git
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _joinExistingFamily() async {
+    final invitationCode = _invitationCodeController.text.trim();
+    if (invitationCode.isEmpty) {
+      setState(() {
+        _errorMessage = AppLocalizations.of(context)!.fillAllFields;
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Davet koduyla aile bul ve katıl
+      final family = await _familyService.getFamilyByCode(invitationCode);
+      await _userService.setTenantId(family.tenantId!);
+
+      // Ana ekrana git
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
+    // Loading gösterimi
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF8FAFC),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            l10n.familySetup,
+            style: const TextStyle(
+              color: Color(0xFF1F2937),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF1F2937)),
-        ),
+        leading: _viewMode > 0
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    _viewMode = 0;
+                    _errorMessage = null;
+                  });
+                },
+                icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF1F2937)),
+              )
+            : null,
         title: Text(
-          l10n.createFamilyProfile,
+          _viewMode == 0
+              ? l10n.familySetup
+              : _viewMode == 1
+                  ? l10n.createFamilyProfile
+                  : l10n.joinFamily,
           style: const TextStyle(
             color: Color(0xFF1F2937),
             fontWeight: FontWeight.bold,
@@ -139,32 +249,285 @@ class _CreateFamilyProfileScreenState extends State<CreateFamilyProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FadeInUp(
-              child: _buildWelcomeCard(),
-            ),
-            const SizedBox(height: 32),
-            FadeInUp(
-              delay: const Duration(milliseconds: 200),
-              child: _buildFamilyNameField(),
-            ),
-            const SizedBox(height: 24),
-            FadeInUp(
-              delay: const Duration(milliseconds: 400),
-              child: _buildMonthlyIncomeField(),
-            ),
-            const SizedBox(height: 32),
-            FadeInUp(
-              delay: const Duration(milliseconds: 600),
-              child: _buildFixedExpensesSection(),
-            ),
-            const SizedBox(height: 40),
-            FadeInUp(
-              delay: const Duration(milliseconds: 800),
-              child: _buildCreateButton(),
-            ),
+            if (_errorMessage != null)
+              FadeInUp(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.red.shade200),
+                  ),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: Colors.red.shade800),
+                  ),
+                ),
+              ),
+
+            // Görünüm moduna göre içerik göster
+            if (_viewMode == 0) _buildSelectionView(l10n),
+            if (_viewMode == 1) _buildCreateFamilyView(l10n),
+            if (_viewMode == 2) _buildJoinFamilyView(l10n),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSelectionView(AppLocalizations l10n) {
+    return Column(
+      children: [
+        FadeInUp(
+          child: _buildWelcomeCard(),
+        ),
+        const SizedBox(height: 32),
+        FadeInUp(
+          delay: const Duration(milliseconds: 200),
+          child: _buildOptionCard(
+            title: l10n.createNewFamily,
+            description: l10n.createNewFamilyDesc,
+            icon: Icons.add_home,
+            color: const Color(0xFF6366F1),
+            onTap: () {
+              setState(() {
+                _viewMode = 1;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        FadeInUp(
+          delay: const Duration(milliseconds: 300),
+          child: _buildOptionCard(
+            title: l10n.joinExistingFamily,
+            description: l10n.joinExistingFamilyDesc,
+            icon: Icons.family_restroom,
+            color: const Color(0xFF10B981),
+            onTap: () {
+              setState(() {
+                _viewMode = 2;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOptionCard({
+    required String title,
+    required String description,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Color(0xFF1F2937),
+                        ),
+                      ),
+                      Text(
+                        description,
+                        style: const TextStyle(
+                          color: Color(0xFF6B7280),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: color,
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildJoinFamilyView(AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FadeInUp(
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF10B981), Color(0xFF059669)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.group_add, color: Colors.white, size: 32),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.joinExistingFamily,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.joinExistingFamilyDesc,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 32),
+        FadeInUp(
+          delay: const Duration(milliseconds: 200),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.invitationCode,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF374151),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _invitationCodeController,
+                  decoration: InputDecoration(
+                    hintText: "ABC123",
+                    prefixIcon: const Icon(Icons.key, color: Color(0xFF6B7280)),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.all(16),
+                    hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _joinExistingFamily,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF10B981),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.joinFamily,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCreateFamilyView(AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FadeInUp(
+          child: _buildWelcomeCard(),
+        ),
+        const SizedBox(height: 32),
+        FadeInUp(
+          delay: const Duration(milliseconds: 200),
+          child: _buildFamilyNameField(),
+        ),
+        const SizedBox(height: 24),
+        FadeInUp(
+          delay: const Duration(milliseconds: 400),
+          child: _buildMonthlyIncomeField(),
+        ),
+        const SizedBox(height: 32),
+        FadeInUp(
+          delay: const Duration(milliseconds: 600),
+          child: _buildFixedExpensesSection(),
+        ),
+        const SizedBox(height: 40),
+        FadeInUp(
+          delay: const Duration(milliseconds: 800),
+          child: _buildCreateButton(),
+        ),
+      ],
     );
   }
 
@@ -405,22 +768,7 @@ class _CreateFamilyProfileScreenState extends State<CreateFamilyProfileScreen> {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () async {
-          // Form verilerinden CreateFamilyDto objesi oluştur
-          final familyDto = _createFamilyDto();
-
-          // Debug konsoluna yazdır
-          debugPrint('Oluşturulan Aile Profili: ${familyDto.toString()}');
-
-          var addedFamily = await _familyService.createFamily(familyDto);
-          await _userService.setTenantId(addedFamily.tenantId!);
-
-          // Bir sonraki ekrana geç
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const DashboardScreen()),
-          );
-        },
+        onPressed: _createNewFamily,
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF6366F1),
           shape: RoundedRectangleBorder(

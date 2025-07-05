@@ -24,38 +24,6 @@ class AuthService {
   AppLocalizations? get _l10n =>
       _context != null ? AppLocalizations.of(_context!) : null;
 
-  // Çeviri metodu - context yoksa varsayılan mesajları kullanır
-  String _getLocalizedMessage(String key, String defaultMessage) {
-    if (_l10n == null) {
-      return defaultMessage;
-    }
-
-    switch (key) {
-      case 'firebaseAuthError':
-        return _l10n!.firebaseAuthError;
-      case 'networkError':
-        return _l10n!.networkError;
-      case 'firebaseConnectionError':
-        return _l10n!.firebaseConnectionError;
-      case 'unknownError':
-        return _l10n!.unknownError;
-      case 'userNotLoggedIn':
-        return _l10n!.userNotLoggedIn;
-      case 'profileUpdateError':
-        return _l10n!.profileUpdateError;
-      case 'emailAlreadyVerified':
-        return _l10n!.emailAlreadyVerified;
-      case 'emailVerificationError':
-        return _l10n!.emailVerificationError;
-      case 'userInfoError':
-        return _l10n!.userInfoError;
-      case 'logoutError':
-        return _l10n!.logoutError;
-      default:
-        return defaultMessage;
-    }
-  }
-
   Future<UserCredential> loginWithEmail(LoginDto loginDto) async {
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
@@ -65,17 +33,13 @@ class AuthService {
 
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('firebaseAuthError', 'FirebaseAuth error: ')}${e.message}');
+      throw Exception('${e.message}');
     } on SocketException catch (_) {
-      throw Exception(_getLocalizedMessage(
-          'networkError', 'Ağ hatası: İnternet bağlantınızı kontrol edin.'));
+      throw Exception('Ağ hatası: İnternet bağlantınızı kontrol edin.');
     } on FirebaseException catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('firebaseConnectionError', 'Firebase bağlantı hatası: ')}${e.message}');
+      throw Exception('Firebase bağlantı hatası: ${e.message}');
     } catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('unknownError', 'Bilinmeyen hata: ')}$e');
+      throw Exception('Bilinmeyen hata: $e');
     }
   }
 
@@ -94,20 +58,16 @@ class AuthService {
       return _auth.currentUser;
     } on FirebaseAuthException catch (e) {
       debugConsole.log('FirebaseAuthException: ${e}');
-      throw Exception(
-          '${_getLocalizedMessage('firebaseAuthError', 'FirebaseAuth hatası: ')}${e.message}');
+      throw Exception('FirebaseAuth hatası:${e.message}');
     } on SocketException catch (_) {
       debugConsole.log('SocketException: Ağ hatası');
-      throw Exception(_getLocalizedMessage(
-          'networkError', 'Ağ hatası: İnternet bağlantınızı kontrol edin.'));
+      throw Exception('Ağ hatası: İnternet bağlantınızı kontrol edin.');
     } on FirebaseException catch (e) {
       debugConsole.log('FirebaseException: ${e.message}');
-      throw Exception(
-          '${_getLocalizedMessage('firebaseConnectionError', 'Firebase bağlantı hatası: ')}${e.message}');
+      throw Exception('Firebase bağlantı hatası:${e.message}');
     } catch (e) {
       debugConsole.log('Unknown exception: $e');
-      throw Exception(
-          '${_getLocalizedMessage('unknownError', 'Bilinmeyen hata: ')}$e');
+      throw Exception('Bilinmeyen hata:$e');
     }
   }
 
@@ -120,12 +80,10 @@ class AuthService {
         user = _auth.currentUser; // Reload the user to get updated info
         return user;
       } else {
-        throw Exception(_getLocalizedMessage(
-            'userNotLoggedIn', 'Kullanıcı oturumu açık değil.'));
+        throw Exception('Kullanıcı oturumu açık değil.');
       }
     } catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('profileUpdateError', 'Profil güncellenirken hata: ')}$e');
+      throw Exception('Profil güncellenirken hata: $e');
     }
   }
 
@@ -133,15 +91,14 @@ class AuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('firebaseAuthError', 'FirebaseAuth hatası: ')}${e.message}');
+      throw Exception('FirebaseAuth hatası: ${e.message}');
     } on SocketException catch (_) {
-      throw Exception(_getLocalizedMessage(
-          'networkError', 'Ağ hatası: İnternet bağlantınızı kontrol edin.'));
+      throw Exception('Ağ hatası: İnternet bağlantınızı kontrol edin.');
     } on FirebaseException catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('firebaseConnectionError', 'Firebase bağlantı hatası: ')}${e.message}');
-    } catch (e) {}
+      throw Exception('Firebase bağlantı hatası: ${e.message}');
+    } catch (e) {
+      throw Exception('Bilinmeyen hata: $e');
+    }
   }
 
   Future<void> sendEmailVerification() async {
@@ -150,12 +107,10 @@ class AuthService {
       if (user != null && !user.emailVerified) {
         await user.sendEmailVerification();
       } else {
-        throw Exception(_getLocalizedMessage(
-            'emailAlreadyVerified', 'E-posta zaten doğrulanmış.'));
+        throw Exception('E-posta doğrulanmadı.');
       }
     } catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('emailVerificationError', 'E-posta doğrulama hatası: ')}$e');
+      throw Exception('E-posta doğrulama hatası: $e');
     }
   }
 
@@ -163,8 +118,7 @@ class AuthService {
     try {
       return _auth.currentUser;
     } catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('userInfoError', 'Kullanıcı bilgisi alınırken hata: ')}$e');
+      throw Exception('Kullanıcı bilgisi alınırken hata: $e');
     }
   }
 
@@ -172,8 +126,7 @@ class AuthService {
     try {
       await _auth.signOut();
     } catch (e) {
-      throw Exception(
-          '${_getLocalizedMessage('logoutError', 'Çıkış yapılırken hata: ')}$e');
+      throw Exception('Çıkış yapılırken hata: $e');
     }
   }
 }

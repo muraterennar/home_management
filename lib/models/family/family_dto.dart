@@ -11,6 +11,7 @@ class FamilyDto {
   DateTime? createdAt;
   DateTime? updatedAt;
   bool? isActive;
+  double? lastMonthIncome;
 
   FamilyDto({
     this.id,
@@ -25,6 +26,7 @@ class FamilyDto {
     this.createdAt,
     this.updatedAt,
     this.isActive,
+    this.lastMonthIncome,
   });
 
   factory FamilyDto.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class FamilyDto {
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       isActive: json['isActive'],
+      lastMonthIncome: json['lastMonthIncome'] != null ? double.tryParse(json['lastMonthIncome'].toString()) : null,
     );
   }
 
@@ -75,6 +78,7 @@ class FamilyDto {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'isActive': isActive,
+      'lastMonthIncome': lastMonthIncome,
     };
   }
 }

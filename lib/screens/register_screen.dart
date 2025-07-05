@@ -538,6 +538,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
     } catch (e) {
+      debugPrint("Registration error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.registrationFailed)),
       );

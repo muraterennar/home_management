@@ -157,6 +157,10 @@ class _DashboardHomeState extends State<DashboardHome> {
   double _monthlyBudget = 0;
   List<Map<String, dynamic>> _recentTransactions = [];
 
+  // Dinamik değişim yüzdeleri
+  String _incomeChangePercent = '+0.0%';
+  String _expenseChangePercent = '+0.0%';
+
   // Tarih bilgileri
   String _currentMonth = '';
   int _daysLeft = 0;
@@ -184,6 +188,7 @@ class _DashboardHomeState extends State<DashboardHome> {
   }
 
   Future<void> _loadData() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -194,6 +199,7 @@ class _DashboardHomeState extends State<DashboardHome> {
       _currentUser = await _userService.getCurrentUserProfile();
 
       if (_currentUser?.tenantId == null || _currentUser!.tenantId!.isEmpty) {
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
           _errorMessage = "Aile bilgisi bulunamadı";
@@ -202,7 +208,8 @@ class _DashboardHomeState extends State<DashboardHome> {
       }
 
       // Aile bilgilerini yükle
-      _family = await _familyService.getFamilyByTenantId(_currentUser!.tenantId!);
+      _family =
+          await _familyService.getFamilyByTenantId(_currentUser!.tenantId!);
 
       // Harcamaları yükle
       _expenses = await _expenseService.getAllExpenses();
@@ -210,10 +217,12 @@ class _DashboardHomeState extends State<DashboardHome> {
       // Verileri işle
       _processData();
 
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _errorMessage = e.toString();
@@ -224,19 +233,27 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   void _processData() {
     // Aylık gelir - Null kontrolü ekleyerek güvenli bir şekilde double'a dönüştürme
-    final monthlyBudget = _family?.familyIncome;
-    _totalIncome = monthlyBudget != null ? monthlyBudget.toDouble() : 0.0;
-    _monthlyBudget = _totalIncome;
+    final monthlyBudget = _family?.monthlyBudget?.toDouble() ?? 0.0;
+    _totalIncome = _family?.familyIncome?.toDouble() ?? 0.0;
+    _monthlyBudget = monthlyBudget;
 
-    // Toplam harcamaları hesapla (bu ay içindekiler)
     final now = DateTime.now();
-    final thisMonthExpenses = _expenses.where((expense) =>
-      expense.date.year == now.year && expense.date.month == now.month).toList();
+    // Bu ay ve geçen ay için harcamaları ayır
+    final thisMonthExpenses = _expenses
+        .where((expense) =>
+            expense.date.year == now.year && expense.date.month == now.month)
+        .toList();
+    final lastMonth = DateTime(now.year, now.month - 1, 1);
+    final lastMonthExpenses = _expenses
+        .where((expense) =>
+            expense.date.year == lastMonth.year && expense.date.month == lastMonth.month)
+        .toList();
 
-    _totalExpenses = thisMonthExpenses.fold(0, (sum, expense) => sum + expense.amount);
+    _totalExpenses =
+        thisMonthExpenses.fold(0, (sum, expense) => sum + expense.amount);
 
     // Kalan bakiye
-    _remainingBalance = _totalIncome - _totalExpenses;
+    _remainingBalance = _monthlyBudget - _totalExpenses;
 
     // Son harcamalar
     _expenses.sort((a, b) => b.date.compareTo(a.date)); // En yeni en başta
@@ -262,7 +279,7 @@ class _DashboardHomeState extends State<DashboardHome> {
       String category = expense.category;
 
       // Kategori ikonları ve renkleri
-      switch(expense.category.toLowerCase()) {
+      switch (expense.category.toLowerCase()) {
         case 'yemek ve restoran':
           icon = Icons.restaurant;
           color = Colors.redAccent;
@@ -304,18 +321,25 @@ class _DashboardHomeState extends State<DashboardHome> {
       };
     }).toList();
 
-    // Eğer işlem yoksa ekleyelim
-    if (_recentTransactions.isEmpty) {
-      _recentTransactions = [
-        {
-          'title': 'Henüz işlem yok',
-          'amount': '-\$0',
-          'category': 'Bilgi',
-          'time': 'Şimdi',
-          'icon': Icons.info_outline,
-          'color': Colors.grey
-        }
-      ];
+    // Dinamik değişim yüzdeleri hesaplama
+    // Gelir değişimi
+    double thisMonthIncome = _family?.familyIncome?.toDouble() ?? 0.0;
+    double lastMonthIncome = _family?.lastMonthIncome?.toDouble() ?? 0.0;
+    if (lastMonthIncome > 0) {
+      double diff = thisMonthIncome - lastMonthIncome;
+      double percent = (diff / lastMonthIncome) * 100;
+      _incomeChangePercent = (percent >= 0 ? '+' : '') + percent.toStringAsFixed(1) + '%';
+    } else {
+      _incomeChangePercent = '+0.0%';
+    }
+    // Harcama değişimi
+    double lastMonthTotalExpenses = lastMonthExpenses.fold(0, (sum, expense) => sum + expense.amount);
+    if (lastMonthTotalExpenses > 0) {
+      double diff = _totalExpenses - lastMonthTotalExpenses;
+      double percent = (diff / lastMonthTotalExpenses) * 100;
+      _expenseChangePercent = (percent >= 0 ? '+' : '') + percent.toStringAsFixed(1) + '%';
+    } else {
+      _expenseChangePercent = '+0.0%';
     }
   }
 
@@ -346,16 +370,18 @@ class _DashboardHomeState extends State<DashboardHome> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _loadData,
-                    child: const Text('Tekrar Dene'),
+                    child: Text(l10n.tryAgain),
                   ),
                   const SizedBox(height: 20),
-                  if (_currentUser?.tenantId == null || _currentUser!.tenantId!.isEmpty)
+                  if (_currentUser?.tenantId == null ||
+                      _currentUser!.tenantId!.isEmpty)
                     ElevatedButton(
                       onPressed: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CreateFamilyProfileScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => CreateFamilyProfileScreen()),
                       ),
-                      child: const Text('Aile Profili Oluştur'),
+                      child: Text(l10n.createFamilyProfile),
                     ),
                 ],
               ),
@@ -396,6 +422,7 @@ class _DashboardHomeState extends State<DashboardHome> {
       ThemeProvider themeProvider) {
     // Aile adını formatla
     final familyName = _family?.name ?? 'Aile';
+    final familyDisplay = '$familyName ${l10n.familySuffix}';
 
     return SliverToBoxAdapter(
       child: FadeInDown(
@@ -429,7 +456,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '$familyName Ailesi',
+                        '$familyName ${l10n.familySuffix}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 28,
@@ -447,7 +474,8 @@ class _DashboardHomeState extends State<DashboardHome> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => FamilyProfileEditScreen()),
-                        ).then((_) => _loadData()); // Geri döndüğünde verileri yenile
+                        ).then((_) =>
+                            _loadData()); // Geri döndüğünde verileri yenile
                       }),
                     ],
                   ),
@@ -476,7 +504,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                     ),
                     const Spacer(),
                     Text(
-                      '$_daysLeft gün kaldı',
+                      l10n.daysLeft(_daysLeft),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
@@ -508,15 +536,24 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   Widget _buildBudgetOverview(
       AppLocalizations l10n, ThemeProvider themeProvider) {
+    // Aile adını formatla
+    final familyName = _family?.name;
+    final familyDisplay = '$familyName ${l10n.familySuffix}';
+    final currencySymbol = l10n.currencySymbol ?? '₺';
+
     // Geçen aya göre değişim yüzdesi (örnek - gerçek veri yok)
-    final incomeChangePercent = '+2.0%';
-    final expenseChangePercent = _expenses.isEmpty ? '+0.0%' : '+12.5%';
+    // final incomeChangePercent = '+2.0%';
+    // final expenseChangePercent = _expenses.isEmpty ? '+0.0%' : '+12.5%';
+    final incomeChangePercent = _incomeChangePercent;
+    final expenseChangePercent = _expenseChangePercent;
 
     // Bütçe durumu (Yolunda mı, aşıldı mı?)
     final bool isBudgetOnTrack = _totalExpenses <= _totalIncome;
 
     // Kalan bakiyenin gelire oranı
-    final remainingPercentage = _totalIncome > 0 ? (_remainingBalance / _totalIncome * 100).toStringAsFixed(0) : '0';
+    final remainingPercentage = _totalIncome > 0
+        ? (_remainingBalance / _totalIncome * 100).toStringAsFixed(0)
+        : '0';
 
     return FadeInUp(
       delay: const Duration(milliseconds: 200),
@@ -534,7 +571,7 @@ class _DashboardHomeState extends State<DashboardHome> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Bütçe Durumu',
+                  l10n.budgetOverview,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -546,14 +583,16 @@ class _DashboardHomeState extends State<DashboardHome> {
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: isBudgetOnTrack
-                      ? themeProvider.successColor.withOpacity(0.1)
-                      : themeProvider.errorColor.withOpacity(0.1),
+                        ? themeProvider.successColor.withOpacity(0.1)
+                        : themeProvider.errorColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    isBudgetOnTrack ? 'Yolunda' : 'Bütçe Aşımı',
+                    isBudgetOnTrack ? l10n.onTrack : l10n.budgetOverflow,
                     style: TextStyle(
-                      color: isBudgetOnTrack ? themeProvider.successColor : themeProvider.errorColor,
+                      color: isBudgetOnTrack
+                          ? themeProvider.successColor
+                          : themeProvider.errorColor,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -566,8 +605,8 @@ class _DashboardHomeState extends State<DashboardHome> {
               children: [
                 Expanded(
                   child: _buildBudgetItem(
-                    'Toplam Gelir',
-                    '\$${_totalIncome.toStringAsFixed(0)}',
+                    l10n.totalIncome,
+                    '$currencySymbol${_totalIncome.toStringAsFixed(0)}',
                     Icons.trending_up,
                     themeProvider.successColor,
                     incomeChangePercent,
@@ -577,8 +616,8 @@ class _DashboardHomeState extends State<DashboardHome> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildBudgetItem(
-                    'Toplam Harcama',
-                    '\$${_totalExpenses.toStringAsFixed(0)}',
+                    l10n.totalSpending,
+                    '$currencySymbol${_totalExpenses.toStringAsFixed(0)}',
                     Icons.trending_down,
                     themeProvider.errorColor,
                     expenseChangePercent,
@@ -622,7 +661,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Kalan Bakiye',
+                          l10n.remainingBalance,
                           style: TextStyle(
                             color: themeProvider.secondaryTextColor,
                             fontSize: 14,
@@ -630,7 +669,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '\$${_remainingBalance.toStringAsFixed(0)}',
+                          '$currencySymbol${_remainingBalance.toStringAsFixed(0)}',
                           style: TextStyle(
                             color: _remainingBalance >= 0
                                 ? themeProvider.primaryTextColor
@@ -646,7 +685,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '$remainingPercentage%',
+                        '${remainingPercentage}%',
                         style: TextStyle(
                           color: _remainingBalance >= 0
                               ? themeProvider.successColor
@@ -656,7 +695,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                         ),
                       ),
                       Text(
-                        'of income',
+                        l10n?.ofIncome(remainingPercentage) ?? '',
                         style: TextStyle(
                           color: themeProvider.secondaryTextColor,
                           fontSize: 12,
@@ -732,10 +771,13 @@ class _DashboardHomeState extends State<DashboardHome> {
     // Günlük ortalama harcama
     final now = DateTime.now();
     final daysPassedInMonth = now.day;
-    final averageDaily = daysPassedInMonth > 0 ? (_totalExpenses / daysPassedInMonth) : 0;
+    final averageDaily =
+        daysPassedInMonth > 0 ? (_totalExpenses / daysPassedInMonth) : 0;
 
     // Bütçe kullanım yüzdesi
-    final budgetUsedPercent = _totalIncome > 0 ? ((_totalExpenses / _totalIncome) * 100).toStringAsFixed(0) : '0';
+    final budgetUsedPercent = _totalIncome > 0
+        ? ((_totalExpenses / _totalIncome) * 100).toStringAsFixed(0)
+        : '0';
 
     return FadeInUp(
       delay: const Duration(milliseconds: 300),
@@ -753,7 +795,7 @@ class _DashboardHomeState extends State<DashboardHome> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Aylık İlerleme',
+                  l10n.monthlyProgress,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -761,7 +803,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                   ),
                 ),
                 Text(
-                  '$_daysLeft gün kaldı',
+                  l10n.daysLeft(_daysLeft),
                   style: TextStyle(
                     color: themeProvider.secondaryTextColor,
                     fontSize: 14,
@@ -781,9 +823,20 @@ class _DashboardHomeState extends State<DashboardHome> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildProgressItem('Geçen Günler', '$daysPassedInMonth', themeProvider),
-                _buildProgressItem('Bütçe Kullanımı', '$budgetUsedPercent%', themeProvider),
-                _buildProgressItem('Günlük Ort.', '\$${averageDaily.toStringAsFixed(0)}', themeProvider),
+                Expanded(
+                  child: _buildProgressItem(
+                      l10n.daysPassed, '$daysPassedInMonth', themeProvider),
+                ),
+                Expanded(
+                  child: _buildProgressItem(
+                      l10n.budgetUsed, '$budgetUsedPercent%', themeProvider),
+                ),
+                Expanded(
+                  child: _buildProgressItem(
+                      l10n.dailyAverage,
+                      '${l10n.currencySymbol} ${averageDaily.toStringAsFixed(0)}',
+                      themeProvider),
+                ),
               ],
             ),
           ],
@@ -824,7 +877,7 @@ class _DashboardHomeState extends State<DashboardHome> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Actions',
+            l10n.quickActions,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -836,7 +889,7 @@ class _DashboardHomeState extends State<DashboardHome> {
             children: [
               Expanded(
                 child: _buildActionCard(
-                  'Add Expense',
+                  l10n.addExpenseAction,
                   Icons.add_circle_outline,
                   themeProvider.primaryColor,
                   () => Navigator.push(
@@ -849,7 +902,7 @@ class _DashboardHomeState extends State<DashboardHome> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildActionCard(
-                  'View Analytics',
+                  l10n.viewAnalyticsAction,
                   Icons.analytics_outlined,
                   themeProvider.warningColor,
                   () => Navigator.push(
@@ -863,7 +916,7 @@ class _DashboardHomeState extends State<DashboardHome> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildActionCard(
-                  'All Expenses',
+                  l10n.allExpensesAction,
                   Icons.receipt_long_outlined,
                   themeProvider.successColor,
                   () => Navigator.push(
@@ -912,6 +965,8 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   Widget _buildRecentTransactions(
       AppLocalizations l10n, ThemeProvider themeProvider) {
+    final currencySymbol = l10n.currencySymbol ?? '₺';
+
     return FadeInUp(
       delay: const Duration(milliseconds: 500),
       child: Container(
@@ -928,7 +983,7 @@ class _DashboardHomeState extends State<DashboardHome> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Son İşlemler',
+                  l10n.recentTransactions,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -937,11 +992,11 @@ class _DashboardHomeState extends State<DashboardHome> {
                 ),
                 GestureDetector(
                   onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ExpenseListScreen())
-                  ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ExpenseListScreen())),
                   child: Text(
-                    'Tümünü Gör',
+                    l10n.viewAll,
                     style: TextStyle(
                       color: themeProvider.primaryColor,
                       fontSize: 14,
@@ -952,10 +1007,14 @@ class _DashboardHomeState extends State<DashboardHome> {
               ],
             ),
             const SizedBox(height: 20),
-            ..._recentTransactions
-                .map((transaction) =>
-                    _buildTransactionItem(transaction, themeProvider))
-                .toList(),
+            ..._recentTransactions.map((transaction) {
+              // Tutarı düzenle
+              String formattedAmount = (transaction['amount'] as String)
+                  .replaceAll('\$', currencySymbol);
+              transaction['amount'] = formattedAmount;
+
+              return _buildTransactionItem(transaction, themeProvider);
+            }).toList(),
           ],
         ),
       ),
@@ -1004,6 +1063,7 @@ class _DashboardHomeState extends State<DashboardHome> {
               ],
             ),
           ),
+          const SizedBox(width: 8), // Biraz boşluk ekleyelim
           Text(
             transaction['amount'] as String,
             style: TextStyle(
@@ -1021,8 +1081,10 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Günaydın!';
-    if (hour < 17) return 'İyi Günler!';
-    return 'İyi Akşamlar!';
+    final l10n = AppLocalizations.of(context);
+
+    if (hour < 12) return l10n?.goodMorning ?? "";
+    if (hour < 17) return l10n?.goodAfternoon ?? "";
+    return l10n?.goodEvening ?? "";
   }
 }

@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @signInToContinue.
   ///
   /// In en, this message translates to:
-  /// **'Sign in to continue managing your home'**
+  /// **'Sign in to continue'**
   String get signInToContinue;
 
   /// No description provided for @email.
@@ -161,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @joinUs.
   ///
   /// In en, this message translates to:
-  /// **'Join us and start managing your home efficiently'**
+  /// **'Join us and start managing your financial life'**
   String get joinUs;
 
   /// No description provided for @fullName.
@@ -179,398 +179,14 @@ abstract class AppLocalizations {
   /// No description provided for @agreeToTerms.
   ///
   /// In en, this message translates to:
-  /// **'I agree to the Terms of Service and Privacy Policy'**
+  /// **'I agree to the terms of service and privacy policy'**
   String get agreeToTerms;
 
-  /// No description provided for @resetPassword.
+  /// No description provided for @alreadyHaveAAccount.
   ///
   /// In en, this message translates to:
-  /// **'Reset Password'**
-  String get resetPassword;
-
-  /// No description provided for @forgotYourPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot Your Password?'**
-  String get forgotYourPassword;
-
-  /// No description provided for @resetPasswordMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.'**
-  String get resetPasswordMessage;
-
-  /// No description provided for @sendResetLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Send Reset Link'**
-  String get sendResetLink;
-
-  /// No description provided for @checkYourEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Check Your Email'**
-  String get checkYourEmail;
-
-  /// No description provided for @resetLinkSent.
-  ///
-  /// In en, this message translates to:
-  /// **'We have sent a password reset link to'**
-  String get resetLinkSent;
-
-  /// No description provided for @backToLogin.
-  ///
-  /// In en, this message translates to:
-  /// **'Back to Login'**
-  String get backToLogin;
-
-  /// No description provided for @resendEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Resend Email'**
-  String get resendEmail;
-
-  /// No description provided for @familySetup.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Setup'**
-  String get familySetup;
-
-  /// No description provided for @familySetupMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Set up your family to start managing your home together'**
-  String get familySetupMessage;
-
-  /// No description provided for @createNewFamily.
-  ///
-  /// In en, this message translates to:
-  /// **'Create New Family'**
-  String get createNewFamily;
-
-  /// No description provided for @createNewFamilyDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Start fresh with a new family group'**
-  String get createNewFamilyDesc;
-
-  /// No description provided for @joinExistingFamily.
-  ///
-  /// In en, this message translates to:
-  /// **'Join Existing Family'**
-  String get joinExistingFamily;
-
-  /// No description provided for @joinExistingFamilyDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Join a family group with an invitation code'**
-  String get joinExistingFamilyDesc;
-
-  /// No description provided for @familyName.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Name'**
-  String get familyName;
-
-  /// No description provided for @homeAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Home Address'**
-  String get homeAddress;
-
-  /// No description provided for @invitationCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Invitation Code'**
-  String get invitationCode;
-
-  /// No description provided for @createFamily.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Family'**
-  String get createFamily;
-
-  /// No description provided for @joinFamily.
-  ///
-  /// In en, this message translates to:
-  /// **'Join Family'**
-  String get joinFamily;
-
-  /// No description provided for @inviteMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'You can invite family members later from the dashboard'**
-  String get inviteMessage;
-
-  /// No description provided for @goodMorning.
-  ///
-  /// In en, this message translates to:
-  /// **'Good Morning!'**
-  String get goodMorning;
-
-  /// No description provided for @dashboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Dashboard'**
-  String get dashboard;
-
-  /// No description provided for @tasks.
-  ///
-  /// In en, this message translates to:
-  /// **'Tasks'**
-  String get tasks;
-
-  /// No description provided for @expenses.
-  ///
-  /// In en, this message translates to:
-  /// **'Expenses'**
-  String get expenses;
-
-  /// No description provided for @events.
-  ///
-  /// In en, this message translates to:
-  /// **'Events'**
-  String get events;
-
-  /// No description provided for @quickActions.
-  ///
-  /// In en, this message translates to:
-  /// **'Quick Actions'**
-  String get quickActions;
-
-  /// No description provided for @addExpense.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Expense'**
-  String get addExpense;
-
-  /// No description provided for @viewExpenses.
-  ///
-  /// In en, this message translates to:
-  /// **'View Expenses'**
-  String get viewExpenses;
-
-  /// No description provided for @analytics.
-  ///
-  /// In en, this message translates to:
-  /// **'Analytics'**
-  String get analytics;
-
-  /// No description provided for @addTask.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Task'**
-  String get addTask;
-
-  /// No description provided for @recentActivity.
-  ///
-  /// In en, this message translates to:
-  /// **'Recent Activity'**
-  String get recentActivity;
-
-  /// No description provided for @viewAll.
-  ///
-  /// In en, this message translates to:
-  /// **'View All'**
-  String get viewAll;
-
-  /// No description provided for @totalExpenses.
-  ///
-  /// In en, this message translates to:
-  /// **'Total Expenses'**
-  String get totalExpenses;
-
-  /// No description provided for @transactions.
-  ///
-  /// In en, this message translates to:
-  /// **'transactions'**
-  String get transactions;
-
-  /// No description provided for @expenseName.
-  ///
-  /// In en, this message translates to:
-  /// **'Expense Name'**
-  String get expenseName;
-
-  /// No description provided for @amount.
-  ///
-  /// In en, this message translates to:
-  /// **'Amount'**
-  String get amount;
-
-  /// No description provided for @category.
-  ///
-  /// In en, this message translates to:
-  /// **'Category'**
-  String get category;
-
-  /// No description provided for @receiptOptional.
-  ///
-  /// In en, this message translates to:
-  /// **'Receipt (Optional)'**
-  String get receiptOptional;
-
-  /// No description provided for @takePhotoOrUpload.
-  ///
-  /// In en, this message translates to:
-  /// **'Take Photo or Upload Receipt'**
-  String get takePhotoOrUpload;
-
-  /// No description provided for @tapToAdd.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to add receipt image'**
-  String get tapToAdd;
-
-  /// No description provided for @camera.
-  ///
-  /// In en, this message translates to:
-  /// **'Camera'**
-  String get camera;
-
-  /// No description provided for @gallery.
-  ///
-  /// In en, this message translates to:
-  /// **'Gallery'**
-  String get gallery;
-
-  /// No description provided for @expenseSummary.
-  ///
-  /// In en, this message translates to:
-  /// **'Expense Summary'**
-  String get expenseSummary;
-
-  /// No description provided for @enterExpenseName.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter expense name'**
-  String get enterExpenseName;
-
-  /// No description provided for @save.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get save;
-
-  /// No description provided for @searchExpenses.
-  ///
-  /// In en, this message translates to:
-  /// **'Search expenses...'**
-  String get searchExpenses;
-
-  /// No description provided for @filterOptions.
-  ///
-  /// In en, this message translates to:
-  /// **'Filter Options'**
-  String get filterOptions;
-
-  /// No description provided for @clearAll.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear All'**
-  String get clearAll;
-
-  /// No description provided for @categories.
-  ///
-  /// In en, this message translates to:
-  /// **'Categories'**
-  String get categories;
-
-  /// No description provided for @amountRange.
-  ///
-  /// In en, this message translates to:
-  /// **'Amount Range'**
-  String get amountRange;
-
-  /// No description provided for @expensesFound.
-  ///
-  /// In en, this message translates to:
-  /// **'expenses found'**
-  String get expensesFound;
-
-  /// No description provided for @applyFilters.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply Filters'**
-  String get applyFilters;
-
-  /// No description provided for @filteredTotal.
-  ///
-  /// In en, this message translates to:
-  /// **'Filtered Total'**
-  String get filteredTotal;
-
-  /// No description provided for @noExpensesFound.
-  ///
-  /// In en, this message translates to:
-  /// **'No expenses found'**
-  String get noExpensesFound;
-
-  /// No description provided for @noExpensesMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'No expenses match your filters'**
-  String get noExpensesMatch;
-
-  /// No description provided for @trySearchingElse.
-  ///
-  /// In en, this message translates to:
-  /// **'Try searching for something else'**
-  String get trySearchingElse;
-
-  /// No description provided for @tryAdjustingFilters.
-  ///
-  /// In en, this message translates to:
-  /// **'Try adjusting your filter criteria'**
-  String get tryAdjustingFilters;
-
-  /// No description provided for @searchingFor.
-  ///
-  /// In en, this message translates to:
-  /// **'Searching for'**
-  String get searchingFor;
-
-  /// No description provided for @results.
-  ///
-  /// In en, this message translates to:
-  /// **'results'**
-  String get results;
-
-  /// No description provided for @all.
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get all;
-
-  /// No description provided for @today.
-  ///
-  /// In en, this message translates to:
-  /// **'Today'**
-  String get today;
-
-  /// No description provided for @thisWeek.
-  ///
-  /// In en, this message translates to:
-  /// **'This Week'**
-  String get thisWeek;
-
-  /// No description provided for @thisMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'This Month'**
-  String get thisMonth;
-
-  /// No description provided for @settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
-  String get settings;
-
-  /// No description provided for @language.
-  ///
-  /// In en, this message translates to:
-  /// **'Language'**
-  String get language;
+  /// **'Already have an account? '**
+  String get alreadyHaveAAccount;
 
   /// No description provided for @selectLanguage.
   ///
@@ -578,83 +194,11 @@ abstract class AppLocalizations {
   /// **'Select Language'**
   String get selectLanguage;
 
-  /// No description provided for @turkish.
+  /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
-  /// **'Türkçe'**
-  String get turkish;
-
-  /// No description provided for @english.
-  ///
-  /// In en, this message translates to:
-  /// **'English'**
-  String get english;
-
-  /// No description provided for @general.
-  ///
-  /// In en, this message translates to:
-  /// **'General'**
-  String get general;
-
-  /// No description provided for @about.
-  ///
-  /// In en, this message translates to:
-  /// **'About'**
-  String get about;
-
-  /// No description provided for @version.
-  ///
-  /// In en, this message translates to:
-  /// **'Version'**
-  String get version;
-
-  /// No description provided for @privacyPolicy.
-  ///
-  /// In en, this message translates to:
-  /// **'Privacy Policy'**
-  String get privacyPolicy;
-
-  /// No description provided for @termsOfService.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms of Service'**
-  String get termsOfService;
-
-  /// No description provided for @notifications.
-  ///
-  /// In en, this message translates to:
-  /// **'Notifications'**
-  String get notifications;
-
-  /// No description provided for @pushNotifications.
-  ///
-  /// In en, this message translates to:
-  /// **'Push Notifications'**
-  String get pushNotifications;
-
-  /// No description provided for @emailNotifications.
-  ///
-  /// In en, this message translates to:
-  /// **'Email Notifications'**
-  String get emailNotifications;
-
-  /// No description provided for @darkMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Dark Mode'**
-  String get darkMode;
-
-  /// No description provided for @currency.
-  ///
-  /// In en, this message translates to:
-  /// **'Currency'**
-  String get currency;
-
-  /// No description provided for @changeLanguage.
-  ///
-  /// In en, this message translates to:
-  /// **'Change Language'**
-  String get changeLanguage;
+  /// **'Cancel'**
+  String get cancel;
 
   /// No description provided for @languageChanged.
   ///
@@ -662,137 +206,149 @@ abstract class AppLocalizations {
   /// **'Language changed successfully'**
   String get languageChanged;
 
-  /// No description provided for @restartRequired.
+  /// No description provided for @fillAllFields.
   ///
   /// In en, this message translates to:
-  /// **'Please restart the app to apply changes'**
-  String get restartRequired;
+  /// **'Please fill in all fields'**
+  String get fillAllFields;
 
-  /// No description provided for @cancel.
+  /// No description provided for @passwordsDoNotMatch.
   ///
   /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
 
-  /// No description provided for @totalIncome.
+  /// No description provided for @registrationSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Total Income'**
-  String get totalIncome;
+  /// **'Registration successful'**
+  String get registrationSuccess;
 
-  /// No description provided for @totalSpending.
+  /// No description provided for @registrationFailed.
   ///
   /// In en, this message translates to:
-  /// **'Total Spending'**
-  String get totalSpending;
+  /// **'Registration failed'**
+  String get registrationFailed;
 
-  /// No description provided for @remainingBalance.
+  /// No description provided for @userAlreadyExists.
   ///
   /// In en, this message translates to:
-  /// **'Remaining Balance'**
-  String get remainingBalance;
+  /// **'This email is already in use'**
+  String get userAlreadyExists;
 
-  /// No description provided for @monthlyIncome.
+  /// No description provided for @verifyEmailFirst.
   ///
   /// In en, this message translates to:
-  /// **'Monthly Income'**
-  String get monthlyIncome;
+  /// **'Please verify your email first'**
+  String get verifyEmailFirst;
 
-  /// No description provided for @fixedExpenses.
+  /// No description provided for @error.
   ///
   /// In en, this message translates to:
-  /// **'Fixed Expenses'**
-  String get fixedExpenses;
+  /// **'Error'**
+  String get error;
 
-  /// No description provided for @spendingByCategory.
+  /// No description provided for @errorOccurred.
   ///
   /// In en, this message translates to:
-  /// **'Spending by Category'**
-  String get spendingByCategory;
+  /// **'An error occurred'**
+  String get errorOccurred;
 
-  /// No description provided for @monthlySpendingTrends.
+  /// No description provided for @settings.
   ///
   /// In en, this message translates to:
-  /// **'Monthly Spending Trends'**
-  String get monthlySpendingTrends;
+  /// **'Settings'**
+  String get settings;
 
-  /// No description provided for @addMore.
+  /// No description provided for @dashboard.
   ///
   /// In en, this message translates to:
-  /// **'Add More'**
-  String get addMore;
+  /// **'Dashboard'**
+  String get dashboard;
 
-  /// No description provided for @editProfile.
+  /// No description provided for @expenses.
   ///
   /// In en, this message translates to:
-  /// **'Edit Profile'**
-  String get editProfile;
+  /// **'Expenses'**
+  String get expenses;
 
-  /// No description provided for @reports.
+  /// No description provided for @analytics.
   ///
   /// In en, this message translates to:
-  /// **'Reports'**
-  String get reports;
+  /// **'Analytics'**
+  String get analytics;
 
-  /// No description provided for @profileSummary.
+  /// No description provided for @addExpense.
   ///
   /// In en, this message translates to:
-  /// **'Profile Summary'**
-  String get profileSummary;
+  /// **'Add Expense'**
+  String get addExpense;
 
-  /// No description provided for @updateFamilyInfo.
+  /// No description provided for @save.
   ///
   /// In en, this message translates to:
-  /// **'Update your family financial information'**
-  String get updateFamilyInfo;
+  /// **'Save'**
+  String get save;
 
-  /// No description provided for @saveChanges.
+  /// No description provided for @currencySymbol.
   ///
   /// In en, this message translates to:
-  /// **'Save Changes'**
-  String get saveChanges;
+  /// **'\$'**
+  String get currencySymbol;
 
-  /// No description provided for @cancelChanges.
+  /// No description provided for @category.
   ///
   /// In en, this message translates to:
-  /// **'Cancel Changes'**
-  String get cancelChanges;
+  /// **'Category'**
+  String get category;
 
-  /// No description provided for @addNewFixedExpense.
+  /// No description provided for @amount.
   ///
   /// In en, this message translates to:
-  /// **'Add New Fixed Expense'**
-  String get addNewFixedExpense;
+  /// **'Amount'**
+  String get amount;
 
-  /// No description provided for @welcomeToFamilyFinance.
+  /// No description provided for @date.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Family Finance'**
-  String get welcomeToFamilyFinance;
+  /// **'Date'**
+  String get date;
 
-  /// No description provided for @familyFinanceDesc.
+  /// No description provided for @expenseSaved.
   ///
   /// In en, this message translates to:
-  /// **'Set up your family profile to start tracking your income and expenses together.'**
-  String get familyFinanceDesc;
+  /// **'Expense successfully saved'**
+  String get expenseSaved;
 
-  /// No description provided for @monthlyFamilyIncome.
+  /// No description provided for @pleaseEnterExpenseName.
   ///
   /// In en, this message translates to:
-  /// **'Monthly Family Income'**
-  String get monthlyFamilyIncome;
+  /// **'Please enter an expense name'**
+  String get pleaseEnterExpenseName;
 
-  /// No description provided for @fixedMonthlyExpenses.
+  /// No description provided for @pleaseEnterAmount.
   ///
   /// In en, this message translates to:
-  /// **'Fixed Monthly Expenses'**
-  String get fixedMonthlyExpenses;
+  /// **'Please enter an amount'**
+  String get pleaseEnterAmount;
 
-  /// No description provided for @createFamilyProfile.
+  /// No description provided for @expenseName.
   ///
   /// In en, this message translates to:
-  /// **'Create Family Profile'**
-  String get createFamilyProfile;
+  /// **'Expense Name'**
+  String get expenseName;
+
+  /// No description provided for @lunchRestaurant.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch (Restaurant)'**
+  String get lunchRestaurant;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date'**
+  String get selectDate;
 
   /// No description provided for @foodDining.
   ///
@@ -842,6 +398,42 @@ abstract class AppLocalizations {
   /// **'Other'**
   String get other;
 
+  /// No description provided for @recurringExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring Expense'**
+  String get recurringExpense;
+
+  /// No description provided for @receiptOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt (Optional)'**
+  String get receiptOptional;
+
+  /// No description provided for @takePhotoOrUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo or upload'**
+  String get takePhotoOrUpload;
+
+  /// No description provided for @tapToAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add'**
+  String get tapToAdd;
+
+  /// No description provided for @expenseSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Summary'**
+  String get expenseSummary;
+
+  /// No description provided for @enterExpenseName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter expense name'**
+  String get enterExpenseName;
+
   /// No description provided for @week.
   ///
   /// In en, this message translates to:
@@ -860,335 +452,83 @@ abstract class AppLocalizations {
   /// **'Year'**
   String get year;
 
-  /// No description provided for @spendingTrend.
+  /// No description provided for @camera.
   ///
   /// In en, this message translates to:
-  /// **'Spending Trend'**
-  String get spendingTrend;
+  /// **'Camera'**
+  String get camera;
 
-  /// No description provided for @categoryBreakdown.
+  /// No description provided for @gallery.
   ///
   /// In en, this message translates to:
-  /// **'Category Breakdown'**
-  String get categoryBreakdown;
+  /// **'Gallery'**
+  String get gallery;
 
-  /// No description provided for @monthlyComparison.
+  /// No description provided for @recurringExpenseNote.
   ///
   /// In en, this message translates to:
-  /// **'Monthly Comparison'**
-  String get monthlyComparison;
+  /// **'This expense will automatically repeat at the selected frequency'**
+  String get recurringExpenseNote;
 
-  /// No description provided for @vsLastMonth.
+  /// No description provided for @uploading.
   ///
   /// In en, this message translates to:
-  /// **'vs Last Month'**
-  String get vsLastMonth;
+  /// **'Uploading...'**
+  String get uploading;
 
-  /// No description provided for @averageDaily.
+  /// No description provided for @familySetup.
   ///
   /// In en, this message translates to:
-  /// **'Average Daily'**
-  String get averageDaily;
+  /// **'Family Setup'**
+  String get familySetup;
 
-  /// No description provided for @emailAddress.
+  /// No description provided for @createFamilyProfile.
   ///
   /// In en, this message translates to:
-  /// **'Email Address'**
-  String get emailAddress;
+  /// **'Create Family Profile'**
+  String get createFamilyProfile;
 
-  /// No description provided for @switchThemes.
+  /// No description provided for @welcomeToFamilyFinance.
   ///
   /// In en, this message translates to:
-  /// **'Switch between light and dark themes'**
-  String get switchThemes;
+  /// **'Welcome to Family Finance'**
+  String get welcomeToFamilyFinance;
 
-  /// No description provided for @receivePushNotifications.
+  /// No description provided for @familyFinanceDesc.
   ///
   /// In en, this message translates to:
-  /// **'Receive push notifications'**
-  String get receivePushNotifications;
+  /// **'View, manage, and improve your family\'s financial situation'**
+  String get familyFinanceDesc;
 
-  /// No description provided for @receiveEmailNotifications.
+  /// No description provided for @familyName.
   ///
   /// In en, this message translates to:
-  /// **'Receive email notifications'**
-  String get receiveEmailNotifications;
-
-  /// No description provided for @readPrivacyPolicy.
-  ///
-  /// In en, this message translates to:
-  /// **'Read our privacy policy'**
-  String get readPrivacyPolicy;
-
-  /// No description provided for @readTermsOfService.
-  ///
-  /// In en, this message translates to:
-  /// **'Read our terms of service'**
-  String get readTermsOfService;
-
-  /// No description provided for @lunchRestaurant.
-  ///
-  /// In en, this message translates to:
-  /// **'e.g., Lunch at restaurant'**
-  String get lunchRestaurant;
-
-  /// No description provided for @addedExpense.
-  ///
-  /// In en, this message translates to:
-  /// **'Added expense:'**
-  String get addedExpense;
-
-  /// No description provided for @taskCompleted.
-  ///
-  /// In en, this message translates to:
-  /// **'Task completed:'**
-  String get taskCompleted;
-
-  /// No description provided for @newExpense.
-  ///
-  /// In en, this message translates to:
-  /// **'New expense:'**
-  String get newExpense;
+  /// **'Family Name'**
+  String get familyName;
 
   /// No description provided for @theFamilyName.
   ///
   /// In en, this message translates to:
-  /// **'The Smith Family'**
+  /// **'Enter your family name'**
   String get theFamilyName;
 
-  /// No description provided for @membersTasksActive.
+  /// No description provided for @monthlyFamilyIncome.
   ///
   /// In en, this message translates to:
-  /// **'4 members • 12 tasks active'**
-  String get membersTasksActive;
+  /// **'Monthly Family Income'**
+  String get monthlyFamilyIncome;
 
-  /// No description provided for @daysLeft.
+  /// No description provided for @fixedMonthlyExpenses.
   ///
   /// In en, this message translates to:
-  /// **'15 days left'**
-  String get daysLeft;
+  /// **'Fixed Monthly Expenses'**
+  String get fixedMonthlyExpenses;
 
-  /// No description provided for @percentRemaining.
+  /// No description provided for @addMore.
   ///
   /// In en, this message translates to:
-  /// **'60% of monthly income remaining'**
-  String get percentRemaining;
-
-  /// No description provided for @family.
-  ///
-  /// In en, this message translates to:
-  /// **'Family'**
-  String get family;
-
-  /// No description provided for @totalSpendingText.
-  ///
-  /// In en, this message translates to:
-  /// **'Total Spending'**
-  String get totalSpendingText;
-
-  /// No description provided for @editFamilyProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Family Profile'**
-  String get editFamilyProfile;
-
-  /// No description provided for @addFamilyMember.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Family Member'**
-  String get addFamilyMember;
-
-  /// No description provided for @aprilMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'April'**
-  String get aprilMonth;
-
-  /// No description provided for @augustMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'August'**
-  String get augustMonth;
-
-  /// No description provided for @decemberMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'December'**
-  String get decemberMonth;
-
-  /// No description provided for @editFamilyMemberProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Family Member Profile'**
-  String get editFamilyMemberProfile;
-
-  /// No description provided for @entertainmentExpenses.
-  ///
-  /// In en, this message translates to:
-  /// **'Entertainment Expenses'**
-  String get entertainmentExpenses;
-
-  /// No description provided for @familyMemberAdded.
-  ///
-  /// In en, this message translates to:
-  /// **'Family member added'**
-  String get familyMemberAdded;
-
-  /// No description provided for @familyMemberEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Member Email'**
-  String get familyMemberEmail;
-
-  /// No description provided for @familyMemberName.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Member Name'**
-  String get familyMemberName;
-
-  /// No description provided for @familyMemberPhone.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Member Phone'**
-  String get familyMemberPhone;
-
-  /// No description provided for @familyMemberProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Member Profile'**
-  String get familyMemberProfile;
-
-  /// No description provided for @familyMemberProfileDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'View and edit the profile of your family member.'**
-  String get familyMemberProfileDesc;
-
-  /// No description provided for @familyMemberProfileUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'Family member profile updated'**
-  String get familyMemberProfileUpdated;
-
-  /// No description provided for @familyMemberProfileUpdatedDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'The family member\'s profile has been updated successfully.'**
-  String get familyMemberProfileUpdatedDesc;
-
-  /// No description provided for @familyMemberRemoved.
-  ///
-  /// In en, this message translates to:
-  /// **'Family member removed'**
-  String get familyMemberRemoved;
-
-  /// No description provided for @familyMemberRole.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Member Role'**
-  String get familyMemberRole;
-
-  /// No description provided for @familyMemberUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'Family member updated'**
-  String get familyMemberUpdated;
-
-  /// No description provided for @familyMembers.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Members'**
-  String get familyMembers;
-
-  /// No description provided for @familyProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Profile'**
-  String get familyProfile;
-
-  /// No description provided for @familyProfileDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage your family\'s information and members.'**
-  String get familyProfileDesc;
-
-  /// No description provided for @februaryMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'February'**
-  String get februaryMonth;
-
-  /// No description provided for @goodMorningFamily.
-  ///
-  /// In en, this message translates to:
-  /// **'Good Morning, Family!'**
-  String get goodMorningFamily;
-
-  /// No description provided for @groceries.
-  ///
-  /// In en, this message translates to:
-  /// **'Groceries'**
-  String get groceries;
-
-  /// No description provided for @insurance.
-  ///
-  /// In en, this message translates to:
-  /// **'Insurance'**
-  String get insurance;
-
-  /// No description provided for @internet.
-  ///
-  /// In en, this message translates to:
-  /// **'Internet'**
-  String get internet;
-
-  /// No description provided for @januaryMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'January'**
-  String get januaryMonth;
-
-  /// No description provided for @julyMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'July'**
-  String get julyMonth;
-
-  /// No description provided for @juneMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'June'**
-  String get juneMonth;
-
-  /// No description provided for @marchMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'March'**
-  String get marchMonth;
-
-  /// No description provided for @mayMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'May'**
-  String get mayMonth;
-
-  /// No description provided for @novemberMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'November'**
-  String get novemberMonth;
-
-  /// No description provided for @octoberMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'October'**
-  String get octoberMonth;
-
-  /// No description provided for @remainingBalanceAmount.
-  ///
-  /// In en, this message translates to:
-  /// **'Remaining Balance Amount'**
-  String get remainingBalanceAmount;
+  /// **'Add More'**
+  String get addMore;
 
   /// No description provided for @rent.
   ///
@@ -1196,65 +536,401 @@ abstract class AppLocalizations {
   /// **'Rent'**
   String get rent;
 
-  /// No description provided for @septemberMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'September'**
-  String get septemberMonth;
-
-  /// No description provided for @totalExpensesAmount.
-  ///
-  /// In en, this message translates to:
-  /// **'Total Expenses Amount'**
-  String get totalExpensesAmount;
-
-  /// No description provided for @totalIncomeAmount.
-  ///
-  /// In en, this message translates to:
-  /// **'Total Income Amount'**
-  String get totalIncomeAmount;
-
-  /// No description provided for @transportationExpenses.
-  ///
-  /// In en, this message translates to:
-  /// **'Transportation Expenses'**
-  String get transportationExpenses;
-
   /// No description provided for @utilities.
   ///
   /// In en, this message translates to:
   /// **'Utilities'**
   String get utilities;
 
-  /// No description provided for @alreadyHaveAAccount.
+  /// No description provided for @internet.
   ///
   /// In en, this message translates to:
-  /// **'Already have an account? '**
-  String get alreadyHaveAAccount;
+  /// **'Internet'**
+  String get internet;
 
-  /// No description provided for @usd.
+  /// No description provided for @insurance.
   ///
   /// In en, this message translates to:
-  /// **'US Dollar (\$)'**
-  String get usd;
+  /// **'Insurance'**
+  String get insurance;
 
-  /// No description provided for @tr.
+  /// No description provided for @delete.
   ///
   /// In en, this message translates to:
-  /// **'Turkish Lira (₺)'**
-  String get tr;
+  /// **'Delete'**
+  String get delete;
 
-  /// No description provided for @selectCurrency.
+  /// No description provided for @createNewFamily.
   ///
   /// In en, this message translates to:
-  /// **'Select Currency'**
-  String get selectCurrency;
+  /// **'Create New Family'**
+  String get createNewFamily;
 
-  /// No description provided for @currencyChanged.
+  /// No description provided for @createNewFamilyDesc.
   ///
   /// In en, this message translates to:
-  /// **'Currency changed successfully'**
-  String get currencyChanged;
+  /// **'Create a new family profile to manage your family finances'**
+  String get createNewFamilyDesc;
+
+  /// No description provided for @joinExistingFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Existing Family'**
+  String get joinExistingFamily;
+
+  /// No description provided for @joinExistingFamilyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Join an existing family using a family code'**
+  String get joinExistingFamilyDesc;
+
+  /// No description provided for @invitationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation Code'**
+  String get invitationCode;
+
+  /// No description provided for @joinFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Family'**
+  String get joinFamily;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
+  /// No description provided for @forgotYourPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Your Password?'**
+  String get forgotYourPassword;
+
+  /// No description provided for @resetPasswordMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address to reset your password. We\'ll send you an email with instructions to reset your password.'**
+  String get resetPasswordMessage;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Link'**
+  String get sendResetLink;
+
+  /// No description provided for @checkYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Your Email'**
+  String get checkYourEmail;
+
+  /// No description provided for @resetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link has been sent to:'**
+  String get resetLinkSent;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get backToLogin;
+
+  /// No description provided for @resendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Email'**
+  String get resendEmail;
+
+  /// No description provided for @editFamilyProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Family Profile'**
+  String get editFamilyProfile;
+
+  /// No description provided for @profileSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Summary'**
+  String get profileSummary;
+
+  /// No description provided for @updateFamilyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your family information'**
+  String get updateFamilyInfo;
+
+  /// No description provided for @monthlyIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Income'**
+  String get monthlyIncome;
+
+  /// No description provided for @fixedExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed Expenses'**
+  String get fixedExpenses;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @cancelChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Changes'**
+  String get cancelChanges;
+
+  /// No description provided for @familyProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Profile'**
+  String get familyProfile;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @familyCodeShareMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello! Join me on {appName} with this family code:\n\n{familyCode}'**
+  String familyCodeShareMessage(String appName, String familyCode);
+
+  /// No description provided for @searchExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Expenses'**
+  String get searchExpenses;
+
+  /// No description provided for @searchingFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching for:'**
+  String get searchingFor;
+
+  /// No description provided for @results.
+  ///
+  /// In en, this message translates to:
+  /// **'results'**
+  String get results;
+
+  /// No description provided for @filterOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Options'**
+  String get filterOptions;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get clearAll;
+
+  /// No description provided for @categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categories;
+
+  /// No description provided for @amountRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount Range'**
+  String get amountRange;
+
+  /// No description provided for @expensesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'expenses found'**
+  String get expensesFound;
+
+  /// No description provided for @applyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get applyFilters;
+
+  /// No description provided for @filteredTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Filtered Total'**
+  String get filteredTotal;
+
+  /// No description provided for @totalExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Expenses'**
+  String get totalExpenses;
+
+  /// No description provided for @transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'transactions'**
+  String get transactions;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get thisWeek;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @deleteExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Expense'**
+  String get deleteExpense;
+
+  /// No description provided for @deleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this expense? This action cannot be undone.'**
+  String get deleteConfirmation;
+
+  /// No description provided for @deleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting...'**
+  String get deleting;
+
+  /// No description provided for @removed.
+  ///
+  /// In en, this message translates to:
+  /// **'removed'**
+  String get removed;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @noExpensesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Expenses Found'**
+  String get noExpensesFound;
+
+  /// No description provided for @trySearchingElse.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term or clear filters'**
+  String get trySearchingElse;
+
+  /// No description provided for @noExpensesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No Expenses Yet'**
+  String get noExpensesYet;
+
+  /// No description provided for @addYourFirstExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Click the plus button to add your first expense'**
+  String get addYourFirstExpense;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// No description provided for @totalSpendingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Spending'**
+  String get totalSpendingText;
+
+  /// No description provided for @vsLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'vs Last Week'**
+  String get vsLastWeek;
+
+  /// No description provided for @vsLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'vs Last Month'**
+  String get vsLastMonth;
+
+  /// No description provided for @vsLastYear.
+  ///
+  /// In en, this message translates to:
+  /// **'vs Last Year'**
+  String get vsLastYear;
+
+  /// No description provided for @vsPreviousPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'vs Previous Period'**
+  String get vsPreviousPeriod;
+
+  /// No description provided for @averageDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Average'**
+  String get averageDaily;
+
+  /// No description provided for @monthlyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Budget'**
+  String get monthlyBudget;
+
+  /// No description provided for @remaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remaining;
+
+  /// No description provided for @budgetExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Exceeded'**
+  String get budgetExceeded;
+
+  /// No description provided for @spendingTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending Trend'**
+  String get spendingTrend;
 
   /// No description provided for @incomeVsExpenses.
   ///
@@ -1268,53 +944,17 @@ abstract class AppLocalizations {
   /// **'Savings Goals'**
   String get savingsGoals;
 
-  /// No description provided for @remaining.
+  /// No description provided for @categoryBreakdown.
   ///
   /// In en, this message translates to:
-  /// **'Remaining'**
-  String get remaining;
+  /// **'Category Breakdown'**
+  String get categoryBreakdown;
 
-  /// No description provided for @monthlyBudget.
+  /// No description provided for @monthlyComparison.
   ///
   /// In en, this message translates to:
-  /// **'Monthly Budget'**
-  String get monthlyBudget;
-
-  /// No description provided for @goal.
-  ///
-  /// In en, this message translates to:
-  /// **'Goal'**
-  String get goal;
-
-  /// No description provided for @groceryShopping.
-  ///
-  /// In en, this message translates to:
-  /// **'Grocery Shopping'**
-  String get groceryShopping;
-
-  /// No description provided for @yesterday.
-  ///
-  /// In en, this message translates to:
-  /// **'Yesterday'**
-  String get yesterday;
-
-  /// No description provided for @salaryDeposit.
-  ///
-  /// In en, this message translates to:
-  /// **'Salary Deposit'**
-  String get salaryDeposit;
-
-  /// No description provided for @daysAgo.
-  ///
-  /// In en, this message translates to:
-  /// **'{days} days ago'**
-  String daysAgo(Object days);
-
-  /// No description provided for @electricityBill.
-  ///
-  /// In en, this message translates to:
-  /// **'Electricity Bill'**
-  String get electricityBill;
+  /// **'Monthly Comparison'**
+  String get monthlyComparison;
 
   /// No description provided for @recentTransactions.
   ///
@@ -1322,191 +962,377 @@ abstract class AppLocalizations {
   /// **'Recent Transactions'**
   String get recentTransactions;
 
-  /// No description provided for @dateRangeSelected.
+  /// No description provided for @goal.
   ///
   /// In en, this message translates to:
-  /// **'Date Range Selected'**
-  String get dateRangeSelected;
+  /// **'Goal'**
+  String get goal;
 
-  /// No description provided for @removed.
+  /// No description provided for @yesterday.
   ///
   /// In en, this message translates to:
-  /// **'Removed'**
-  String get removed;
+  /// **'Yesterday'**
+  String get yesterday;
 
-  /// No description provided for @remove.
+  /// No description provided for @daysAgo.
   ///
   /// In en, this message translates to:
-  /// **'Remove'**
-  String get remove;
+  /// **'days ago'**
+  String daysAgo(Object days);
 
-  /// No description provided for @delete.
+  /// No description provided for @budget.
   ///
   /// In en, this message translates to:
-  /// **'Delete'**
-  String get delete;
+  /// **'Budget'**
+  String get budget;
 
-  /// No description provided for @undo.
+  /// No description provided for @budgetOverview.
   ///
   /// In en, this message translates to:
-  /// **'Undo'**
-  String get undo;
+  /// **'Budget Overview'**
+  String get budgetOverview;
 
-  /// No description provided for @noExpensesYet.
+  /// No description provided for @spent.
   ///
   /// In en, this message translates to:
-  /// **'No expenses yet'**
-  String get noExpensesYet;
+  /// **'Spent'**
+  String get spent;
 
-  /// No description provided for @addYourFirstExpense.
+  /// No description provided for @spentSoFar.
   ///
   /// In en, this message translates to:
-  /// **'Add your first expense'**
-  String get addYourFirstExpense;
+  /// **'Spent So Far'**
+  String get spentSoFar;
 
-  /// No description provided for @recurringExpenseNote.
+  /// No description provided for @allocatedBudget.
   ///
   /// In en, this message translates to:
-  /// **'This is a recurring expense'**
-  String get recurringExpenseNote;
+  /// **'Allocated Budget'**
+  String get allocatedBudget;
 
-  /// No description provided for @recurringExpense.
+  /// No description provided for @overBudget.
   ///
   /// In en, this message translates to:
-  /// **'Recurring Expense'**
-  String get recurringExpense;
+  /// **'Over Budget'**
+  String get overBudget;
 
-  /// No description provided for @pleaseEnterAmount.
+  /// No description provided for @adjust.
   ///
   /// In en, this message translates to:
-  /// **'Please enter an amount'**
-  String get pleaseEnterAmount;
+  /// **'Adjust'**
+  String get adjust;
 
-  /// No description provided for @selectDate.
+  /// No description provided for @edit.
   ///
   /// In en, this message translates to:
-  /// **'Select Date'**
-  String get selectDate;
+  /// **'Edit'**
+  String get edit;
 
-  /// No description provided for @pleaseEnterExpenseName.
+  /// No description provided for @monthlyBudgetOverview.
   ///
   /// In en, this message translates to:
-  /// **'Please enter an expense name'**
-  String get pleaseEnterExpenseName;
+  /// **'Monthly Budget Overview'**
+  String get monthlyBudgetOverview;
 
-  /// No description provided for @expenseSaved.
+  /// No description provided for @uncategorized.
   ///
   /// In en, this message translates to:
-  /// **'Expense saved'**
-  String get expenseSaved;
+  /// **'Uncategorized'**
+  String get uncategorized;
 
-  /// No description provided for @loginFailed.
+  /// No description provided for @amountPaid.
   ///
   /// In en, this message translates to:
-  /// **'Login failed. Please check your credentials.'**
-  String get loginFailed;
+  /// **'Amount Paid'**
+  String get amountPaid;
 
-  /// No description provided for @invalidEmailOrPassword.
+  /// No description provided for @receiptDetails.
   ///
   /// In en, this message translates to:
-  /// **'Invalid email or password'**
-  String get invalidEmailOrPassword;
+  /// **'Receipt Details'**
+  String get receiptDetails;
 
-  /// No description provided for @fillAllFields.
+  /// No description provided for @subtotal.
   ///
   /// In en, this message translates to:
-  /// **'Please fill all fields'**
-  String get fillAllFields;
+  /// **'Subtotal'**
+  String get subtotal;
+
+  /// No description provided for @tax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax'**
+  String get tax;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @familyCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Family code copied to clipboard!'**
+  String get familyCodeCopied;
+
+  /// No description provided for @familyCodeNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No family code found to share!'**
+  String get familyCodeNotFound;
+
+  /// No description provided for @familyProfileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Family profile updated'**
+  String get familyProfileUpdated;
+
+  /// No description provided for @updateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Update error: {error}'**
+  String updateError(String error);
+
+  /// No description provided for @familyDataError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load family data: {error}'**
+  String familyDataError(String error);
+
+  /// No description provided for @tenantIdNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Tenant ID not found'**
+  String get tenantIdNotFound;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning!'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon!'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening!'**
+  String get goodEvening;
+
+  /// No description provided for @familySuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get familySuffix;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left'**
+  String daysLeft(Object days);
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// No description provided for @addExpenseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense'**
+  String get addExpenseAction;
+
+  /// No description provided for @viewAnalyticsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View Analytics'**
+  String get viewAnalyticsAction;
+
+  /// No description provided for @allExpensesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'All Expenses'**
+  String get allExpensesAction;
+
+  /// No description provided for @imageUploadedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Image uploaded successfully.'**
+  String get imageUploadedSuccess;
+
+  /// No description provided for @uploadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Image upload failed'**
+  String get uploadError;
+
+  /// No description provided for @uploadErrorWithMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image upload failed: {error}'**
+  String uploadErrorWithMessage(String error);
+
+  /// No description provided for @imageUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Uploading...'**
+  String get imageUploading;
+
+  /// No description provided for @noFamilyFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No family information found'**
+  String get noFamilyFound;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @createFamilyProfileAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Family Profile'**
+  String get createFamilyProfileAction;
+
+  /// No description provided for @sharingFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied for sharing'**
+  String get sharingFor;
+
+  /// No description provided for @invalidInvitationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid invitation code'**
+  String get invalidInvitationCode;
+
+  /// No description provided for @ofIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'of Income'**
+  String ofIncome(Object percentage);
 
   /// No description provided for @firebaseAuthError.
   ///
   /// In en, this message translates to:
-  /// **'Firebase Authentication error: '**
-  String get firebaseAuthError;
+  /// **'Firebase authentication error: {error}'**
+  String firebaseAuthError(Object error);
 
-  /// No description provided for @networkError.
+  /// No description provided for @noRecentTransactions.
   ///
   /// In en, this message translates to:
-  /// **'Network error: Please check your internet connection.'**
-  String get networkError;
+  /// **'No recent transactions found'**
+  String get noRecentTransactions;
 
-  /// No description provided for @firebaseConnectionError.
+  /// No description provided for @general.
   ///
   /// In en, this message translates to:
-  /// **'Firebase connection error: '**
-  String get firebaseConnectionError;
+  /// **'General'**
+  String get general;
 
-  /// No description provided for @unknownError.
+  /// No description provided for @darkMode.
   ///
   /// In en, this message translates to:
-  /// **'Unknown error: '**
-  String get unknownError;
+  /// **'Dark Mode'**
+  String get darkMode;
 
-  /// No description provided for @userNotLoggedIn.
+  /// No description provided for @switchThemes.
   ///
   /// In en, this message translates to:
-  /// **'User is not logged in.'**
-  String get userNotLoggedIn;
+  /// **'Switch Themes'**
+  String get switchThemes;
 
-  /// No description provided for @profileUpdateError.
+  /// No description provided for @currency.
   ///
   /// In en, this message translates to:
-  /// **'Error updating profile: '**
-  String get profileUpdateError;
+  /// **'Currency'**
+  String get currency;
 
-  /// No description provided for @emailAlreadyVerified.
+  /// No description provided for @selectCurrency.
   ///
   /// In en, this message translates to:
-  /// **'User is not logged in or email is already verified.'**
-  String get emailAlreadyVerified;
+  /// **'Select Currency'**
+  String get selectCurrency;
 
-  /// No description provided for @emailVerificationError.
+  /// No description provided for @language.
   ///
   /// In en, this message translates to:
-  /// **'Error sending email verification: '**
-  String get emailVerificationError;
+  /// **'Language'**
+  String get language;
 
-  /// No description provided for @userInfoError.
+  /// No description provided for @notifications.
   ///
   /// In en, this message translates to:
-  /// **'Error getting user information: '**
-  String get userInfoError;
+  /// **'Notifications'**
+  String get notifications;
 
-  /// No description provided for @logoutError.
+  /// No description provided for @pushNotifications.
   ///
   /// In en, this message translates to:
-  /// **'Error during logout: '**
-  String get logoutError;
+  /// **'Push Notifications'**
+  String get pushNotifications;
 
-  /// No description provided for @passwordRequired.
+  /// No description provided for @receivePushNotifications.
   ///
   /// In en, this message translates to:
-  /// **'Please enter your password'**
-  String get passwordRequired;
+  /// **'Receive Push Notifications'**
+  String get receivePushNotifications;
 
-  /// No description provided for @passwordsDoNotMatch.
+  /// No description provided for @emailNotifications.
   ///
   /// In en, this message translates to:
-  /// **'Passwords do not match'**
-  String get passwordsDoNotMatch;
+  /// **'Email Notifications'**
+  String get emailNotifications;
 
-  /// No description provided for @registrationFailed.
+  /// No description provided for @receiveEmailNotifications.
   ///
   /// In en, this message translates to:
-  /// **'Registration failed. Please try again.'**
-  String get registrationFailed;
+  /// **'Receive Email Notifications'**
+  String get receiveEmailNotifications;
 
-  /// No description provided for @registrationSuccess.
+  /// No description provided for @about.
   ///
   /// In en, this message translates to:
-  /// **'Registration successful! You can now login.'**
-  String get registrationSuccess;
+  /// **'About'**
+  String get about;
 
-  /// No description provided for @verifyEmailFirst.
+  /// No description provided for @version.
   ///
   /// In en, this message translates to:
-  /// **'Please verify your email address first.'**
-  String get verifyEmailFirst;
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @readPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Read our Privacy Policy'**
+  String get readPrivacyPolicy;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @readTermsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Read our Terms of Service'**
+  String get readTermsOfService;
 
   /// No description provided for @account.
   ///
@@ -1523,8 +1349,26 @@ abstract class AppLocalizations {
   /// No description provided for @logoutDescription.
   ///
   /// In en, this message translates to:
-  /// **'Sign out from your account'**
+  /// **'Are you sure you want to log out? You will need to sign in again to access your account.'**
   String get logoutDescription;
+
+  /// No description provided for @usd.
+  ///
+  /// In en, this message translates to:
+  /// **'\$'**
+  String get usd;
+
+  /// No description provided for @tr.
+  ///
+  /// In en, this message translates to:
+  /// **'₺'**
+  String get tr;
+
+  /// No description provided for @currencyChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency changed successfully'**
+  String get currencyChanged;
 
   /// No description provided for @logoutConfirmation.
   ///
@@ -1535,92 +1379,68 @@ abstract class AppLocalizations {
   /// No description provided for @logoutMessage.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to logout from your account?'**
+  /// **'Are you sure you want to log out? You will need to sign in again to access your account.'**
   String get logoutMessage;
 
-  /// No description provided for @logoutSuccess.
+  /// No description provided for @remainingBalance.
   ///
   /// In en, this message translates to:
-  /// **'You have been logged out successfully'**
-  String get logoutSuccess;
+  /// **'Remaining Balance'**
+  String get remainingBalance;
 
-  /// No description provided for @userAlreadyExists.
+  /// No description provided for @totalSpending.
   ///
   /// In en, this message translates to:
-  /// **'User already exists with this email address.'**
-  String get userAlreadyExists;
+  /// **'Total Spending'**
+  String get totalSpending;
 
-  /// No description provided for @error.
+  /// No description provided for @totalIncome.
   ///
   /// In en, this message translates to:
-  /// **'Error'**
-  String get error;
+  /// **'Total Income'**
+  String get totalIncome;
 
-  /// No description provided for @currencySymbol.
+  /// No description provided for @onTrack.
   ///
   /// In en, this message translates to:
-  /// **'\$'**
-  String get currencySymbol;
+  /// **'On Track'**
+  String get onTrack;
 
-  /// No description provided for @noRecentTransactions.
+  /// No description provided for @budgetOverflow.
   ///
   /// In en, this message translates to:
-  /// **'No recent transactions'**
-  String get noRecentTransactions;
+  /// **'Budget Overflow'**
+  String get budgetOverflow;
 
-  /// No description provided for @budgetExceeded.
+  /// No description provided for @goodDay.
   ///
   /// In en, this message translates to:
-  /// **'Budget exceeded'**
-  String get budgetExceeded;
+  /// **'Good Day'**
+  String get goodDay;
 
-  /// No description provided for @vsPreviousPeriod.
+  /// No description provided for @monthlyProgress.
   ///
   /// In en, this message translates to:
-  /// **'vs Previous Period'**
-  String get vsPreviousPeriod;
+  /// **'Monthly Progress'**
+  String get monthlyProgress;
 
-  /// No description provided for @vsLastWeek.
+  /// No description provided for @daysPassed.
   ///
   /// In en, this message translates to:
-  /// **'vs Last Week'**
-  String get vsLastWeek;
+  /// **'Days Passed'**
+  String get daysPassed;
 
-  /// No description provided for @vsLastYear.
+  /// No description provided for @budgetUsed.
   ///
   /// In en, this message translates to:
-  /// **'vs Last Year'**
-  String get vsLastYear;
+  /// **'Budget Used'**
+  String get budgetUsed;
 
-  /// No description provided for @uploading.
+  /// No description provided for @dailyAverage.
   ///
   /// In en, this message translates to:
-  /// **'Uploading...'**
-  String get uploading;
-
-  /// No description provided for @deleteExpense.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete Expense'**
-  String get deleteExpense;
-
-  /// No description provided for @deleteConfirmation.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to delete this expense?'**
-  String get deleteConfirmation;
-
-  /// No description provided for @errorOccurred.
-  ///
-  /// In en, this message translates to:
-  /// **'An error occurred'**
-  String get errorOccurred;
-
-  /// No description provided for @deleting.
-  ///
-  /// In en, this message translates to:
-  /// **'Deleting...'**
-  String get deleting;
+  /// **'Daily Avg.'**
+  String get dailyAverage;
 }
 
 class _AppLocalizationsDelegate

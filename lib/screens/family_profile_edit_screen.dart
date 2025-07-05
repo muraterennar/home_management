@@ -7,6 +7,8 @@ import 'package:home_management/services/family_service.dart';
 import 'package:home_management/services/user_service.dart';
 import 'package:home_management/models/family/family_dto.dart';
 import 'package:home_management/models/family/update_family_dto.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';  // Paylaşım için import eklendi
 
 class FamilyProfileEditScreen extends StatefulWidget {
   @override
@@ -21,34 +23,10 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
   final _familyNameController = TextEditingController();
   final _monthlyIncomeController = TextEditingController();
 
-  List<Map<String, dynamic>> _fixedExpenses = [
-    {
-      'name': 'Rent',
-      'controller': TextEditingController(),
-      'icon': Icons.home,
-      'isDefault': true
-    },
-    {
-      'name': 'Utilities',
-      'controller': TextEditingController(),
-      'icon': Icons.flash_on,
-      'isDefault': true
-    },
-    {
-      'name': 'Internet',
-      'controller': TextEditingController(),
-      'icon': Icons.wifi,
-      'isDefault': true
-    },
-    {
-      'name': 'Insurance',
-      'controller': TextEditingController(),
-      'icon': Icons.security,
-      'isDefault': true
-    },
-  ];
+  List<Map<String, dynamic>> _fixedExpenses = [];
 
   String? _tenantId;
+  String? _familyCode; // FamilyCode için değişken ekledim
   bool _loading = true;
 
   int _summaryIncome = 0;
@@ -67,13 +45,14 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
     try {
       _tenantId = await _userService.getTenantId();
       if (_tenantId == null || _tenantId!.isEmpty) {
-        throw Exception("TenantId bulunamadı");
+        throw Exception(AppLocalizations.of(context)?.tenantIdNotFound ?? "TenantId bulunamadı");
       }
 
       final family = await _familyService.getFamilyByTenantId(_tenantId!);
 
       _familyNameController.text = family.name;
       _monthlyIncomeController.text = family.familyIncome.toString();
+      _familyCode = family.familyCode; // Family code'u yükleme
 
       // Harcamaları doldur
       _fixedExpenses = [];
@@ -113,12 +92,41 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
     } catch (e) {
       // Hata yönetimi
       debugPrint("Family data yüklenirken hata: $e");
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Aile bilgisi yüklenemedi: $e")));
+          SnackBar(content: Text(l10n?.familyDataError(e.toString()) ?? "Aile bilgisi yüklenemedi: $e")));
     }
     setState(() {
       _loading = false;
     });
+  }
+
+  // Family Code'u kopyalama işlevi
+  void _copyFamilyCode() {
+    final l10n = AppLocalizations.of(context)!;
+    if (_familyCode != null && _familyCode!.isNotEmpty) {
+      Clipboard.setData(ClipboardData(text: _familyCode!));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.familyCodeCopied)),
+      );
+    }
+  }
+
+  // Family Code'u paylaşma işlevi
+  void _shareFamilyCode() async {
+    final l10n = AppLocalizations.of(context)!;
+    if (_familyCode != null && _familyCode!.isNotEmpty) {
+      final String appName = "Ev Yönetimi"; // Uygulama adı
+
+      // Çevirisi yapılmış mesaj kullan
+      final String shareText = l10n.familyCodeShareMessage(appName, _familyCode!);
+
+      await Share.share(shareText, subject: l10n.familyProfile);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.familyCodeNotFound)),
+      );
+    }
   }
 
   void _addExpense() {
@@ -157,6 +165,7 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
   }
 
   Future<void> _saveFamily() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_tenantId == null) return;
     final name = _familyNameController.text.trim();
     final income = int.tryParse(_monthlyIncomeController.text.trim()) ?? 0;
@@ -179,12 +188,12 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
     try {
       await _familyService.updateFamily(updateDto);
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Aile profili güncellendi")));
+          SnackBar(content: Text(l10n.familyProfileUpdated)));
       Navigator.pop(context);
     } catch (e) {
       debugPrint("Aile profili güncellenirken hata: $e");
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Güncelleme hatası: $e")));
+          .showSnackBar(SnackBar(content: Text(l10n.updateError(e.toString()))));
     }
   }
 
@@ -315,6 +324,72 @@ class _FamilyProfileEditScreenState extends State<FamilyProfileEditScreen> {
               ),
             ],
           ),
+          // Family Code Bölümü
+          if (_familyCode != null && _familyCode!.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              decoration: BoxDecoration(
+                color: themeProvider.surfaceColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: themeProvider.dividerColor),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.key,
+                    size: 18,
+                    color: themeProvider.secondaryTextColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.invitationCode, // "Aile Kodu" yerine l10n kullanıldı
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: themeProvider.secondaryTextColor,
+                          ),
+                        ),
+                        Text(
+                          _familyCode!,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: themeProvider.primaryTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _copyFamilyCode,
+                    icon: Icon(
+                      Icons.copy,
+                      color: themeProvider.primaryColor,
+                    ),
+                    tooltip: l10n.copy ?? "Kodu Kopyala", // l10n eklenebilir
+                    constraints: const BoxConstraints(),
+                    padding: const EdgeInsets.all(8),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  IconButton(
+                    onPressed: _shareFamilyCode,
+                    icon: Icon(
+                      Icons.share,
+                      color: themeProvider.primaryColor,
+                    ),
+                    tooltip: l10n.share ?? "Paylaş", // l10n eklenebilir
+                    constraints: const BoxConstraints(),
+                    padding: const EdgeInsets.all(8),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 20),
           Row(
             children: [
