@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
+import '../models/espenses/expense_category.dart';
 import '../providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
 import 'settings_screen.dart';
@@ -158,17 +159,38 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
 
   void _calculateCategoryTotals() {
     _categoryTotals = {};
+    final l10n = AppLocalizations.of(context)!;
 
     // Seçili döneme göre (hafta, ay, yıl) filtrele
     List<ExpenseDto> filteredExpenses = _filterExpensesByPeriod(_expenses);
 
     // Kategori bazlı toplam hesapla
     for (var expense in filteredExpenses) {
-      final category = expense.category;
-      if (_categoryTotals.containsKey(category)) {
-        _categoryTotals[category] = (_categoryTotals[category] ?? 0) + expense.amount;
+      String categoryName;
+      switch (expense.category) {
+        case ExpenseCategory.foodDining:
+          categoryName = l10n.foodDining;
+          break;
+        case ExpenseCategory.shopping:
+          categoryName = l10n.shopping;
+          break;
+        case ExpenseCategory.transportation:
+          categoryName = l10n.transportation;
+          break;
+        case ExpenseCategory.billsUtilities:
+          categoryName = l10n.billsUtilities;
+          break;
+        case ExpenseCategory.entertainment:
+          categoryName = l10n.entertainment;
+          break;
+        default:
+          categoryName = l10n.other;
+      }
+
+      if (_categoryTotals.containsKey(categoryName)) {
+        _categoryTotals[categoryName] = (_categoryTotals[categoryName] ?? 0) + expense.amount;
       } else {
-        _categoryTotals[category] = expense.amount;
+        _categoryTotals[categoryName] = expense.amount;
       }
     }
   }
@@ -297,12 +319,15 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
                     ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
-              await Navigator.push(
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => AddExpenseScreen()),
               );
-              // Yeni harcama eklendiğinde verileri yenile
-              _loadData();
+              // Yeni harcama eklendiğinde veya herhangi bir değişiklik olduğunda verileri yenile
+              setState(() {
+                _isLoading = true; // Yükleme durumunu göster
+              });
+              await _loadData(); // Verileri yeniden yükle
             },
             backgroundColor: themeProvider.primaryColor,
             icon: const Icon(Icons.add, color: Colors.white),
@@ -1317,22 +1342,26 @@ class _ExpenseDashboardScreenState extends State<ExpenseDashboardScreen> {
       IconData icon;
       Color color;
 
-      switch (expense.category.toLowerCase()) {
-        case 'yemek ve restoran':
+      switch (expense.category) {
+        case ExpenseCategory.foodDining:
           icon = Icons.restaurant;
           color = const Color(0xFFF59E0B);
           break;
-        case 'ulaşım':
+        case ExpenseCategory.transportation:
           icon = Icons.directions_car;
           color = const Color(0xFF3B82F6);
           break;
-        case 'alışveriş':
+        case ExpenseCategory.shopping:
           icon = Icons.shopping_bag;
           color = const Color(0xFFF59E0B);
           break;
-        case 'faturalar ve hizmetler':
+        case ExpenseCategory.billsUtilities:
           icon = Icons.receipt_long;
           color = const Color(0xFF8B5CF6);
+          break;
+        case ExpenseCategory.entertainment:
+          icon = Icons.movie;
+          color = const Color(0xFFEF4444);
           break;
         default:
           icon = Icons.attach_money;

@@ -10,6 +10,7 @@ import 'package:home_management/services/family_service.dart';
 import 'package:home_management/services/user_service.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../models/espenses/expense_category.dart';
 import '../providers/theme_provider.dart';
 import 'add_expense_screen.dart';
 import 'expense_list_screen.dart';
@@ -232,6 +233,8 @@ class _DashboardHomeState extends State<DashboardHome> {
   }
 
   void _processData() {
+    final l10n = AppLocalizations.of(context)!;
+
     // Aylık gelir - Null kontrolü ekleyerek güvenli bir şekilde double'a dönüştürme
     final monthlyBudget = _family?.monthlyBudget?.toDouble() ?? 0.0;
     _totalIncome = _family?.familyIncome?.toDouble() ?? 0.0;
@@ -276,45 +279,45 @@ class _DashboardHomeState extends State<DashboardHome> {
 
       IconData icon;
       Color color;
-      String category = expense.category;
+      String categoryName; // String olarak kategori adını tutacağız
 
       // Kategori ikonları ve renkleri
-      switch (expense.category.toLowerCase()) {
-        case 'yemek ve restoran':
+      switch (expense.category) {
+        case ExpenseCategory.foodDining:
           icon = Icons.restaurant;
           color = Colors.redAccent;
-          category = 'Yemek';
+          categoryName = l10n.foodDining;
           break;
-        case 'alışveriş':
+        case ExpenseCategory.shopping:
           icon = Icons.shopping_bag;
           color = Colors.orangeAccent;
+          categoryName = l10n.shopping;
           break;
-        case 'ulaşım':
+        case ExpenseCategory.transportation:
           icon = Icons.directions_car;
           color = Colors.blueAccent;
+          categoryName = l10n.transportation;
           break;
-        case 'faturalar ve hizmetler':
+        case ExpenseCategory.billsUtilities:
           icon = Icons.receipt_long;
           color = Colors.purpleAccent;
-          category = 'Faturalar';
+          categoryName = l10n.billsUtilities;
           break;
-        case 'eğlence':
+        case ExpenseCategory.entertainment:
           icon = Icons.movie;
           color = Colors.pinkAccent;
-          break;
-        case 'sağlık':
-          icon = Icons.medical_services;
-          color = Colors.greenAccent;
+          categoryName = l10n.entertainment;
           break;
         default:
           icon = Icons.attach_money;
           color = Colors.grey;
+          categoryName = l10n.other;
       }
 
       return {
         'title': expense.name,
         'amount': '-\$${expense.amount.toStringAsFixed(2)}',
-        'category': category,
+        'category': categoryName,
         'time': timeAgo,
         'icon': icon,
         'color': color
@@ -570,14 +573,18 @@ class _DashboardHomeState extends State<DashboardHome> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  l10n.budgetOverview,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: themeProvider.primaryTextColor,
+                Expanded(
+                  child: Text(
+                    l10n.budgetOverview,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: themeProvider.primaryTextColor,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'expense_category.dart';
 
 class CreateExpenseDto extends Equatable {
-  int? id;
+  String id; // int? yerine String yapıyoruz
   String name;
   double amount;
-  String category;
+  ExpenseCategory category; // String yerine ExpenseCategory
   DateTime date;
   String? tenantId;
   String? createdBy;
@@ -15,7 +16,7 @@ class CreateExpenseDto extends Equatable {
   String? voucherUrl;
 
   CreateExpenseDto({
-    int? id,
+    String? id,
     this.tenantId,
     this.createdBy,
     required this.isActive,
@@ -27,14 +28,14 @@ class CreateExpenseDto extends Equatable {
     required this.amount,
     required this.category,
     required this.date,
-  }) : this.id = id ?? DateTime.now().millisecondsSinceEpoch;
+  }) : this.id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
       'amount': amount,
-      'category': category,
+      'category': category.toDatabaseValue(), // Enum'dan string'e dönüşüm
       'date': date.toIso8601String(),
       'tenantId': tenantId,
       'createdBy': createdBy,
@@ -48,21 +49,28 @@ class CreateExpenseDto extends Equatable {
 
   factory CreateExpenseDto.fromJson(Map<String, dynamic> json) {
     return CreateExpenseDto(
-      id: json['id'] as int?,
-      tenantId: json['tenantId'] as String?,
-      createdBy: json['createdBy'] as String?,
-      isActive: json['isActive'] as bool? ?? true,
-      createdAt:
-          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      deletedAt:
-          json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
-      name: json['name'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      category: json['category'] as String,
-      date: DateTime.parse(json['date']),
-      voucherUrl: json['voucherUrl'] as String?,
+      id: json['id']?.toString(),
+      name: json['name'] ?? '',
+      amount: (json['amount'] is int)
+          ? (json['amount'] as int).toDouble()
+          : (json['amount'] as num?)?.toDouble() ?? 0.0,
+      category: ExpenseCategoryExtension.fromDatabaseValue(json['category'] ?? 'other'), // String'den enum'a dönüşüm
+      date: json['date'] != null
+          ? DateTime.parse(json['date'])
+          : DateTime.now(),
+      tenantId: json['tenantId']?.toString(),
+      createdBy: json['createdBy']?.toString(),
+      isActive: json['isActive'] ?? true,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      deletedAt: json['deletedAt'] != null
+          ? DateTime.parse(json['deletedAt'])
+          : null,
+      voucherUrl: json['voucherUrl']?.toString(),
     );
   }
 
@@ -78,6 +86,7 @@ class CreateExpenseDto extends Equatable {
         isActive,
         createdAt,
         updatedAt,
-        deletedAt
+        deletedAt,
+        voucherUrl,
       ];
 }

@@ -47,7 +47,20 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Sesli not veya video kaydı için mikrofon erişimi gereklidir.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Fatura veya fiş eklemek için fotoğraf galerisine erişim gereklidir.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>Fatura veya fiş eklemek için fotoğraf kaydetme izni gereklidir.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Fatura veya fiş eklemek için kamera erişimi gereklidir.</string>
 		<key>NSLocalNetworkUsageDescription</key>
 		<string>Bu uygulama yerel ağ bağlantıları için izin istemektedir.</string>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+		</dict>
 	</dict>
 </plist>

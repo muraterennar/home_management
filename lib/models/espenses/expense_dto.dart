@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'expense_category.dart';
 
 class ExpenseDto extends Equatable {
-  final String? id; // Eklenen id alanı
+  final String? id;
   final String name;
   final double amount;
-  final String category;
+  final ExpenseCategory category; // String yerine ExpenseCategory
   final DateTime date;
   final String? tenantId;
   final String? createdBy;
@@ -31,10 +32,10 @@ class ExpenseDto extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id, // Eklenen id alanı
+      'id': id,
       'name': name,
       'amount': amount,
-      'category': category,
+      'category': category.toDatabaseValue(), // Enum'dan string'e dönüşüm
       'date': date.toIso8601String(),
       'tenantId': tenantId,
       'createdBy': createdBy,
@@ -50,63 +51,63 @@ class ExpenseDto extends Equatable {
     // Güvenli tip dönüşümlerini uygula
     String? idValue;
     if (json['id'] != null) {
-      idValue = json['id'].toString(); // Integer olsa bile string'e çevir
+      idValue = json['id'].toString();
     }
 
-    // amount değerini güvenli bir şekilde double'a dönüştür
-    double amountValue = 0.0;
-    if (json['amount'] != null) {
-      if (json['amount'] is double) {
-        amountValue = json['amount'];
-      } else if (json['amount'] is int) {
-        amountValue = (json['amount'] as int).toDouble();
-      } else {
-        // String veya başka bir tip olması durumunda
-        try {
-          amountValue = double.parse(json['amount'].toString());
-        } catch (e) {
-          print('Error converting amount to double: $e');
-        }
-      }
-    }
-
-    // Tarih dönüşümü
-    DateTime dateValue;
+    // Tarih alanlarını güvenli şekilde parse et
+    DateTime? date;
     try {
-      if (json['date'] is DateTime) {
-        dateValue = json['date'];
-      } else if (json['date'] is String) {
-        dateValue = DateTime.parse(json['date']);
-      } else {
-        dateValue = DateTime.now();
-        print('Date not in expected format, using current date');
-      }
+      date = json['date'] != null ? DateTime.parse(json['date']) : null;
     } catch (e) {
-      dateValue = DateTime.now();
-      print('Error parsing date: $e');
+      date = DateTime.now();
     }
 
-    // Diğer alanların güvenli bir şekilde dönüştürülmesi
+    DateTime? createdAt;
+    try {
+      createdAt = json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null;
+    } catch (e) {
+      createdAt = null;
+    }
+
+    DateTime? updatedAt;
+    try {
+      updatedAt = json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null;
+    } catch (e) {
+      updatedAt = null;
+    }
+
+    DateTime? deletedAt;
+    try {
+      deletedAt = json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null;
+    } catch (e) {
+      deletedAt = null;
+    }
+
+    // Kategori alanını enum değerine dönüştür
+    final categoryStr = json['category']?.toString() ?? 'other';
+    final category = ExpenseCategoryExtension.fromDatabaseValue(categoryStr);
+
     return ExpenseDto(
       id: idValue,
-      name: json['name']?.toString() ?? 'Unnamed Expense',
-      amount: amountValue,
-      date: dateValue,
-      category: json['category']?.toString() ?? 'Other',
-      isActive: json['isActive'] as bool? ?? true,
-      createdAt: json['createdAt'] != null
-          ? (json['createdAt'] is DateTime
-              ? json['createdAt']
-              : DateTime.parse(json['createdAt'].toString()))
-          : DateTime.now(),
-      createdBy: json['createdBy']?.toString(),
+      name: json['name'] ?? '',
+      amount: json['amount'] is int
+          ? (json['amount'] as int).toDouble()
+          : (json['amount'] as num?)?.toDouble() ?? 0.0,
+      category: category,
+      date: date ?? DateTime.now(),
       tenantId: json['tenantId']?.toString(),
+      createdBy: json['createdBy']?.toString(),
+      isActive: json['isActive'] ?? true,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      deletedAt: deletedAt,
       voucherUrl: json['voucherUrl']?.toString(),
     );
   }
 
   @override
   List<Object?> get props => [
+        id,
         name,
         amount,
         category,
@@ -116,6 +117,7 @@ class ExpenseDto extends Equatable {
         isActive,
         createdAt,
         updatedAt,
-        deletedAt
+        deletedAt,
+        voucherUrl,
       ];
 }

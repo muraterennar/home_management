@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:home_management/models/espenses/expense_dto.dart';
 import 'package:provider/provider.dart';
+import '../models/espenses/expense_category.dart';
 import '../providers/theme_provider.dart';
 import '../services/expense_service.dart';
 import 'add_expense_screen.dart';
@@ -20,7 +21,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   bool _showFilterPanel = false;
   TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  List<String> _selectedCategories = [];
+  List<ExpenseCategory> _selectedCategories = [];
   double _minAmount = 0;
   double _maxAmount = 10000; // Değeri artırdım, varsayılan 200 çok düşük olabilir
   final _expenseService = ExpenseService();
@@ -293,22 +294,46 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: categories.map((category) {
+              children: categories.asMap().entries.map((entry) {
+                final categoryName = categories[entry.key];
+                ExpenseCategory? category;
+
+                // String kategori adından enum'a dönüşüm
+                switch (entry.key) {
+                  case 0:
+                    category = ExpenseCategory.foodDining;
+                    break;
+                  case 1:
+                    category = ExpenseCategory.transportation;
+                    break;
+                  case 2:
+                    category = ExpenseCategory.shopping;
+                    break;
+                  case 3:
+                    category = ExpenseCategory.entertainment;
+                    break;
+                  case 4:
+                    category = ExpenseCategory.billsUtilities;
+                    break;
+                  default:
+                    // Diğer kategorileri şimdilik other olarak işaretleyelim
+                    category = ExpenseCategory.other;
+                }
+
                 final isSelected = _selectedCategories.contains(category);
                 return FilterChip(
                   label: Text(
-                    category,
+                    categoryName,
                     style: TextStyle(
                       fontSize: 12,
-                      color:
-                          isSelected ? Colors.white : const Color(0xFF6B7280),
+                      color: isSelected ? Colors.white : const Color(0xFF6B7280),
                     ),
                   ),
                   selected: isSelected,
                   onSelected: (selected) {
                     setState(() {
                       if (selected) {
-                        _selectedCategories.add(category);
+                        _selectedCategories.add(category!);
                       } else {
                         _selectedCategories.remove(category);
                       }
@@ -393,9 +418,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     // Arama
     if (_searchQuery.isNotEmpty) {
+      final searchTerm = _searchQuery.toLowerCase();
+      final l10n = AppLocalizations.of(context)!;
       filtered = filtered.where((expense) {
-        return expense.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            expense.category.toLowerCase().contains(_searchQuery.toLowerCase());
+        // İsim araması
+        final nameMatch = expense.name.toLowerCase().contains(searchTerm);
+        // Kategori araması - enum'ı l10n string'ine çevirip öyle arama yap
+        final categoryName = _getCategoryName(expense.category, l10n).toLowerCase();
+        return nameMatch || categoryName.contains(searchTerm);
       }).toList();
       print("After search filter: ${filtered.length}");
     }
@@ -403,11 +433,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     // Kategori
     if (_selectedCategories.isNotEmpty) {
       filtered = filtered
-          .where((expense) {
-            // Kategorileri lokalize edilmiş isimlerle karşılaştırmak yerine
-            // doğrudan eşleşme kontrolü yapalım
-            return _selectedCategories.contains(expense.category);
-          })
+          .where((expense) => _selectedCategories.contains(expense.category))
           .toList();
       print("After category filter: ${filtered.length}");
     }
@@ -641,6 +667,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   Widget _buildExpenseCard(
       ExpenseDto expense, ThemeProvider themeProvider) {
+
+    final l10n = AppLocalizations.of(context)!;
+
     // Tarih formatını düzeltme
     final formattedDate = expense.date != null
         ? "${expense.date.day}/${expense.date.month}/${expense.date.year}"
@@ -717,7 +746,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         children: [
                           Flexible(
                             child: Text(
-                              expense.category,
+                              // Kategori adını l10n üzerinden al
+                              _getCategoryName(expense.category, l10n),
                               style: const TextStyle(
                                 color: Color(0xFF6B7280),
                                 fontSize: 12,
@@ -769,43 +799,35 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   // Kategori ikonları ve renkleri için yardımcı metotlar
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'food & dining':
+  IconData _getCategoryIcon(ExpenseCategory category) {
+    switch (category) {
+      case ExpenseCategory.foodDining:
         return Icons.restaurant;
-      case 'transportation':
+      case ExpenseCategory.transportation:
         return Icons.directions_car;
-      case 'shopping':
+      case ExpenseCategory.shopping:
         return Icons.shopping_bag;
-      case 'entertainment':
+      case ExpenseCategory.entertainment:
         return Icons.movie;
-      case 'bills & utilities':
+      case ExpenseCategory.billsUtilities:
         return Icons.receipt;
-      case 'healthcare':
-        return Icons.medical_services;
-      case 'education':
-        return Icons.school;
       default:
         return Icons.attach_money;
     }
   }
 
-  Color _getCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'food & dining':
+  Color _getCategoryColor(ExpenseCategory category) {
+    switch (category) {
+      case ExpenseCategory.foodDining:
         return const Color(0xFF10B981);
-      case 'transportation':
+      case ExpenseCategory.transportation:
         return const Color(0xFF3B82F6);
-      case 'shopping':
+      case ExpenseCategory.shopping:
         return const Color(0xFFF59E0B);
-      case 'entertainment':
+      case ExpenseCategory.entertainment:
         return const Color(0xFFEF4444);
-      case 'bills & utilities':
+      case ExpenseCategory.billsUtilities:
         return const Color(0xFF8B5CF6);
-      case 'healthcare':
-        return const Color(0xFFEC4899);
-      case 'education':
-        return const Color(0xFF6366F1);
       default:
         return const Color(0xFF6B7280);
     }
@@ -984,5 +1006,29 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         ),
       ),
     );
+  }
+
+  // Kategori adını l10n üzerinden alma metodu
+  String _getCategoryName(ExpenseCategory category, AppLocalizations l10n) {
+    switch (category) {
+      case ExpenseCategory.foodDining:
+        return l10n.foodDining;
+      case ExpenseCategory.transportation:
+        return l10n.transportation;
+      case ExpenseCategory.shopping:
+        return l10n.shopping;
+      case ExpenseCategory.entertainment:
+        return l10n.entertainment;
+      case ExpenseCategory.billsUtilities:
+        return l10n.billsUtilities;
+      case ExpenseCategory.healthcare:
+        return l10n.healthcare;
+      case ExpenseCategory.education:
+        return l10n.education;
+      case ExpenseCategory.other:
+        return l10n.other;
+      default:
+        return '';
+    }
   }
 }

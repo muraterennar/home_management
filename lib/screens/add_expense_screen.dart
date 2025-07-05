@@ -8,14 +8,15 @@ import 'package:provider/provider.dart';
 import '../providers/currency_provider.dart';
 import '../providers/theme_provider.dart';
 import 'package:home_management/l10n/app_localizations.dart';
-import '../services/expense_service.dart'; // ExpenseService'i import ediyoruz
-import '../models/espenses/create_expense_dto.dart'; // CreateExpenseDto modelini import ediyoruz
+import '../services/expense_service.dart';
+import '../models/espenses/create_expense_dto.dart';
+import '../models/espenses/expense_category.dart';
+import '../services/sync_service.dart';
 import 'settings_screen.dart';
-import 'dart:developer' as developer; // debugPrint yerine developer.log kullanmak için
-import 'dart:convert'; // Base64 için
-import 'dart:io'; // File için
-import 'package:image_picker/image_picker.dart'; // Resim seçmek için
-import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase için
+import 'dart:developer' as developer;
+import 'dart:convert';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   @override
@@ -27,13 +28,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _expenseNameController = TextEditingController();
   final _amountController = TextEditingController();
   final _dateController = TextEditingController();
-  String? _selectedCategory;
+  ExpenseCategory _selectedCategory = ExpenseCategory.foodDining; // String yerine ExpenseCategory
   bool _hasReceiptImage = false;
   bool _isRecurring = false;
   String _recurringFrequency = 'monthly';
   DateTime _selectedDate = DateTime.now();
-  final _expenseService = ExpenseService(); // ExpenseService örneği oluşturuyoruz
-  String? _uploadedUrl; // Supabase'den dönen public url
+  final _expenseService = ExpenseService();
+  final _syncService = SyncService.instance;
+  String? _imageId; // Local image ID
+  String? _localImagePath; // Local image path
+  String? _onlineImageUrl; // Online image URL
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
   double _uploadProgress = 0.0; // Yükleme ilerleme yüzdesi
@@ -85,92 +89,131 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   // Kameradan resim çekme
   Future<void> _getImageFromCamera() async {
-    await _pickAndUploadImage(ImageSource.camera);
+    try {
+      developer.log('Kameradan fotoğraf çekme başlatıldı', name: 'AddExpenseScreen');
+      await _pickAndUploadImage(ImageSource.camera);
+    } catch (e, stack) {
+      developer.log('Kameradan fotoğraf çekme hatası', name: 'AddExpenseScreen', error: e, stackTrace: stack);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kamera hatası: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   // Galeriden resim seçme
   Future<void> _getImageFromGallery() async {
-    await _pickAndUploadImage(ImageSource.gallery);
+    try {
+      developer.log('Galeriden fotoğraf seçme başlatıldı', name: 'AddExpenseScreen');
+      await _pickAndUploadImage(ImageSource.gallery);
+    } catch (e, stack) {
+      developer.log('Galeriden fotoğraf seçme hatası', name: 'AddExpenseScreen', error: e, stackTrace: stack);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Galeri hatası: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
-  // Supabase'a upload fonksiyonu
+  // Hibrit resim yükleme fonksiyonu
   Future<void> _pickAndUploadImage(ImageSource source) async {
     final l10n = AppLocalizations.of(context)!;
-    final picked = await _picker.pickImage(source: source, imageQuality: 80);
-    if (picked == null) return;
-
-    setState(() {
-      _isUploading = true;
-      _uploadProgress = 0.0; // İlerlemeyi sıfırla
-    });
-
-    final File file = File(picked.path);
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}_${picked.name}';
-    const bucket = 'home-management';
-    final path = 'public/$fileName';
-
     try {
-      final storage = Supabase.instance.client.storage;
+      final picked = await _picker.pickImage(source: source, imageQuality: 80);
+      developer.log('ImagePicker sonucu: ${picked?.path}', name: 'AddExpenseScreen');
 
-      // Simüle edilmiş ilerleme animasyonu
-      // (Supabase yükleme ilerleme bildirimi desteklemediği için)
-      final progressTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        if (_uploadProgress < 0.9) {
-          setState(() {
-            _uploadProgress += 0.01;
-          });
-        } else {
-          timer.cancel();
-        }
+      if (picked == null) {
+        developer.log('Kullanıcı fotoğraf seçmedi veya çekmedi', name: 'AddExpenseScreen');
+        return;
+      }
+
+      final file = File(picked.path);
+      developer.log('File exists: ${await file.exists()} - Path: ${file.path}', name: 'AddExpenseScreen');
+
+      setState(() {
+        _isUploading = true;
+        _uploadProgress = 0.0;
       });
 
-      final res = await storage
-          .from(bucket)
-          .upload(path, file, fileOptions: const FileOptions(cacheControl: '3600', upsert: false));
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${picked.name}';
 
-      // Timer'ı durdur
-      progressTimer.cancel();
+      try {
+        // Hibrit resim kaydetme: önce local, sonra Supabase
+        final results = await _syncService.saveImageHybrid(file, fileName);
 
-      if (res != null && res.isNotEmpty) {
-        final publicURL = storage.from(bucket).getPublicUrl(path);
         setState(() {
-          _uploadProgress = 1.0; // Yükleme tamamlandı
-          _uploadedUrl = publicURL;
+          _uploadProgress = 0.5; // Local kayıt tamamlandı
+          _imageId = results['imageId'];
+          _localImagePath = results['localPath'];
+          _onlineImageUrl = results['onlineUrl']; // Varsa online URL
           _hasReceiptImage = true;
         });
 
-        // Yükleme tamamlandı göstergesini kısa süre göster
-        await Future.delayed(const Duration(milliseconds: 500));
+        // UI güncellemesi için kısa animasyon
+        for (int i = 50; i <= 100; i += 10) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          if (mounted) {
+            setState(() {
+              _uploadProgress = i / 100;
+            });
+          }
+        }
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.imageUploadedSuccess),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,)
+            SnackBar(
+              content: Text(_onlineImageUrl != null
+                  ? l10n.imageUploadedSuccess
+                  : 'Resim local\'e kaydedildi, internet bağlantısı kurulduğunda sync edilecek'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
           );
         }
-      } else {
+
+      } catch (e, stack) {
+        developer.log('Hibrit resim kaydetme hatası', name: 'AddExpenseScreen', error: e, stackTrace: stack);
+
+        String errorMessage;
+        if (e.toString().contains('Failed host lookup') || e.toString().contains('SocketException')) {
+          errorMessage = 'Resim local\'e kaydedildi. İnternet bağlantısı kurulduğunda sync edilecek.';
+        } else {
+          errorMessage = 'Resim kaydetme hatası: ${e.toString()}';
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: e.toString().contains('Failed host lookup') ? Colors.orange : Colors.red,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Tekrar Dene',
+                textColor: Colors.white,
+                onPressed: () => _pickAndUploadImage(source),
+              ),
+            ),
+          );
+        }
+      } finally {
+        setState(() {
+          _isUploading = false;
+        });
+      }
+    } catch (e, stack) {
+      developer.log('Resim seçme/yükleme genel hatası', name: 'AddExpenseScreen', error: e, stackTrace: stack);
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.uploadError),
+            content: Text('Resim seçme/yükleme hatası: $e'),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
         );
       }
-    } catch (e) {
-      debugPrint('Resim yükleme hatası: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.uploadErrorWithMessage(e.toString())),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } finally {
-      setState(() {
-        _isUploading = false;
-      });
     }
   }
 
@@ -180,53 +223,58 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     return Consumer2<ThemeProvider, CurrencyProvider>(
       builder: (context, themeProvider, currencyProvider, child) {
+        // Kategori listesini enum değerlerine dayalı olarak oluştur
         final List<Map<String, dynamic>> _categories = [
           {
+            'category': ExpenseCategory.foodDining,
             'name': l10n.foodDining,
             'icon': Icons.restaurant,
             'color': themeProvider.successColor
           },
           {
+            'category': ExpenseCategory.transportation,
             'name': l10n.transportation,
             'icon': Icons.directions_car,
             'color': themeProvider.infoColor
           },
           {
+            'category': ExpenseCategory.shopping,
             'name': l10n.shopping,
             'icon': Icons.shopping_bag,
             'color': themeProvider.warningColor
           },
           {
+            'category': ExpenseCategory.entertainment,
             'name': l10n.entertainment,
             'icon': Icons.movie,
             'color': themeProvider.errorColor
           },
           {
+            'category': ExpenseCategory.billsUtilities,
             'name': l10n.billsUtilities,
             'icon': Icons.receipt_long,
             'color': themeProvider.primaryVariant
           },
           {
+            'category': ExpenseCategory.healthcare,
             'name': l10n.healthcare,
             'icon': Icons.local_hospital,
             'color': const Color(0xFF06B6D4)
           },
           {
+            'category': ExpenseCategory.education,
             'name': l10n.education,
             'icon': Icons.school,
             'color': const Color(0xFFF97316)
           },
           {
+            'category': ExpenseCategory.other,
             'name': l10n.other,
             'icon': Icons.more_horiz,
             'color': themeProvider.iconColor
           },
         ];
 
-        if (_selectedCategory == null ||
-            !_categories.any((cat) => cat['name'] == _selectedCategory)) {
-          _selectedCategory = _categories.first['name'];
-        }
 
         return Scaffold(
           backgroundColor: themeProvider.backgroundColor,
@@ -434,7 +482,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  currencyProvider.currencySymbol,
+                  l10n.currencySymbol ?? '₺',
                   style: TextStyle(
                     color: themeProvider.primaryColor,
                     fontWeight: FontWeight.bold,
@@ -484,10 +532,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final category = categories[index];
-            final isSelected = _selectedCategory == category['name'];
+            final enumCategory = category['category'] as ExpenseCategory;
+            final isSelected = _selectedCategory == enumCategory;
 
             return GestureDetector(
-              onTap: () => setState(() => _selectedCategory = category['name']),
+              onTap: () => setState(() => _selectedCategory = enumCategory),
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -722,25 +771,52 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: _uploadedUrl != null
-                      ? Image.network(
-                          _uploadedUrl!,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                                color: const Color(0xFF6366F1),
-                              ),
-                            );
-                          },
-                        )
+                  child: (_onlineImageUrl != null || _localImagePath != null)
+                      ? (_onlineImageUrl != null
+                          ? Image.network(
+                              _onlineImageUrl!,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                    color: const Color(0xFF6366F1),
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                // Online resim yüklenemezse local'i dene
+                                return _localImagePath != null
+                                    ? Image.file(
+                                        File(_localImagePath!),
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        color: const Color(0xFFF3F4F6),
+                                        child: const Icon(
+                                          Icons.receipt_long,
+                                          size: 48,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      );
+                              },
+                            )
+                          : Image.file(
+                              File(_localImagePath!),
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ))
                       : Container(
                           width: double.infinity,
                           height: double.infinity,
@@ -760,7 +836,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       ? null
                       : () => setState(() {
                           _hasReceiptImage = false;
-                          _uploadedUrl = null;
+                          _onlineImageUrl = null;
+                          _localImagePath = null;
+                          _imageId = null;
                         }),
                     child: Container(
                       padding: const EdgeInsets.all(4),
@@ -884,10 +962,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       CurrencyProvider currencyProvider) {
     return Consumer<CurrencyProvider>(
       builder: (context, currencyProvider, child) {
-        // Güvenli kategori bulma
+        // Seçilen kategoriyi bul
         final selectedCategoryData = categories.firstWhere(
-          (cat) => cat['name'] == _selectedCategory,
-          orElse: () => categories.first, // Bulunamazsa ilk kategoriyi kullan
+          (cat) => cat['category'] == _selectedCategory,
+          orElse: () => categories.first,
         );
 
         final currencySymbol = l10n.currencySymbol ?? '₺';
@@ -940,7 +1018,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _selectedCategory ?? l10n.category,
+                          selectedCategoryData['name'], // Yerelleştirilmiş kategori adı
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -1019,13 +1097,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void _saveExpense() async {
     if (_formKey.currentState!.validate()) {
       try {
+        // Hibrit yapıda resim URL'ini belirle: önce online, sonra local
+        String? imageUrl;
+        if (_onlineImageUrl != null) {
+          imageUrl = _onlineImageUrl; // Online URL varsa onu kullan
+        } else if (_localImagePath != null) {
+          imageUrl = _localImagePath; // Yoksa local path'i kullan
+        }
+
         final createExpenseDto = CreateExpenseDto(
           name: _expenseNameController.text,
           amount: double.tryParse(_amountController.text) ?? 0.0,
           category: _selectedCategory!,
           date: _selectedDate,
           isActive: true,
-          voucherUrl: _uploadedUrl, // Artık Supabase public url'si
+          voucherUrl: imageUrl, // Hibrit resim URL'i
         );
 
         developer.log("Kaydedilecek harcama: ${createExpenseDto.toJson()}", name: 'ExpenseCreation');
