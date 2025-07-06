@@ -1,91 +1,137 @@
 # 🏡 Home Management
 
-Home Management is a Flutter application designed to help users manage household tasks, expenses, and resources efficiently. The app provides an intuitive interface for organizing chores, tracking expenses, and collaborating with family members or housemates.
+<p align="center">
+  <img src="https://fyhidojcaouuqisljhbw.supabase.co/storage/v1/object/sign/home-mangement-base/app_icon.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hZjRiMzE3YS01NWMzLTRiOWItOTg0OC04NWU5YTA5ZDFkYTkiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJob21lLW1hbmdlbWVudC1iYXNlL2FwcF9pY29uLnBuZyIsImlhdCI6MTc1MTgzMzEzOSwiZXhwIjoyMDY3MTkzMTM5fQ.cSlmOFA8WeeojuBjqWepc9HH1kEdkkWHLSuVIO9b2I8" alt="Uygulama Simgesi" style="border-radius:8px;" width="150" />
+</p>
+
+Home Management, kullanıcıların ev işleri, harcamalar ve kaynakları kolayca yönetmesini sağlayan bir
+Flutter uygulamasıdır. Uygulama; görev takibi, harcama yönetimi ve aile/ev arkadaşlarıyla iş birliği
+gibi özellikler sunar.
 
 ---
 
-## ✨ Features
+## ✨ Özellikler
 
-- ✅ **Task management:** Create, assign, and track household chores.
-- 💸 **Expense tracking:** Log and categorize shared expenses.
-- 📦 **Resource management:** Monitor inventory of household items.
-- 🔔 **Notifications:** Get reminders for upcoming tasks and payments.
-- 👨‍👩‍👧‍👦 **User collaboration:** Multiple users can manage the same household.
-- 📱 **Responsive UI:** Works seamlessly on Android and iOS devices.
+- ✅ Görev yönetimi: Ev işlerini oluşturun, atayın ve takip edin. _(Yakında)_
+- 💸 Harcama takibi: Ortak harcamaları kaydedin ve kategorilere ayırın.
+- 📦 Kaynak yönetimi: Evdeki stokları ve kaynakları izleyin. _(Yakında)_
+- 🔔 Bildirimler: Yaklaşan görevler ve ödemeler için hatırlatıcılar alın. _(Yakında)_
+- 👨‍👩‍👧‍👦 Kullanıcı iş birliği: Birden fazla kullanıcı aynı evi yönetebilir.
+- 📱 Duyarlı arayüz: Android ve iOS cihazlarda sorunsuz çalışır.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Kurulum ve Başlangıç
 
-### 🛠️ Prerequisites
+### 1. Gereksinimler
 
 - [Flutter SDK](https://flutter.dev/docs/get-started/install)
-- Dart SDK (included with Flutter)
-- Android Studio or Xcode (for mobile emulation)
-- A device or emulator
+- Dart SDK (Flutter ile birlikte gelir)
+- Android Studio veya Xcode (mobil emülatör için)
+- Gerçek cihaz veya emülatör
 
-### 📦 Installation
+### 2. Projeyi Klonlayın
 
-1. **Clone the repository:**
+```bash
+git clone https://github.com/muraterennar/home_management.git
+cd home_management
+```
+
+### 3. Bağımlılıkları Yükleyin
+
+```bash
+flutter pub get
+```
+
+### 4. Firebase Entegrasyonu
+
+1. [Firebase Console](https://console.firebase.google.com/) üzerinden yeni bir proje oluşturun.
+2. Android için `android/app/google-services.json`, iOS için `ios/Runner/GoogleService-Info.plist`
+   dosyalarını indirin ve ilgili dizinlere ekleyin.
+3. Gerekli paketleri ekleyin:
    ```bash
-   git clone https://github.com/yourusername/home_management.git
-   cd home_management
+   dart pub add firebase_core firebase_auth cloud_firestore
+   ```
+4. `lib/firebase_options.dart` dosyasını oluşturmak için:
+   ```bash
+   flutterfire configure
+   ```
+5. `main.dart` dosyanızda Firebase'i başlatın:
+   ```dart
+   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
    ```
 
-2. **Install dependencies:**
-   ```bash
-   flutter pub get
-   ```
+### 5. Supabase Entegrasyonu
 
-3. **Run the app:**
+1. [Supabase](https://supabase.com/) üzerinden yeni bir proje oluşturun.
+2. Proje ayarlarından `anon` ve `service_role` anahtarlarını alın.
+3. Gerekli paketi ekleyin:
    ```bash
-   flutter run
+   dart pub add supabase_flutter
    ```
+4. `lib/services/` altında bir servis dosyası oluşturup anahtarlarınızı burada kullanın:
+   ```dart
+   final supabase = Supabase.instance.client;
+   ```
+5. Anahtarlarınızı doğrudan kodda tutmak yerine `.env` veya benzeri bir gizli yapılandırma yöntemi
+   kullanın.
+
+### 6. Uygulamayı Çalıştırın
+
+```bash
+flutter run
+```
 
 ---
 
-## 📁 Folder Structure
+## 📁 Klasör Yapısı
 
 ```
 home_management/
 ├── lib/
-│   ├── main.dart           # App entry point
-│   ├── models/             # Data models
-│   ├── screens/            # UI screens
-│   ├── widgets/            # Reusable widgets
-│   ├── services/           # Business logic and services
-│   └── utils/              # Utility functions
-├── assets/                 # Images, fonts, etc.
-├── test/                   # Unit and widget tests
-├── pubspec.yaml            # Dependencies and assets
-└── README.md               # Project documentation
+│   ├── main.dart           # Uygulama giriş noktası
+│   ├── models/             # Veri modelleri
+│   ├── screens/            # Ekranlar
+│   ├── widgets/            # Tekrar kullanılabilir bileşenler
+│   ├── services/           # Servisler ve iş mantığı
+├── assets/                 # Görseller, fontlar vb.
+├── pubspec.yaml            # Bağımlılıklar ve varlıklar
+└── README.md               # Dokümantasyon
 ```
 
 ---
 
-## 📝 Usage
+## 📝 Kullanım
 
-1. 🚀 Launch the app on your device or emulator.
-2. 🆕 Register or log in to your account.
-3. 👥 Add household members and start creating tasks or logging expenses.
-4. 📊 Use the dashboard to monitor progress and receive notifications.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. 🍴 Fork the repository.
-2. 🌿 Create a new branch: `git checkout -b feature/your-feature-name`
-3. 💾 Commit your changes: `git commit -m 'Add some feature'`
-4. 🚀 Push to the branch: `git push origin feature/your-feature-name`
-5. 🔄 Open a pull request.
+1. Uygulamayı cihazınızda veya emülatörde başlatın.
+2. Kayıt olun veya giriş yapın.
+3. Ev üyelerini ekleyin, görev ve harcama oluşturun.
+4. Gösterge panelinden ilerlemeyi ve bildirimleri takip edin.
 
 ---
 
-## 📄 License
+## ⚠️ Güvenlik ve Gizlilik
 
-This project is licensed under the MIT License.  
-See the [LICENSE](LICENSE) file for details.
+- `google-services.json`, `firebase_options.dart`, Supabase anahtarları gibi hassas dosyaları asla
+  herkese açık şekilde paylaşmayın.
+- Bu dosyaları `.gitignore` dosyanıza ekleyin ve versiyon kontrolüne dahil etmeyin.
+- Ortam değişkenleri veya güvenli bir yapılandırma yöntemi kullanarak anahtarlarınızı gizli tutun.
 
+---
+
+## 🤝 Katkı Sağlama
+
+Katkılarınızı bekliyoruz! Lütfen şu adımları izleyin:
+
+1. Repoyu çatallayın (fork).
+2. Yeni bir dal oluşturun: `git checkout -b feature/ozellik-adi`
+3. Değişikliklerinizi kaydedin: `git commit -m 'Özellik eklendi'`
+4. Dalı gönderin: `git push origin feature/ozellik-adi`
+5. Pull request açın.
+
+---
+
+## 📄 Lisans
+
+Bu proje MIT lisansı ile lisanslanmıştır. Ayrıntılar için [LICENSE](LICENSE) dosyasına
+bakabilirsiniz.
