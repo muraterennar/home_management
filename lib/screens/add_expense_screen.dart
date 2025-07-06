@@ -402,11 +402,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     child: _buildCategorySelector(
                         l10n, _categories, themeProvider),
                   ),
-                  const SizedBox(height: 32),
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 500),
-                    child: _buildRecurringOptions(l10n, themeProvider),
-                  ),
+                  // const SizedBox(height: 32),
+                  // FadeInUp(
+                  //   delay: const Duration(milliseconds: 500),
+                  //   child: _buildRecurringOptions(l10n, themeProvider),
+                  // ),
                   const SizedBox(height: 32),
                   FadeInUp(
                     delay: const Duration(milliseconds: 600),

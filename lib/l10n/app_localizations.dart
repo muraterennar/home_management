@@ -1507,6 +1507,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get Current Location'**
   String get getCurrentLocation;
+
+  /// No description provided for @onBoardingOneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Home Management App'**
+  String get onBoardingOneTitle;
+
+  /// No description provided for @onBoardingOneDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Designed to simplify home management. Manage your income, expenses, and family budget.'**
+  String get onBoardingOneDesc;
+
+  /// No description provided for @onBoardingTwoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Family Profile'**
+  String get onBoardingTwoTitle;
+
+  /// No description provided for @onBoardingTwoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your family members and start home management together. Share your family budget and track your expenses.'**
+  String get onBoardingTwoDesc;
+
+  /// No description provided for @onBoardingThreeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Income and Expenses'**
+  String get onBoardingThreeTitle;
+
+  /// No description provided for @onBoardingThreeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Easily track your income and expenses. Manage your monthly budget and achieve your savings goals.'**
+  String get onBoardingThreeDesc;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @go.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get go;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
 }
 
 class _AppLocalizationsDelegate

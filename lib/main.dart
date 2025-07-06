@@ -12,6 +12,8 @@ import 'firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,13 +22,20 @@ Future<void> main() async {
   );
   await Supabase.initialize(
     url: '******',
-    anonKey:
-        '******',
+    anonKey: '******',
   );
-  runApp(MyApp());
+
+  final prefs = await SharedPreferences.getInstance();
+  final showOnboarding = prefs.getBool('showOnboarding') ?? true;
+
+  runApp(MyApp(showOnboarding: showOnboarding));
 }
 
 class MyApp extends StatelessWidget {
+  final bool showOnboarding;
+
+  const MyApp({Key? key, required this.showOnboarding}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -53,20 +62,22 @@ class MyApp extends StatelessWidget {
                 displayColor: themeProvider.primaryTextColor,
               ),
             ),
-            home: StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                if (snapshot.hasData) {
-                  return DashboardScreen();
-                }
-                return const LoginScreen();
-              },
-            ),
+            home: showOnboarding
+                ? const OnboardingScreen()
+                : StreamBuilder<User?>(
+                    stream: FirebaseAuth.instance.authStateChanges(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Scaffold(
+                          body: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        return DashboardScreen();
+                      }
+                      return const LoginScreen();
+                    },
+                  ),
           );
         },
       ),

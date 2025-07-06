@@ -60,11 +60,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   delay: const Duration(milliseconds: 200),
                   child: _buildLanguageSection(l10n, themeProvider),
                 ),
-                const SizedBox(height: 32),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 300),
-                  child: _buildCurrencySection(l10n, themeProvider),
-                ),
+                // const SizedBox(height: 32),
+                // FadeInUp(
+                //   delay: const Duration(milliseconds: 300),
+                //   child: _buildCurrencySection(l10n, themeProvider),
+                // ),
                 const SizedBox(height: 32),
                 FadeInUp(
                   delay: const Duration(milliseconds: 400),
@@ -163,17 +163,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: l10n.notifications,
       themeProvider: themeProvider,
       children: [
-        _buildSettingsTile(
-          icon: Icons.notifications_outlined,
-          title: l10n.pushNotifications,
-          subtitle: l10n.receivePushNotifications,
-          trailing: Switch(
-            value: true,
-            onChanged: (value) {}, // Non-functional
-            activeColor: const Color(0xFF6366F1),
-          ),
-          themeProvider: themeProvider,
-        ),
+        // _buildSettingsTile(
+        //   icon: Icons.notifications_outlined,
+        //   title: l10n.pushNotifications,
+        //   subtitle: l10n.receivePushNotifications,
+        //   trailing: Switch(
+        //     value: true,
+        //     onChanged: (value) {}, // Non-functional
+        //     activeColor: const Color(0xFF6366F1),
+        //   ),
+        //   themeProvider: themeProvider,
+        // ),
         _buildSettingsTile(
           icon: Icons.email_outlined,
           title: l10n.emailNotifications,

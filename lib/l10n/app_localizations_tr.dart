@@ -740,4 +740,37 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get getCurrentLocation => 'Mevcut Konumu Al';
+
+  @override
+  String get onBoardingOneTitle => 'Ev Yönetimi Uygulamasına Hoş Geldiniz';
+
+  @override
+  String get onBoardingOneDesc =>
+      'Ev yönetimini kolaylaştırmak için tasarlandı. Gelirlerinizi, harcamalarınızı ve aile bütçenizi yönetin.';
+
+  @override
+  String get onBoardingTwoTitle => 'Aile Profili Oluşturun';
+
+  @override
+  String get onBoardingTwoDesc =>
+      'Aile üyelerinizi ekleyin ve birlikte ev yönetimine başlayın. Aile bütçenizi paylaşın ve harcamalarınızı takip edin.';
+
+  @override
+  String get onBoardingThreeTitle => 'Gelir ve Giderlerinizi Takip Edin';
+
+  @override
+  String get onBoardingThreeDesc =>
+      'Gelirlerinizi ve harcamalarınızı kolayca takip edin. Aylık bütçenizi yönetin ve tasarruf hedeflerinize ulaşın.';
+
+  @override
+  String get getStarted => 'Başlayın';
+
+  @override
+  String get skip => 'Atla';
+
+  @override
+  String get go => 'İleri';
+
+  @override
+  String get back => 'Geri';
 }

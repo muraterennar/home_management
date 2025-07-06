@@ -336,5 +336,17 @@
   "locationServicesDisabled": "Konum servisleri kapalı",
   "locationPermissionDenied": "Konum izni reddedildi",
   "locationPermissionPermanentlyDenied": "Konum izni kalıcı olarak reddedildi. Lütfen ayarlardan etkinleştirin",
-  "getCurrentLocation": "Mevcut Konumu Al"
+  "getCurrentLocation": "Mevcut Konumu Al",
+  "onBoardingOneTitle": "Ev Yönetimi Uygulamasına Hoş Geldiniz",
+  "onBoardingOneDesc": "Ev yönetimini kolaylaştırmak için tasarlandı. Gelirlerinizi, harcamalarınızı ve aile bütçenizi yönetin.",
+  "onBoardingTwoTitle": "Aile Profili Oluşturun",
+  "onBoardingTwoDesc": "Aile üyelerinizi ekleyin ve birlikte ev yönetimine başlayın. Aile bütçenizi paylaşın ve harcamalarınızı takip edin.",
+  "onBoardingThreeTitle": "Gelir ve Giderlerinizi Takip Edin",
+  "onBoardingThreeDesc": "Gelirlerinizi ve harcamalarınızı kolayca takip edin. Aylık bütçenizi yönetin ve tasarruf hedeflerinize ulaşın.",
+  "getStarted": "Başlayın",
+  "skip": "Atla",
+  "go": "İleri",
+  "back": "Geri",
+  "welcomeToFamilyFinance": "Aile Finansına Hoş Geldiniz",
+  "familyFinanceDesc": "Gelir ve giderlerinizi birlikte takip etmeye başlamak için aile profilinizi kurun."
 }

@@ -276,5 +276,15 @@
   "locationServicesDisabled": "Location services are disabled",
   "locationPermissionDenied": "Location permission denied",
   "locationPermissionPermanentlyDenied": "Location permission permanently denied. Please enable from settings",
-  "getCurrentLocation": "Get Current Location"
+  "getCurrentLocation": "Get Current Location",
+  "onBoardingOneTitle": "Welcome to Home Management App",
+  "onBoardingOneDesc": "Designed to simplify home management. Manage your income, expenses, and family budget.",
+  "onBoardingTwoTitle": "Create a Family Profile",
+  "onBoardingTwoDesc": "Add your family members and start home management together. Share your family budget and track your expenses.",
+  "onBoardingThreeTitle": "Track Your Income and Expenses",
+  "onBoardingThreeDesc": "Easily track your income and expenses. Manage your monthly budget and achieve your savings goals.",
+  "getStarted": "Get Started",
+  "skip": "Skip",
+  "go": "Next",
+  "back": "Back"
 }
