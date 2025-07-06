@@ -739,4 +739,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get getCurrentLocation => 'Get Current Location';
+
+  @override
+  String get onBoardingOneTitle => 'Welcome to Home Management App';
+
+  @override
+  String get onBoardingOneDesc =>
+      'Designed to simplify home management. Manage your income, expenses, and family budget.';
+
+  @override
+  String get onBoardingTwoTitle => 'Create a Family Profile';
+
+  @override
+  String get onBoardingTwoDesc =>
+      'Add your family members and start home management together. Share your family budget and track your expenses.';
+
+  @override
+  String get onBoardingThreeTitle => 'Track Your Income and Expenses';
+
+  @override
+  String get onBoardingThreeDesc =>
+      'Easily track your income and expenses. Manage your monthly budget and achieve your savings goals.';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get go => 'Next';
+
+  @override
+  String get back => 'Back';
 }
